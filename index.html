@@ -221,6 +221,79 @@ svg .dev.fail rect { stroke: var(--bad); fill: var(--bad-soft); stroke-dasharray
 svg .link.fail { stroke: var(--bad); stroke-dasharray: 6 5; }
 svg .jn { fill: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+
+/* ---------- Thème VLAN ---------- */
+:root { --c1: #2F5FD0; --c1-soft: #E0E8FA; --c2: #A4560F; --c2-soft: #F6E3CF; --c3: #7A3FC2; --c3-soft: #ECE3F8; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --c1: #86A6FF; --c1-soft: #1D2A4A; --c2: #E8A25F; --c2-soft: #3A2A14; --c3: #B98CFF; --c3-soft: #2A1F40; }
+}
+:root[data-theme="dark"] { --c1: #86A6FF; --c1-soft: #1D2A4A; --c2: #E8A25F; --c2-soft: #3A2A14; --c3: #B98CFF; --c3-soft: #2A1F40; }
+svg .link.v10 { stroke: var(--c1); }
+svg .link.v20 { stroke: var(--c2); }
+svg .link.v30 { stroke: var(--c3); }
+svg .link.dim { opacity: .3; }
+.lx-top { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.lx-toggle { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--muted); cursor: pointer; }
+.lx-svg { overflow-x: auto; margin-inline: -8px; }
+.lx-svg svg { display: block; width: 100%; min-width: 520px; height: auto; }
+.lx-hint { font-size: .9rem; }
+.lx-ctrl { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+.lx-ctrl .lx-wide { flex-basis: 220px; }
+.lx-ctrl select { width: 100%; min-height: 44px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--surface); padding: 6px 10px; }
+.lx-panel { border: 1.5px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.lx-h { font-size: 1.15rem; }
+.lx-t { min-width: 0; }
+.lx-t th, .lx-t td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.lx-tag { display: inline-block; font: 600 12px/1.5 var(--f-mono); padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); }
+.lx-tag.c1 { background: var(--c1-soft); color: var(--c1); }
+.lx-tag.c2 { background: var(--c2-soft); color: var(--c2); }
+.lx-tag.c3 { background: var(--c3-soft); color: var(--c3); }
+.lx-bad, .lx-ko { color: var(--bad); font-weight: 700; }
+.lx-ok { color: var(--ok); font-weight: 700; }
+.lx-console, .lx-ios { margin: 0; background: #0F1A21; color: #CFE6D6; border-radius: 10px; padding: 14px 16px; font: 500 13px/1.6 var(--f-mono); overflow-x: auto; white-space: pre; }
+.lx-ios .c { color: #7F978A; }
+.lx svg .lx-w { stroke: var(--muted); stroke-width: 3; fill: none; opacity: .7; }
+.lx svg .lx-w.c1 { stroke: var(--c1); opacity: 1; }
+.lx svg .lx-w.c2 { stroke: var(--c2); opacity: 1; }
+.lx svg .lx-w.c3 { stroke: var(--c3); opacity: 1; }
+.lx svg .lx-w.trunk { stroke: var(--accent); opacity: 1; }
+.lx svg .lx-w.broken { stroke: var(--bad); stroke-dasharray: 7 6; opacity: 1; }
+.lx svg .lx-zone { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 5 5; }
+.lx svg text.lx-zl { font: 600 12px var(--f-mono); fill: var(--muted); letter-spacing: .06em; }
+.lx svg text.lx-port { font: 500 12px var(--f-mono); fill: var(--muted); }
+.lx svg text.lx-ll { font: 600 12px var(--f-body); fill: var(--muted); }
+.lx svg text.lx-ll.bad, .lx svg text.lx-ns.bad { fill: var(--bad); font-weight: 700; }
+.lx svg text.lx-nl { font: 700 15px var(--f-body); fill: var(--ink); }
+.lx svg text.lx-ns { font: 500 12px var(--f-mono); fill: var(--muted); }
+.lx svg .lx-body { fill: var(--surface); stroke: var(--ink); stroke-width: 2.2; }
+.lx svg .lx-gl { stroke: var(--ink); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.lx svg .lx-node { cursor: pointer; }
+.lx svg .lx-node:hover .lx-body { fill: var(--accent-soft); }
+.lx svg .lx-node.sel .lx-body { stroke: var(--accent); stroke-width: 3.5; }
+.lx svg .lx-ring { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0; }
+.lx svg .lx-node.sel .lx-ring { opacity: .45; }
+.lx svg .lx-chip.c1 { fill: var(--c1); }
+.lx svg .lx-chip.c2 { fill: var(--c2); }
+.lx svg .lx-chip.c3 { fill: var(--c3); }
+.lx svg text.lx-ct { font: 700 11px var(--f-body); fill: var(--surface); }
+.lx svg .lx-pkt { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.lx svg .lx-pkt.c1 { fill: var(--c1); }
+.lx svg .lx-pkt.c2 { fill: var(--c2); }
+.lx svg .lx-pkt.c3 { fill: var(--c3); }
+.lx svg .lx-tb { fill: var(--ink); }
+.lx svg text.lx-tt { font: 700 11px var(--f-mono); fill: var(--surface); }
+.lx svg .lx-fail { stroke: var(--bad); stroke-width: 5; stroke-linecap: round; }
+.lx svg .lx-badge { fill: var(--bad); }
+.lx svg text.lx-bt { font: 800 13px var(--f-body); fill: #FFFFFF; }
+.lx-meta { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; margin: 0; font-size: .95rem; }
+.lx-meta dt { color: var(--muted); }
+.lx-meta dd { margin: 0; font-weight: 600; }
+.lx-steps { margin: 0; padding-left: 1.4rem; display: flex; flex-direction: column; gap: 12px; }
+.lx-steps p { margin-top: 2px; }
+.lx-corr { display: flex; flex-direction: column; gap: 14px; }
+.lx-corr[hidden] { display: none; }
+.lx-cfg { display: flex; flex-direction: column; gap: 6px; }
+.lx-cfgh { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 </style>
 
 <main id="app"></main>
@@ -1742,19 +1815,688 @@ function simTopo(el) {
   });
   draw();
 }
-const SIMS = { hub: simHub, pick: simPick, explorer: simExplorer, mac: simMac, dom: simDom, arp: simArp, osi: simOsi, encaps: simEncaps, map: simMap, bits: simBits, ip: simIp, subnet: simSubnet, vlsm: simVlsm, macinfo: simMacinfo, transfer: simTransfer, topo: simTopo };
+/* ---------- Thème « Les VLAN » : situations, labs et leçons ---------- */
+const SCEN_VCFG = [
+  { s: "Vous devez créer le VLAN 30 et l'appeler ADMINISTRATION, en mode de configuration globale.", o: ["vlan 30 puis name ADMINISTRATION", "switchport access vlan 30", "interface vlan 30", "ip vlan 30 ADMINISTRATION"], a: 0, e: "La commande vlan 30 crée le VLAN et ouvre son mode de configuration, où name lui donne un nom." },
+  { s: "Le port Fa0/5 doit accueillir le PC d'un formateur, dans le VLAN 20.", o: ["switchport mode access puis switchport access vlan 20", "switchport mode trunk", "vlan 20 puis name Fa0/5", "encapsulation dot1Q 20"], a: 0, e: "Un port qui relie un équipement final est un port d'accès, rangé dans un seul VLAN." },
+  { s: "Le port G0/1 relie deux switchs et doit transporter tous les VLAN.", o: ["switchport mode trunk", "switchport mode access", "switchport access vlan all", "spanning-tree portfast"], a: 0, e: "Entre deux switchs, le lien doit être un trunk : il transporte plusieurs VLAN grâce à l'étiquette 802.1Q." },
+  { s: "Les ports Fa0/1 à Fa0/10 doivent tous rejoindre le VLAN 10, en une seule fois.", o: ["interface range fa0/1 - 10 puis switchport access vlan 10", "interface fa0/1-10 vlan 10", "vlan 10 ports 1-10", "switchport range 1-10 vlan 10"], a: 0, e: "interface range applique les mêmes commandes à plusieurs ports d'un coup." },
+  { s: "Vous voulez voir la liste des VLAN et les ports d'accès rangés dans chacun.", o: ["show vlan brief", "show interfaces trunk", "show ip route", "show running-config interface vlan"], a: 0, e: "show vlan brief affiche chaque VLAN avec ses ports d'accès. Les trunks n'y figurent pas." },
+  { s: "Vous voulez vérifier qu'un lien est bien en trunk et voir les VLAN qu'il transporte.", o: ["show interfaces trunk", "show vlan brief", "show mac address-table", "show ip interface brief"], a: 0, e: "show interfaces trunk liste les ports en trunk, leur VLAN natif et les VLAN autorisés." },
+  { s: "Le trunk ne doit transporter que les VLAN 10 et 20.", o: ["switchport trunk allowed vlan 10,20", "switchport access vlan 10,20", "vlan 10,20 trunk", "switchport trunk native vlan 10,20"], a: 0, e: "La liste allowed limite les VLAN autorisés sur le trunk. Attention : un VLAN oublié dans cette liste ne passe plus." }
+];
+const SCEN_VDEP = [
+  { s: "Deux PC du VLAN 10 branchés sur deux switchs différents ne se joignent pas. Sur un même switch, tout fonctionne.", o: ["Le lien entre les switchs n'est pas en trunk", "La passerelle des PC est fausse", "Le routeur n'a pas de sous-interface", "Le câble des PC est croisé"], a: 0, e: "Même VLAN, même réseau : le routeur n'intervient pas. Si ça casse uniquement entre switchs, le coupable est le lien entre eux." },
+  { s: "Un PC ne joint ni ses voisins ni sa passerelle. Dans show vlan brief, son port apparaît dans le VLAN 1.", o: ["Son port n'a pas été affecté au bon VLAN", "Le trunk est mal configuré", "Le VLAN natif est différent", "Il manque ip routing"], a: 0, e: "Il manque switchport access vlan sur ce port : le PC est resté seul dans le VLAN 1." },
+  { s: "Le VLAN 30 ne joint aucun autre VLAN. Les VLAN 10 et 20 communiquent normalement entre eux.", o: ["La sous-interface G0/0.30 est mal configurée", "L'interface physique G0/0 est éteinte", "Le trunk vers le routeur est en mode access", "Le VLAN 10 est absent du switch"], a: 0, e: "Une seule sous-interface en défaut : vérifiez encapsulation dot1Q 30 et l'adresse IP de G0/0.30." },
+  { s: "Toutes les sous-interfaces du routeur sont « down ». Aucun VLAN ne joint sa passerelle.", o: ["L'interface physique G0/0 n'a pas reçu no shutdown", "Une encapsulation dot1Q est fausse", "Un port d'accès est dans le mauvais VLAN", "Le switch n'a pas de VLAN 1"], a: 0, e: "Les sous-interfaces dépendent de l'interface physique. Sur un routeur, les interfaces sont éteintes par défaut." },
+  { s: "Sur le trunk, tous les VLAN passent sauf le VLAN 20.", o: ["Le VLAN 20 manque dans la liste switchport trunk allowed vlan", "Le VLAN natif est le VLAN 20", "Le port est en mode access", "Le câble du trunk est défectueux"], a: 0, e: "Un trunk qui laisse passer certains VLAN et pas d'autres : regardez la liste des VLAN autorisés dans show interfaces trunk." },
+  { s: "Un switch central sans aucun PC relie deux switchs d'accès. Le VLAN 10 ne le traverse pas, les autres VLAN oui.", o: ["Le VLAN 10 n'a pas été créé sur le switch central", "Les PC du VLAN 10 ont une mauvaise passerelle", "Le routeur ne connaît pas le VLAN 10", "Le VLAN 10 est le VLAN natif"], a: 0, e: "Un switch ne fait jamais passer un VLAN qu'il ne connaît pas. Sans port d'accès dans ce VLAN, il faut le créer à la main." },
+  { s: "Packet Tracer affiche régulièrement « Native VLAN mismatch » sur un lien entre deux switchs.", o: ["Le VLAN natif n'est pas le même aux deux bouts du trunk", "Le lien est en mode access des deux côtés", "Un VLAN porte deux noms différents", "Le switch a trop de VLAN"], a: 0, e: "Le VLAN natif (non étiqueté) doit être identique des deux côtés, sinon des trames passent d'un VLAN à l'autre." }
+];
+
+/* Mini-lab : deux switchs reliés par un trunk, sans routeur */
+const LAB2 = {
+  legend: [['--c1', 'VLAN 10 · STAGIAIRES'], ['--c2', 'VLAN 20 · FORMATEURS'], ['--accent', 'Trunk 802.1Q']],
+  aria: "SW1 et SW2 reliés par un trunk. Sur SW1 : PC1 (VLAN 10) et PC2 (VLAN 20). Sur SW2 : PC3 (VLAN 10) et PC4 (VLAN 20).",
+  viewBox: [720, 360],
+  nodes: {
+    SW1: { x: 200, y: 110, type: 'switch', label: 'above', lines: () => [{ t: 'Cisco 2960' }] },
+    SW2: { x: 520, y: 110, type: 'switch', label: 'above', lines: () => [{ t: 'Cisco 2960' }], badge: f => f === 'port' },
+    PC1: { x: 110, y: 262, type: 'pc', label: 'below', host: true, cls: 'c1', chip: '10', vlan: 10, ip: '192.168.10.11', gw: '192.168.10.1', sw: 'SW1', port: 'Fa0/1' },
+    PC2: { x: 290, y: 262, type: 'pc', label: 'below', host: true, cls: 'c2', chip: '20', vlan: 20, ip: '192.168.20.11', gw: '192.168.20.1', sw: 'SW1', port: 'Fa0/11' },
+    PC3: { x: 430, y: 262, type: 'pc', label: 'below', host: true, cls: 'c1', chip: '10', vlan: 10, ip: '192.168.10.12', gw: '192.168.10.1', sw: 'SW2', port: 'Fa0/1' },
+    PC4: { x: 610, y: 262, type: 'pc', label: 'below', host: true, cls: 'c2', chip: '20', vlan: 20, ip: '192.168.20.12', gw: '192.168.20.1', sw: 'SW2', port: 'Fa0/11' }
+  },
+  hostLines(n, f) { return [{ t: n.ip }, n.id === 'PC3' && f === 'port' ? { t: 'port en VLAN 1', bad: true } : { t: 'VLAN ' + n.vlan }]; },
+  links: [
+    { a: 'SW1', b: 'SW2', pa: 'G0/1', pb: 'G0/1', cls: 'trunk', colors: f => f === 'allowed' ? ['c1'] : ['c1', 'c2'], portSide: -1,
+      label: f => f === 'access' ? { t: 'mode access (erreur)', bad: true } : f === 'allowed' ? { t: 'allowed vlan 10 (erreur)', bad: true } : { t: 'trunk 802.1Q' }, broken: f => f === 'access' },
+    { a: 'SW1', b: 'PC1', pa: 'Fa0/1', cls: 'c1' },
+    { a: 'SW1', b: 'PC2', pa: 'Fa0/11', cls: 'c2' },
+    { a: 'SW2', b: 'PC3', pa: 'Fa0/1', cls: f => f === 'port' ? '' : 'c1' },
+    { a: 'SW2', b: 'PC4', pa: 'Fa0/11', cls: 'c2' }
+  ],
+  faults: [
+    { id: 'none', label: 'Aucune, tout fonctionne' },
+    { id: 'access', label: 'Lien SW1–SW2 laissé en mode access' },
+    { id: 'allowed', label: 'VLAN 20 absent de la liste allowed' },
+    { id: 'port', label: 'Port de PC3 resté dans le VLAN 1' }
+  ],
+  defaultSel: 'SW1', defaultSrc: 'PC1', defaultDst: 'PC3',
+  panel(id, f, H) {
+    const n = this.nodes[id];
+    if (n.type === 'switch') {
+      const rows = id === 'SW1'
+        ? [[H.mono('Fa0/1'), 'access', H.tag('c1', '10')], [H.mono('Fa0/11'), 'access', H.tag('c2', '20')]]
+        : [[H.mono('Fa0/1'), 'access', f === 'port' ? H.bad('VLAN 1 (oubli)') : H.tag('c1', '10')], [H.mono('Fa0/11'), 'access', H.tag('c2', '20')]];
+      rows.push([H.mono('G0/1'), f === 'access' ? H.bad('access') : 'trunk', f === 'allowed' ? H.bad('10 seulement') : H.tag('', '10 + 20 étiquetés')]);
+      return H.head(`${id} · Switch Cisco 2960`) + `<p>Il range chaque PC dans son VLAN et envoie vers l'autre switch, par le trunk, les trames destinées à des PC situés là-bas.</p>` + H.table(['Port', 'Mode', 'VLAN'], rows);
+    }
+    return H.head(`${id} · PC`) + `<p>Membre du ${H.tag(n.cls, 'VLAN ' + n.vlan)}, branché sur ${n.sw} ${H.mono(n.port)}.</p>` + H.table(null, [['Adresse IP', H.mono(n.ip)], ['Masque', H.mono('255.255.255.0')], ['Passerelle', H.mono(n.gw) + ' (aucun routeur ici)']]);
+  },
+  plan(src, dst, f) {
+    const N = this.nodes, s = N[src], d = N[dst], steps = [], cls = s.cls;
+    if (src === dst) return { error: 'Choisissez deux machines différentes.' };
+    if (s.vlan !== d.vlan) return { steps, ok: false, failAt: src, end: `${src} voit que ${d.ip} n'est pas dans son réseau : il doit passer par sa passerelle ${s.gw}. Mais il n'y a aucun routeur dans ce réseau : la requête ARP pour la passerelle reste sans réponse. Deux VLAN différents ne communiquent jamais sans équipement de couche 3.` };
+    const p3 = f === 'port' && (src === 'PC3' || dst === 'PC3');
+    if (p3 && src === 'PC3') {
+      steps.push({ a: src, b: s.sw, cls: '', t: `PC3 envoie la trame directement : ${d.ip} est dans son réseau.` });
+      return { steps, ok: false, failAt: 'SW2', end: "SW2 range la trame de PC3 dans le VLAN 1, car son port n'a jamais été affecté au VLAN 10. PC1 est dans le VLAN 10 : la trame ne l'atteindra jamais." };
+    }
+    steps.push({ a: src, b: s.sw, cls, t: `${src} voit que ${d.ip} est dans son réseau : il envoie la trame directement, sans passerelle.` });
+    if (s.sw !== d.sw) {
+      if (f === 'access') return { steps, ok: false, failAt: s.sw, end: `G0/1 n'est pas un trunk : c'est un port d'accès du VLAN 1. Une trame du VLAN ${s.vlan} ne peut pas sortir par là : ${s.sw} la garde pour lui.` };
+      if (f === 'allowed' && s.vlan === 20) return { steps, ok: false, failAt: s.sw, end: `Le trunk n'autorise que le VLAN 10 (switchport trunk allowed vlan 10). ${s.sw} n'a pas le droit d'y envoyer une trame du VLAN 20 : elle est jetée.` };
+      steps.push({ a: s.sw, b: d.sw, cls, tag: '802.1Q ' + s.vlan, t: `${s.sw} ne trouve pas ${dst} sur ses propres ports du VLAN ${s.vlan}. Il colle l'étiquette 802.1Q « VLAN ${s.vlan} » et envoie la trame sur le trunk G0/1.` });
+    }
+    if (p3) return { steps, ok: false, failAt: 'SW2', end: "SW2 cherche un port du VLAN 10 pour livrer la trame à PC3… mais le port de PC3 est resté dans le VLAN 1. Trame jamais livrée." };
+    steps.push({ a: d.sw, b: dst, cls, t: s.sw !== d.sw ? `${d.sw} lit l'étiquette, retire le badge et livre la trame à ${dst} sur ${d.port} (VLAN ${d.vlan}). Le PC ne voit jamais l'étiquette.` : `${d.sw} livre la trame à ${dst} sur ${d.port}, un port du même VLAN.` });
+    return { steps, ok: true, ttl: 128, end: `${dst} répond par le même chemin. Aucun routeur traversé : TTL=128.` };
+  }
+};
+
+/* Lab complet : trois switchs, un routeur, routage inter-VLAN */
+const LAB3 = {
+  legend: [['--c1', 'VLAN 10 · STAGIAIRES'], ['--c2', 'VLAN 20 · FORMATEURS'], ['--c3', 'VLAN 30 · ADMINISTRATION']],
+  aria: "R1 relié par un trunk au switch central SW1 ; SW1 relié par des trunks à SW2 (PC1 VLAN 10, PC2 VLAN 20) et à SW3 (PC3 VLAN 10, PC4 VLAN 30)",
+  viewBox: [720, 530],
+  zones: [{ x: 40, y: 258, w: 300, h: 262, label: 'Bâtiment A' }, { x: 380, y: 258, w: 300, h: 262, label: 'Bâtiment B' }],
+  nodes: {
+    R1: { x: 360, y: 62, type: 'router', label: 'right', lines: () => [{ t: 'Cisco 2911' }], badge: f => f === 'dot1q30' },
+    SW1: { x: 360, y: 178, type: 'switch', label: 'right', lines: () => [{ t: 'Cisco 2960 · central' }], badge: f => f === 'vlan10' || f === 'trunk3' },
+    SW2: { x: 190, y: 320, type: 'switch', label: 'right', lines: () => [{ t: 'Cisco 2960' }] },
+    SW3: { x: 530, y: 320, type: 'switch', label: 'right', lines: () => [{ t: 'Cisco 2960' }] },
+    PC1: { x: 110, y: 438, type: 'pc', label: 'below', host: true, cls: 'c1', chip: '10', vlan: 10, ip: '192.168.10.11', gw: '192.168.10.1', sw: 'SW2', port: 'Fa0/1' },
+    PC2: { x: 270, y: 438, type: 'pc', label: 'below', host: true, cls: 'c2', chip: '20', vlan: 20, ip: '192.168.20.11', gw: '192.168.20.1', sw: 'SW2', port: 'Fa0/11' },
+    PC3: { x: 450, y: 438, type: 'pc', label: 'below', host: true, cls: 'c1', chip: '10', vlan: 10, ip: '192.168.10.12', gw: '192.168.10.1', sw: 'SW3', port: 'Fa0/1' },
+    PC4: { x: 610, y: 438, type: 'pc', label: 'below', host: true, cls: 'c3', chip: '30', vlan: 30, ip: '192.168.30.11', gw: '192.168.30.1', sw: 'SW3', port: 'Fa0/21' }
+  },
+  hostLines(n) { return [{ t: n.ip }, { t: 'gw ' + n.gw }]; },
+  links: [
+    { a: 'R1', b: 'SW1', pa: 'G0/0', pb: 'G0/1', cls: 'trunk', colors: () => ['c1', 'c2', 'c3'], label: () => ({ t: 'trunk 802.1Q' }), labelSide: -1 },
+    { a: 'SW1', b: 'SW2', pa: 'Fa0/23', pb: 'G0/1', cls: 'trunk', colors: () => ['c1', 'c2', 'c3'] },
+    { a: 'SW1', b: 'SW3', pa: 'Fa0/24', pb: 'G0/1', cls: 'trunk', colors: () => ['c1', 'c2', 'c3'], broken: f => f === 'trunk3', label: f => f === 'trunk3' ? { t: 'Fa0/24 en access', bad: true } : null },
+    { a: 'SW2', b: 'PC1', pa: 'Fa0/1', cls: 'c1' },
+    { a: 'SW2', b: 'PC2', pa: 'Fa0/11', cls: 'c2' },
+    { a: 'SW3', b: 'PC3', pa: 'Fa0/1', cls: 'c1' },
+    { a: 'SW3', b: 'PC4', pa: 'Fa0/21', cls: 'c3' }
+  ],
+  faults: [
+    { id: 'none', label: 'Aucune, tout fonctionne' },
+    { id: 'trunk3', label: 'Fa0/24 de SW1 en mode access' },
+    { id: 'vlan10', label: 'VLAN 10 non créé sur SW1' },
+    { id: 'dot1q30', label: 'dot1Q 30 oublié sur R1' }
+  ],
+  defaultSel: 'SW1', defaultSrc: 'PC1', defaultDst: 'PC4',
+  panel(id, f, H) {
+    const n = this.nodes[id];
+    if (id === 'R1') return H.head('R1 · Routeur Cisco 2911') + `<p>L'<b>accueil central</b>. Un seul câble vers SW1, mais une sous-interface par VLAN : tous les échanges entre services passent par lui.</p>` +
+      H.table(['Interface', 'VLAN', 'IP'], [[H.mono('G0/0'), H.tag('', 'physique'), 'aucune, juste no shutdown'], [H.mono('G0/0.10'), H.tag('c1', 'dot1Q 10'), H.mono('192.168.10.1/24')], [H.mono('G0/0.20'), H.tag('c2', 'dot1Q 20'), H.mono('192.168.20.1/24')], [H.mono('G0/0.30'), f === 'dot1q30' ? H.bad('dot1Q oublié') : H.tag('c3', 'dot1Q 30'), H.mono('192.168.30.1/24')]]);
+    if (id === 'SW1') return H.head('SW1 · Switch central Cisco 2960') + `<p>Le <b>bâtiment central</b> : aucun bureau, seulement des passerelles couvertes. Il doit quand même connaître tous les services pour les laisser passer.</p>` +
+      H.table(['Port', 'Mode', 'Vers'], [[H.mono('G0/1'), 'trunk', 'R1 G0/0'], [H.mono('Fa0/23'), 'trunk', 'SW2 G0/1'], [H.mono('Fa0/24'), f === 'trunk3' ? H.bad('access (erreur)') : 'trunk', 'SW3 G0/1']]) +
+      `<p class="muted">VLAN connus : ${f === 'vlan10' ? H.bad('20 et 30 seulement') : H.tag('c1', '10') + ' ' + H.tag('c2', '20') + ' ' + H.tag('c3', '30')}</p>`;
+    if (n.type === 'switch') {
+      const rows = id === 'SW2'
+        ? [[H.mono('Fa0/1'), 'access', H.tag('c1', '10')], [H.mono('Fa0/11'), 'access', H.tag('c2', '20')], [H.mono('G0/1'), 'trunk', 'vers SW1']]
+        : [[H.mono('Fa0/1'), 'access', H.tag('c1', '10')], [H.mono('Fa0/21'), 'access', H.tag('c3', '30')], [H.mono('G0/1'), 'trunk', 'vers SW1']];
+      return H.head(`${id} · Switch d'accès Cisco 2960`) + `<p>Le <b>${id === 'SW2' ? 'bâtiment A' : 'bâtiment B'}</b>. Il range chaque poste dans son service et envoie le reste vers SW1 par son trunk.</p>` + H.table(['Port', 'Mode', 'VLAN'], rows);
+    }
+    return H.head(`${id} · PC`) + `<p>Membre du ${H.tag(n.cls, 'VLAN ' + n.vlan)}, branché sur ${n.sw} ${H.mono(n.port)}.</p>` + H.table(null, [['Adresse IP', H.mono(n.ip)], ['Masque', H.mono('255.255.255.0')], ['Passerelle', H.mono(n.gw)]]);
+  },
+  ports: { SW2: { SW1: 'G0/1' }, SW3: { SW1: 'G0/1' }, SW1: { SW2: 'Fa0/23', SW3: 'Fa0/24', R1: 'G0/1' } },
+  plan(src, dst, fault) {
+    const N = this.nodes, s = N[src], d = N[dst], steps = [], P = this.ports, C = { 10: 'c1', 20: 'c2', 30: 'c3' };
+    if (src === dst) return { error: 'Choisissez deux machines différentes.' };
+    const same = s.vlan === d.vlan;
+    const T3 = v => `Fa0/24 de SW1 est en mode access (VLAN 1) au lieu de trunk. Une trame du VLAN ${v} ne peut ni sortir ni entrer par ce port : SW1 la jette. Tout le bâtiment B est coupé du reste.`;
+    const V10 = "SW1 ne connaît pas le VLAN 10 : il est absent de son show vlan brief. Un switch ne fait jamais passer un VLAN qu'il ne connaît pas : trame jetée.";
+    const go = (seq, v, target) => {
+      for (let i = 0; i < seq.length - 1; i++) {
+        const a = seq[i], b = seq[i + 1], cls = C[v], tag = '802.1Q ' + v;
+        if (N[a].host) {
+          steps.push({ a, b, cls, t: same ? `${a} voit que ${d.ip} est dans son réseau (192.168.${v}.0/24) : il envoie directement, sans passer par la passerelle.` : `${a} compare : ${d.ip} n'est pas dans son réseau. Il envoie la trame à sa passerelle ${s.gw}.` });
+          continue;
+        }
+        if (N[b].host) { steps.push({ a, b, cls, t: `${a} retire l'étiquette et livre la trame à ${b} sur ${N[b].port} (VLAN ${v}).` }); continue; }
+        if (fault === 'trunk3' && ((a === 'SW1' && b === 'SW3') || (a === 'SW3' && b === 'SW1'))) {
+          if (a === 'SW3') steps.push({ a, b, cls, tag, t: `SW3 envoie la trame vers SW1 par son trunk G0/1, étiquetée VLAN ${v}.` });
+          return { at: 'SW1', t: T3(v) };
+        }
+        if (b === 'R1') { steps.push({ a, b, cls, tag, t: `SW1 : la trame est adressée à la passerelle. Il l'envoie à R1 par le trunk G0/1, étiquetée VLAN ${v}.` }); continue; }
+        if (a === 'R1') steps.push({ a, b, cls, tag, t: `R1 reçoit sur G0/0.${s.vlan} et lit sa table : 192.168.${v}.0/24 est directement connecté via G0/0.${v}. Il renvoie la trame étiquetée VLAN ${v}.` });
+        else if (b === 'SW1') steps.push({ a, b, cls, tag, t: `${a} ne trouve pas la destination sur ses propres ports du VLAN ${v}. Il colle l'étiquette 802.1Q « VLAN ${v} » et envoie la trame sur son trunk ${P[a].SW1} vers SW1.` });
+        else steps.push({ a, b, cls, tag, t: `SW1 sait que ${target} est derrière ${P.SW1[b]} : il fait suivre la trame sur ce trunk vers ${b}, toujours étiquetée VLAN ${v}.` });
+        if (b === 'SW1' && fault === 'vlan10' && v === 10) return { at: 'SW1', t: V10 };
+      }
+      return null;
+    };
+    let r;
+    if (same) {
+      r = go(s.sw === d.sw ? [src, s.sw, dst] : [src, s.sw, 'SW1', d.sw, dst], s.vlan, dst);
+      if (r) return { steps, ok: false, failAt: r.at, end: r.t };
+      return { steps, ok: true, ttl: 128, end: `${dst} répond par le même chemin. Le routeur n'a jamais été utilisé : TTL=128.` };
+    }
+    r = go([src, s.sw, 'SW1', 'R1'], s.vlan, 'R1');
+    if (r) return { steps, ok: false, failAt: r.at, end: r.t };
+    if (fault === 'dot1q30' && (s.vlan === 30 || d.vlan === 30)) return { steps, ok: false, failAt: 'R1', end: s.vlan === 30
+      ? "R1 reçoit une trame étiquetée VLAN 30, mais aucune sous-interface n'a « encapsulation dot1Q 30 » : il ne sait pas à quel service elle appartient. Trame ignorée."
+      : "R1 veut joindre 192.168.30.0/24, mais G0/0.30 n'a pas son « encapsulation dot1Q 30 » : la sous-interface est inutilisable, le VLAN 30 est injoignable." };
+    r = go(['R1', 'SW1', d.sw, dst], d.vlan, dst);
+    if (r) return { steps, ok: false, failAt: r.at, end: r.t };
+    return { steps, ok: true, ttl: 127, end: `${dst} répond (echo reply). La réponse refait le chemin inverse et repasse par R1 : TTL=127.` };
+  },
+  sheet: {
+    meta: [['Durée', '2 h 30'], ['Logiciel', 'Cisco Packet Tracer 8.x'], ['Matériel', '1 × 2911, 3 × 2960, 4 PC']],
+    intro: "Trois services, deux bâtiments, un switch central. Le service Stagiaires a des postes dans les deux bâtiments : vous allez voir qu'un VLAN peut traverser plusieurs switchs, puis faire communiquer les services entre eux grâce au routeur.",
+    addr: { h: ['Appareil', 'Interface', 'VLAN', 'Adresse IP', 'Masque', 'Passerelle'], r: [
+      ['R1', 'G0/0.10', '10', '192.168.10.1', '255.255.255.0', '—'],
+      ['R1', 'G0/0.20', '20', '192.168.20.1', '255.255.255.0', '—'],
+      ['R1', 'G0/0.30', '30', '192.168.30.1', '255.255.255.0', '—'],
+      ['PC1', 'Fa0 → SW2 Fa0/1', '10', '192.168.10.11', '255.255.255.0', '192.168.10.1'],
+      ['PC2', 'Fa0 → SW2 Fa0/11', '20', '192.168.20.11', '255.255.255.0', '192.168.20.1'],
+      ['PC3', 'Fa0 → SW3 Fa0/1', '10', '192.168.10.12', '255.255.255.0', '192.168.10.1'],
+      ['PC4', 'Fa0 → SW3 Fa0/21', '30', '192.168.30.11', '255.255.255.0', '192.168.30.1']] },
+    cabl: { h: ['Liaison', 'De', 'Vers', 'Câble', 'Mode'], r: [
+      ['Accueil', 'SW1 G0/1', 'R1 G0/0', 'Droit', 'Trunk'],
+      ['Bâtiment A', 'SW1 Fa0/23', 'SW2 G0/1', 'Croisé', 'Trunk'],
+      ['Bâtiment B', 'SW1 Fa0/24', 'SW3 G0/1', 'Croisé', 'Trunk']] },
+    steps: [
+      ['Placer et câbler', "Posez un routeur 2911, trois switchs 2960 et 4 PC. Câble croisé entre deux switchs, câble droit partout ailleurs. Respectez le tableau de câblage.", "Réflexion : pourquoi un câble croisé entre deux switchs ?"],
+      ['Configurer les PC', "Dans chaque PC : Desktop › IP Configuration. Saisissez l'IP, le masque et la passerelle du plan d'adressage.", ''],
+      ['Tester avant les VLAN', "Faites un ping de PC1 vers PC3, puis de PC1 vers PC2. Notez les résultats.", "Réflexion : PC1 joint PC3, mais pas PC2. Pourtant ils sont tous branchés ensemble. Pourquoi ?"],
+      ['Créer les VLAN sur les 3 switchs', "Sur SW1, SW2 et SW3, créez la même liste : VLAN 10 `STAGIAIRES`, 20 `FORMATEURS`, 30 `ADMINISTRATION`. Oui, aussi sur SW1, qui n'a aucun PC.", "Vérifiez : `show vlan brief` sur chaque switch."],
+      ['Affecter les ports d\'accès', "Sur SW2 : Fa0/1 → VLAN 10, Fa0/11 → VLAN 20. Sur SW3 : Fa0/1 → VLAN 10, Fa0/21 → VLAN 30.", "Réflexion : refaites le ping PC1 → PC3. Il échoue maintenant. Que manque-t-il entre les bâtiments ?"],
+      ['Configurer les trunks', "Sur SW1 : G0/1, Fa0/23 et Fa0/24 en mode trunk. Sur SW2 et SW3 : G0/1 en mode trunk.", "Vérifiez : `show interfaces trunk`, puis le ping PC1 → PC3 : il remarche, sans aucun routeur."],
+      ['Créer les sous-interfaces sur R1', "Activez G0/0 avec `no shutdown`, puis créez G0/0.10, G0/0.20 et G0/0.30 avec leur `encapsulation dot1Q` et l'IP de passerelle du VLAN.", "Vérifiez : `show ip route` affiche trois lignes C."],
+      ['Tester le routage inter-VLAN', "Faites un ping de PC1 vers PC4, puis de PC2 vers PC3. Comparez le TTL avec le ping PC1 → PC3.", "Réflexion : pourquoi PC1 → PC3 donne TTL=128 et PC1 → PC4 donne TTL=127 ?"],
+      ['Sauvegarder', "Sur R1 et les 3 switchs : `copy running-config startup-config`.", "Bonus : reproduisez dans Packet Tracer les pannes du simulateur et observez les symptômes."]
+    ],
+    configs: [
+      { title: 'R1 · Cisco 2911', text: `enable
+configure terminal
+hostname R1
+! L'interface physique : allumée, sans IP
+interface g0/0
+ no shutdown
+! Une sous-interface (une "porte d'accueil") par VLAN
+interface g0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+interface g0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0
+interface g0/0.30
+ encapsulation dot1Q 30
+ ip address 192.168.30.1 255.255.255.0
+end
+copy running-config startup-config` },
+      { title: 'SW1 · Cisco 2960 (central)', text: `enable
+configure terminal
+hostname SW1
+! Aucun PC ici, mais SW1 doit connaître chaque VLAN qu'il fait passer
+vlan 10
+ name STAGIAIRES
+vlan 20
+ name FORMATEURS
+vlan 30
+ name ADMINISTRATION
+exit
+! Trois trunks : vers le routeur et vers les deux bâtiments
+interface g0/1
+ switchport mode trunk
+interface range fa0/23 - 24
+ switchport mode trunk
+end
+copy running-config startup-config` },
+      { title: 'SW2 · Cisco 2960 (bâtiment A)', text: `enable
+configure terminal
+hostname SW2
+! La même liste de VLAN sur tous les switchs : moins d'oublis
+vlan 10
+ name STAGIAIRES
+vlan 20
+ name FORMATEURS
+vlan 30
+ name ADMINISTRATION
+exit
+interface fa0/1
+ switchport mode access
+ switchport access vlan 10
+interface fa0/11
+ switchport mode access
+ switchport access vlan 20
+! Le lien vers SW1 transporte tous les VLAN
+interface g0/1
+ switchport mode trunk
+end
+copy running-config startup-config` },
+      { title: 'SW3 · Cisco 2960 (bâtiment B)', text: `enable
+configure terminal
+hostname SW3
+vlan 10
+ name STAGIAIRES
+vlan 20
+ name FORMATEURS
+vlan 30
+ name ADMINISTRATION
+exit
+interface fa0/1
+ switchport mode access
+ switchport access vlan 10
+interface fa0/21
+ switchport mode access
+ switchport access vlan 30
+interface g0/1
+ switchport mode trunk
+end
+copy running-config startup-config` }
+    ],
+    verifs: { h: ['Sur', 'Commande', 'Ce que vous devez voir'], r: [
+      ['SW1', 'show vlan brief', "VLAN 10, 20 et 30 présents, sans aucun port : c'est normal, SW1 n'a que des trunks."],
+      ['SW1', 'show interfaces trunk', 'Gig0/1, Fa0/23 et Fa0/24 en statut trunking.'],
+      ['SW2', 'show vlan brief', 'Fa0/1 dans le VLAN 10, Fa0/11 dans le VLAN 20.'],
+      ['SW3', 'show vlan brief', 'Fa0/1 dans le VLAN 10, Fa0/21 dans le VLAN 30.'],
+      ['R1', 'show ip route', 'Trois lignes C : 192.168.10.0/24, 20.0/24 et 30.0/24 via G0/0.10, .20 et .30.'],
+      ['PC1', 'ping 192.168.10.12', 'Réponses de PC3 avec TTL=128 : même VLAN, aucun routeur traversé.'],
+      ['PC1', 'ping 192.168.30.11', 'Réponses de PC4 avec TTL=127 : un routeur traversé.']] },
+    faults: [
+      { sym: 'Tout le bâtiment B est isolé, le bâtiment A fonctionne', cause: "Fa0/24 de SW1 est resté en mode access. Correction : `switchport mode trunk` des deux côtés de chaque lien entre switchs.", f: 'trunk3', src: 'PC1', dst: 'PC3', sel: 'SW1' },
+      { sym: 'PC1 et PC3 (même VLAN) ne se voient pas, alors que les autres VLAN fonctionnent', cause: "Le VLAN 10 n'a pas été créé sur SW1, le switch de passage. Correction : la même liste de VLAN sur tous les switchs.", f: 'vlan10', src: 'PC1', dst: 'PC3', sel: 'SW1' },
+      { sym: "Le service Administration est coupé des autres services", cause: "`encapsulation dot1Q 30` manquante sur G0/0.30. Correction : le numéro dot1Q doit être celui du VLAN.", f: 'dot1q30', src: 'PC2', dst: 'PC4', sel: 'R1' },
+      { sym: 'Un PC ne joint personne, même pas sa passerelle', cause: "Son port d'accès est resté dans le VLAN 1 (oubli de `switchport access vlan`). Correction : vérifiez avec `show vlan brief` que chaque port est dans le bon VLAN." }
+    ]
+  }
+};
+
+THEMES.push(
+{ id: 22, ch: 5, t: "Le concept de VLAN", short: "Segmenter un switch, domaines de diffusion", sim: 'vlanbc',
+  def: "Un VLAN (Virtual LAN) est un réseau local logique créé à l'intérieur d'un ou de plusieurs switchs. Les ports d'un même VLAN communiquent entre eux comme s'ils étaient sur un switch à part. Deux VLAN différents sont isolés, même s'ils partagent le même matériel.",
+  pts: [
+    "Un VLAN est un domaine de diffusion : un broadcast ne sort jamais de son VLAN.",
+    "On regroupe les machines par fonction (Stagiaires, Formateurs, Administration), et non par emplacement physique.",
+    "En général, un VLAN = un sous-réseau IP. Par exemple, VLAN 10 = 192.168.10.0/24.",
+    "Sur un switch Cisco, tous les ports sont dans le VLAN 1 par défaut.",
+    "Deux machines de VLAN différents ne communiquent pas sans un équipement de couche 3 (routeur ou switch de niveau 3).",
+    "Plage normale : VLAN 1 à 1005. Plage étendue : 1006 à 4094."
+  ],
+  table: { h: ["", "Sans VLAN", "Avec VLAN"], r: [
+    ["Domaines de diffusion", "Un seul pour tout le switch", "Un par VLAN"],
+    ["Broadcast d'un PC", "Reçu par tous les PC", "Reçu par les PC de son VLAN"],
+    ["Séparation des services", "Aucune", "Chaque service dans son VLAN"],
+    ["Ajouter un service", "Acheter un switch de plus", "Créer un VLAN de plus"],
+    ["Communication entre services", "Directe", "Par un routeur ou un switch de niveau 3"]
+  ] },
+  kw: ["VLAN", "Domaine de diffusion", "Broadcast", "VLAN 1", "Segmentation", "Sous-réseau"],
+  ana: "Le switch est un immeuble et chaque VLAN est un étage fermé à badge. Les personnes d'un étage ne croisent jamais celles d'un autre étage, même si elles partagent l'ascenseur et l'entrée.",
+  res: "Dans un établissement OFPPT, un même switch de 24 ports accueille les postes des stagiaires (VLAN 10), des formateurs (VLAN 20) et de l'administration (VLAN 30). Un stagiaire ne voit pas les partages réseau de l'administration.",
+  piege: "Changer l'adresse IP d'un PC ne l'isole pas : sur le même VLAN, il reçoit toujours tous les broadcasts. Seul le VLAN sépare vraiment les domaines de diffusion.",
+  simIntro: "Un switch relie six PC. Envoyez un broadcast depuis un PC, d'abord sans VLAN, puis avec trois VLAN, et comparez qui le reçoit.",
+  q: [
+    { q: "Qu'est-ce qu'un VLAN ?", o: ["Un réseau local logique créé à l'intérieur d'un ou de plusieurs switchs", "Un réseau sans fil d'entreprise", "Un câble virtuel entre deux routeurs", "Une classe d'adresses IP"], e: "Le VLAN découpe logiquement un switch en plusieurs réseaux locaux indépendants." },
+    { q: "Que limite un VLAN ?", o: ["Le domaine de diffusion (broadcast)", "Le débit des ports", "Le nombre de ports du switch", "La longueur maximale des câbles"], e: "Chaque VLAN forme son propre domaine de diffusion : les broadcasts restent à l'intérieur." },
+    { q: "Deux PC branchés sur le même switch sont dans deux VLAN différents. Que se passe-t-il ?", o: ["Ils ne communiquent pas sans un équipement de couche 3", "Ils communiquent normalement, le switch est le même", "Ils communiquent seulement en broadcast", "Le switch fusionne automatiquement les deux VLAN"], e: "Deux VLAN sont deux réseaux séparés. Il faut un routeur ou un switch de niveau 3 pour passer de l'un à l'autre." },
+    { q: "Dans quel VLAN se trouvent tous les ports d'un switch Cisco neuf ?", o: ["Le VLAN 1", "Le VLAN 0", "Le VLAN 10", "Aucun VLAN"], e: "Le VLAN 1 est le VLAN par défaut : tous les ports y sont au départ." },
+    { q: "À quoi correspond en général un VLAN au niveau IP ?", o: ["À un sous-réseau IP", "À une seule adresse IP", "À une adresse MAC", "À un numéro de port TCP"], e: "On associe un sous-réseau par VLAN, par exemple VLAN 20 = 192.168.20.0/24." },
+    { q: "Quel est l'intérêt principal des VLAN dans une école ?", o: ["Séparer les services pour la sécurité et réduire les broadcasts", "Augmenter la vitesse des câbles", "Supprimer le besoin d'adresses IP", "Remplacer les routeurs"], e: "Les VLAN isolent les services et réduisent la taille des domaines de diffusion." },
+    { q: "Quelle plage correspond aux VLAN de la plage normale ?", o: ["1 à 1005", "0 à 255", "1 à 65535", "100 à 999"], e: "Plage normale : 1 à 1005. Plage étendue : 1006 à 4094." },
+    { q: "Pour isoler le service Invités du reste du réseau, sur le même switch, il faut…", o: ["Créer un VLAN Invités et y placer leurs ports", "Changer seulement l'adresse IP des invités", "Utiliser un câble croisé pour les invités", "Désactiver le broadcast sur le switch"], e: "Changer l'IP ne suffit pas : seul un VLAN sépare vraiment le domaine de diffusion." }
+  ] },
+
+{ id: 23, ch: 5, t: "Ports d'accès, trunk et 802.1Q", short: "Étiquette, VLAN natif, lien entre switchs", sim: 'lab', lab: LAB2,
+  def: "Un port d'accès appartient à un seul VLAN et relie un équipement final (PC, imprimante). Un port trunk transporte plusieurs VLAN sur un même lien, en général entre deux switchs ou entre un switch et un routeur. Pour que l'autre bout sache à quel VLAN appartient chaque trame, le switch y ajoute une étiquette définie par la norme IEEE 802.1Q.",
+  pts: [
+    "Port d'accès : un seul VLAN, trames sans étiquette. Commande : `switchport mode access` puis `switchport access vlan 10`.",
+    "Port trunk : plusieurs VLAN, trames étiquetées. Commande : `switchport mode trunk`.",
+    "L'étiquette 802.1Q fait 4 octets. Elle est insérée dans la trame Ethernet, entre l'adresse MAC source et le champ Type.",
+    "Le numéro de VLAN est codé sur 12 bits dans l'étiquette, d'où un maximum de 4094 VLAN utilisables.",
+    "Le switch ajoute l'étiquette quand la trame sort par un trunk, et la retire avant de la livrer au PC. Le PC ne voit jamais l'étiquette.",
+    "VLAN natif : le VLAN dont les trames traversent le trunk sans étiquette (VLAN 1 par défaut). Il doit être identique aux deux bouts.",
+    "`switchport trunk allowed vlan` limite les VLAN autorisés sur le trunk."
+  ],
+  table: { h: ["", "Port d'accès", "Port trunk"], r: [
+    ["Nombre de VLAN", "Un seul", "Plusieurs"],
+    ["Équipement relié", "PC, imprimante, serveur", "Switch, routeur"],
+    ["Étiquette 802.1Q", "Non", "Oui (sauf VLAN natif)"],
+    ["Commande", "switchport mode access", "switchport mode trunk"],
+    ["Vérification", "show vlan brief", "show interfaces trunk"]
+  ] },
+  kw: ["Port d'accès", "Trunk", "IEEE 802.1Q", "Étiquette (tag)", "VLAN natif", "allowed vlan"],
+  ana: "Le trunk est une passerelle couverte entre deux bâtiments. Un seul passage pour tous les services, mais chaque visiteur porte un badge avec le numéro de son service : l'étiquette 802.1Q.",
+  res: "Les postes des stagiaires sont dans deux salles, chacune avec son switch. Un seul câble trunk entre les deux switchs suffit pour que le VLAN Stagiaires et le VLAN Formateurs existent dans les deux salles.",
+  piege: "Entre deux switchs, un lien laissé en mode access ne transporte qu'un seul VLAN (le VLAN 1). Les autres VLAN sont coupés d'une salle à l'autre, alors que tout semble bien câblé.",
+  simIntro: "Deux switchs reliés par un trunk. Envoyez un ping entre deux PC du même VLAN situés sur des switchs différents et regardez l'étiquette. Testez aussi deux VLAN différents, puis provoquez une panne.",
+  q: [
+    { q: "Qu'est-ce qu'un port d'accès ?", o: ["Un port qui appartient à un seul VLAN et relie un équipement final", "Un port qui transporte tous les VLAN", "Un port réservé à l'administration du switch", "Un port qui relie deux routeurs"], e: "Le port d'accès relie un PC, une imprimante ou un serveur, dans un seul VLAN." },
+    { q: "Quel est le rôle d'un lien trunk ?", o: ["Transporter plusieurs VLAN sur un même lien", "Relier un PC à son switch", "Augmenter le débit d'un port", "Isoler un PC de tous les autres"], e: "Le trunk transporte les trames de plusieurs VLAN, chacune avec son étiquette." },
+    { q: "Quelle norme définit l'étiquetage des trames sur un trunk ?", o: ["IEEE 802.1Q", "IEEE 802.3", "IEEE 802.11", "IEEE 802.1D"], e: "802.1Q pour les VLAN. 802.3 est Ethernet, 802.11 le Wi-Fi, 802.1D le Spanning Tree." },
+    { q: "Sur combien de bits est codé le numéro de VLAN dans l'étiquette 802.1Q ?", o: ["12 bits", "8 bits", "16 bits", "32 bits"], e: "12 bits donnent 4096 valeurs, dont 4094 VLAN utilisables." },
+    { q: "Qu'est-ce que le VLAN natif d'un trunk ?", o: ["Le VLAN dont les trames passent sans étiquette (VLAN 1 par défaut)", "Le VLAN qui a le plus de ports", "Le premier VLAN créé sur le switch", "Le VLAN réservé au routeur"], e: "Les trames du VLAN natif traversent le trunk sans étiquette. Il doit être le même des deux côtés." },
+    { q: "Qui ajoute l'étiquette 802.1Q à une trame ?", o: ["Le switch, quand la trame sort par un port trunk", "Le PC, avant d'envoyer la trame", "Le serveur DHCP", "Le câble"], e: "Le PC envoie une trame normale. Le switch l'étiquette sur le trunk, puis l'autre switch retire l'étiquette avant de la livrer." },
+    { q: "Quelle commande passe un port en mode trunk ?", o: ["switchport mode trunk", "switchport access trunk", "trunk enable", "encapsulation trunk"], e: "switchport mode trunk, en mode configuration d'interface." },
+    { q: "Un trunk est configuré avec `switchport trunk allowed vlan 10`. Que se passe-t-il pour le VLAN 20 ?", o: ["Il ne traverse plus ce trunk", "Il traverse sans étiquette", "Il devient le VLAN natif", "Rien ne change"], e: "Seul le VLAN 10 est autorisé : les PC du VLAN 20 situés de part et d'autre du trunk ne se joignent plus." }
+  ] },
+
+{ id: 24, ch: 5, t: "Configurer les VLAN sur un switch Cisco", short: "Créer, nommer, affecter et vérifier", sim: 'pick', scen: SCEN_VCFG,
+  def: "La configuration des VLAN sur un switch Cisco se fait en ligne de commande (CLI), en trois temps : créer et nommer les VLAN, affecter les ports d'accès, puis configurer les trunks. On vérifie chaque étape avec une commande show.",
+  pts: [
+    "Créer et nommer un VLAN, en mode configuration globale : `vlan 10` puis `name STAGIAIRES`.",
+    "Affecter un port d'accès, en mode interface : `switchport mode access` puis `switchport access vlan 10`.",
+    "Plusieurs ports d'un coup : `interface range fa0/1 - 10`.",
+    "Configurer un trunk : `switchport mode trunk` sur le port qui relie l'autre switch ou le routeur.",
+    "Vérifier : `show vlan brief` (VLAN et ports d'accès), `show interfaces trunk` (trunks et VLAN autorisés).",
+    "Supprimer un VLAN : `no vlan 30`. Les ports de ce VLAN deviennent inactifs jusqu'à leur réaffectation.",
+    "Les VLAN sont enregistrés dans le fichier vlan.dat de la mémoire flash. Pensez aussi à `copy running-config startup-config`."
+  ],
+  table: { h: ["Objectif", "Mode", "Commande"], r: [
+    ["Créer le VLAN 10", "Configuration globale", "vlan 10"],
+    ["Nommer le VLAN", "Configuration de VLAN", "name STAGIAIRES"],
+    ["Port d'accès", "Interface", "switchport mode access"],
+    ["Affecter au VLAN 10", "Interface", "switchport access vlan 10"],
+    ["Port trunk", "Interface", "switchport mode trunk"],
+    ["Vérifier les VLAN", "Privilégié (#)", "show vlan brief"],
+    ["Vérifier les trunks", "Privilégié (#)", "show interfaces trunk"]
+  ] },
+  kw: ["vlan", "name", "switchport mode access", "switchport access vlan", "interface range", "show vlan brief"],
+  ana: "Configurer un VLAN, c'est comme organiser un immeuble : on crée l'étage et on lui met un nom sur la porte (vlan et name), on attribue chaque bureau à un étage (access vlan), puis on installe l'ascenseur entre les bâtiments (trunk).",
+  res: "Un technicien prépare 3 switchs pour une nouvelle salle : il crée les VLAN 10, 20 et 30 sur chacun, range les ports 1 à 12 dans le VLAN 10 et 13 à 22 dans le VLAN 20, puis passe les ports 23 et 24 en trunk.",
+  piege: "Les ports trunk n'apparaissent pas dans show vlan brief. Ce n'est pas une erreur : ils appartiennent à tous les VLAN autorisés. Pour les voir, utilisez show interfaces trunk.",
+  simIntro: "Pour chaque situation, choisissez la commande Cisco qui convient.",
+  q: [
+    { q: "Dans quel mode crée-t-on un VLAN avec la commande `vlan 10` ?", o: ["Le mode de configuration globale (Switch(config)#)", "Le mode utilisateur (Switch>)", "Le mode de configuration d'interface", "Le mode privilégié (Switch#)"], e: "On entre configure terminal, puis vlan 10. Le prompt devient Switch(config-vlan)#." },
+    { q: "Quelle commande range le port courant dans le VLAN 20 ?", o: ["switchport access vlan 20", "vlan 20 access", "switchport trunk vlan 20", "ip vlan 20"], e: "En mode interface, après switchport mode access." },
+    { q: "Que montre la commande `show vlan brief` ?", o: ["La liste des VLAN et les ports d'accès de chacun", "La table de routage", "Les adresses MAC apprises", "Les trunks et leurs VLAN autorisés"], e: "show vlan brief affiche les VLAN, leur nom, leur état et leurs ports d'accès." },
+    { q: "Pourquoi le port G0/1 configuré en trunk n'apparaît-il pas dans `show vlan brief` ?", o: ["Un trunk appartient à tous les VLAN autorisés : il est listé par show interfaces trunk", "Le trunk est mal configuré", "Le port est éteint", "Les ports Gigabit n'apparaissent jamais"], e: "C'est normal. show interfaces trunk sert à vérifier les trunks." },
+    { q: "Comment appliquer la même configuration aux ports Fa0/1 à Fa0/12 ?", o: ["interface range fa0/1 - 12", "interface fa0/1 to fa0/12", "range fa0/1-12 config", "interface all fa0"], e: "interface range applique les commandes suivantes à tous les ports de la plage." },
+    { q: "Quelle commande supprime le VLAN 30 ?", o: ["no vlan 30", "delete vlan 30", "vlan 30 remove", "clear vlan 30"], e: "Le préfixe no annule une commande sur un équipement Cisco." },
+    { q: "Où un switch Cisco enregistre-t-il la liste des VLAN ?", o: ["Dans le fichier vlan.dat de la mémoire flash", "Dans la table MAC", "Dans la NVRAM uniquement", "Dans la table de routage"], e: "Les VLAN de la plage normale sont stockés dans vlan.dat, en flash." },
+    { q: "Quelle commande sauvegarde la configuration pour qu'elle survive à un redémarrage ?", o: ["copy running-config startup-config", "save vlan", "write vlan.dat", "show running-config"], e: "copy running-config startup-config copie la configuration active en NVRAM." }
+  ] },
+
+{ id: 25, ch: 5, t: "Routage inter-VLAN", short: "Router-on-a-stick, sous-interfaces, switch de niveau 3", sim: 'lab', lab: LAB3,
+  def: "Chaque VLAN est un réseau IP différent. Pour que deux VLAN communiquent, il faut un équipement de couche 3 qui route entre eux : c'est le routage inter-VLAN. La méthode la plus courante en TP est le router-on-a-stick : un seul lien trunk entre le switch et le routeur, et une sous-interface par VLAN sur le routeur.",
+  pts: [
+    "Un PC qui veut joindre un autre VLAN envoie le paquet à sa passerelle, qui est l'adresse du routeur dans son VLAN.",
+    "Router-on-a-stick : l'interface physique (G0/0) est seulement activée avec `no shutdown`, sans adresse IP.",
+    "Une sous-interface par VLAN : `interface g0/0.10`, `encapsulation dot1Q 10`, puis l'adresse IP de passerelle.",
+    "Le lien entre le switch et le routeur est un trunk.",
+    "Switch de niveau 3 : une interface virtuelle (SVI) par VLAN, `interface vlan 10` avec une IP, et la commande `ip routing`.",
+    "Le TTL baisse de 1 à chaque routeur traversé : 128 dans le même VLAN, 127 entre deux VLAN depuis un PC Windows."
+  ],
+  table: { h: ["Méthode", "Principe", "Avantage", "Limite"], r: [
+    ["Une interface par VLAN", "Un câble du switch au routeur pour chaque VLAN", "Simple à comprendre", "Consomme beaucoup de ports"],
+    ["Router-on-a-stick", "Un trunk, une sous-interface par VLAN", "Un seul câble, peu coûteux", "Tout passe par un seul lien"],
+    ["Switch de niveau 3", "Une SVI par VLAN, ip routing", "Très rapide, pas de routeur", "Matériel plus cher"]
+  ] },
+  kw: ["Routage inter-VLAN", "Router-on-a-stick", "Sous-interface", "encapsulation dot1Q", "Passerelle", "SVI"],
+  ana: "Le routeur est l'accueil central d'un groupe de bâtiments. Pour aller voir un collègue d'un autre service, même dans le même bâtiment, on passe par l'accueil, qui vous redirige vers le bon étage.",
+  res: "Dans un établissement, les stagiaires (VLAN 10) doivent imprimer sur l'imprimante de l'administration (VLAN 30). Le routeur, avec ses sous-interfaces G0/0.10 et G0/0.30, fait passer les impressions d'un VLAN à l'autre.",
+  piege: "Le numéro de `encapsulation dot1Q` doit être celui du VLAN, pas celui de la sous-interface. G0/0.30 avec `encapsulation dot1Q 3` ne fonctionne pas pour le VLAN 30.",
+  simIntro: "Le lab complet : trois switchs, un routeur, trois VLAN. Comparez un ping dans le même VLAN (PC1 → PC3) et un ping entre deux VLAN (PC1 → PC4). Provoquez ensuite une panne. L'onglet Lab contient l'énoncé, le corrigé et les vérifications pour Packet Tracer.",
+  q: [
+    { q: "Pourquoi faut-il un routeur pour faire communiquer deux VLAN ?", o: ["Chaque VLAN est un réseau IP différent : passer de l'un à l'autre est un travail de couche 3", "Parce que le switch n'a pas assez de ports", "Pour transformer les trames en broadcast", "Parce que le trunk ne transporte qu'un VLAN"], e: "Changer de réseau IP demande du routage, donc un routeur ou un switch de niveau 3." },
+    { q: "Qu'est-ce que le router-on-a-stick ?", o: ["Un seul lien trunk vers le routeur, avec une sous-interface par VLAN", "Un routeur par VLAN", "Un câble d'accès par VLAN entre le switch et le routeur", "Un routeur sans aucune interface configurée"], e: "Un seul câble suffit : le trunk transporte tous les VLAN, le routeur les distingue grâce aux sous-interfaces." },
+    { q: "Quelle commande associe la sous-interface G0/0.20 au VLAN 20 ?", o: ["encapsulation dot1Q 20", "switchport access vlan 20", "vlan 20", "ip vlan 20"], e: "En mode sous-interface : encapsulation dot1Q 20, puis l'adresse IP." },
+    { q: "Quelle passerelle configurer sur un PC du VLAN 20 ?", o: ["L'adresse IP de la sous-interface G0/0.20 du routeur", "L'adresse IP de l'interface physique G0/0", "L'adresse du switch", "L'adresse d'un PC du VLAN 10"], e: "La passerelle est l'adresse du routeur dans le réseau du PC, donc celle de G0/0.20." },
+    { q: "Que faut-il configurer sur l'interface physique G0/0 du routeur ?", o: ["Seulement no shutdown, sans adresse IP", "Une adresse IP pour chaque VLAN", "switchport mode trunk", "encapsulation dot1Q 1"], e: "L'interface physique est juste allumée. Les adresses sont sur les sous-interfaces." },
+    { q: "Sur un switch de niveau 3, que faut-il pour router entre les VLAN ?", o: ["Une interface vlan (SVI) par VLAN avec une IP, et la commande ip routing", "Un trunk vers chaque PC", "Une sous-interface par port", "Rien, il route automatiquement sans configuration"], e: "Les SVI servent de passerelles, et ip routing active le routage entre elles." },
+    { q: "Un ping de PC1 (VLAN 10) vers PC4 (VLAN 30) affiche TTL=127. Pourquoi pas 128 ?", o: ["Le paquet a traversé un routeur, qui a décrémenté le TTL de 1", "Le switch a décrémenté le TTL", "Le VLAN 30 retire toujours 1", "C'est une erreur de configuration"], e: "Seuls les équipements de couche 3 décrémentent le TTL. Dans le même VLAN, il reste à 128." },
+    { q: "En router-on-a-stick, dans quel mode est le port du switch relié au routeur ?", o: ["Trunk", "Access dans le VLAN 1", "Access dans le VLAN 10", "Éteint"], e: "Ce lien doit transporter tous les VLAN vers le routeur : c'est un trunk." }
+  ] },
+
+{ id: 26, ch: 5, t: "Dépannage des VLAN", short: "Du symptôme à la cause, méthode et commandes", sim: 'pick', scen: SCEN_VDEP,
+  def: "Dépanner un réseau à VLAN, c'est partir du symptôme observé pour trouver l'étape de configuration oubliée ou erronée. Une bonne méthode suit le chemin du paquet : le PC, son port d'accès, les trunks, puis le routeur.",
+  pts: [
+    "Délimitez la panne : un seul PC, un seul VLAN, un seul bâtiment, ou tout le réseau ?",
+    "Un seul PC isolé : vérifiez son IP, sa passerelle et son port avec `show vlan brief`.",
+    "Même VLAN coupé entre deux switchs : vérifiez le lien avec `show interfaces trunk` et la création du VLAN sur chaque switch traversé.",
+    "Un seul VLAN coupé des autres : vérifiez sa sous-interface sur le routeur (`encapsulation dot1Q`, adresse IP).",
+    "Tous les VLAN coupés du routeur : vérifiez `no shutdown` sur l'interface physique et le trunk vers le routeur.",
+    "Le TTL d'un ping indique si le paquet a traversé un routeur : 128 dans le même VLAN, 127 entre deux VLAN."
+  ],
+  table: { h: ["Symptôme", "Cause probable", "Commande de vérification"], r: [
+    ["Un PC isolé de tous", "Port d'accès dans le mauvais VLAN", "show vlan brief"],
+    ["Même VLAN coupé entre switchs", "Lien pas en trunk ou VLAN absent", "show interfaces trunk"],
+    ["Un VLAN coupé des autres", "Sous-interface mal configurée", "show ip interface brief"],
+    ["Aucun VLAN ne joint le routeur", "G0/0 éteinte ou trunk absent", "show ip interface brief"],
+    ["Un VLAN ne passe pas un trunk", "VLAN absent de la liste allowed", "show interfaces trunk"]
+  ] },
+  kw: ["Dépannage", "show vlan brief", "show interfaces trunk", "show ip interface brief", "VLAN natif", "TTL"],
+  ana: "Dépanner, c'est enquêter comme un détective : on part de la victime (le PC qui ne communique pas) et on remonte le chemin, indice par indice, jusqu'à la cause.",
+  res: "Un lundi matin, les formateurs du bâtiment B n'accèdent plus au serveur. Les stagiaires du même bâtiment, oui. Le technicien en déduit que seul le VLAN Formateurs est touché, regarde show interfaces trunk sur le lien du bâtiment B, et trouve le VLAN 20 retiré de la liste allowed.",
+  piege: "Ne reconfigurez pas tout au hasard. Une seule commande show bien choisie trouve la panne plus vite que dix commandes de configuration tapées à l'aveugle.",
+  simIntro: "Pour chaque symptôme, trouvez la cause la plus probable.",
+  q: [
+    { q: "Un PC ne joint aucune machine. Quelle commande vérifier en premier sur son switch ?", o: ["show vlan brief", "show ip route", "show running-config du routeur", "show version"], e: "On vérifie d'abord que le port du PC est bien dans le bon VLAN." },
+    { q: "Le lien entre deux switchs n'apparaît pas dans `show interfaces trunk`. Que cela signifie-t-il ?", o: ["Le lien n'est pas en trunk", "Le lien est en trunk et tout va bien", "Le VLAN 1 a été supprimé", "Le switch est en panne"], e: "Un lien absent de show interfaces trunk n'est pas un trunk : il ne transporte qu'un VLAN." },
+    { q: "Que signale le message « Native VLAN mismatch » ?", o: ["Le VLAN natif est différent aux deux bouts d'un trunk", "Un VLAN porte un mauvais nom", "Un port d'accès n'a pas de VLAN", "Le routeur n'a pas de passerelle"], e: "Le VLAN natif doit être identique des deux côtés, sinon des trames changent de VLAN." },
+    { q: "Le VLAN 10 fonctionne sur les switchs d'accès, mais ne traverse pas le switch central qui n'a aucun PC. Cause probable ?", o: ["Le VLAN 10 n'a pas été créé sur le switch central", "La passerelle des PC est fausse", "Le routeur est éteint", "Les PC ont la même adresse IP"], e: "Un switch ne fait pas passer un VLAN qu'il ne connaît pas." },
+    { q: "Toutes les sous-interfaces du routeur sont « down ». Que vérifier ?", o: ["no shutdown sur l'interface physique G0/0", "L'adresse IP des PC", "Le nom des VLAN", "La table MAC du switch"], e: "Si l'interface physique est éteinte, toutes ses sous-interfaces le sont aussi." },
+    { q: "Un PC du VLAN 20 joint les PC de son VLAN mais aucun autre VLAN. Les autres PC du VLAN 20 joignent tout. Cause probable ?", o: ["Sa passerelle par défaut est fausse ou absente", "Le trunk est en mode access", "Le VLAN 20 n'existe pas", "Le routeur n'a pas de sous-interface .20"], e: "Le problème touche un seul PC et seulement le trafic qui sort du VLAN : c'est sa passerelle." },
+    { q: "Sur un switch de niveau 3, les SVI répondent au ping mais les VLAN ne communiquent pas entre eux. Que manque-t-il ?", o: ["La commande ip routing", "Un trunk vers chaque PC", "La commande no shutdown sur les ports d'accès", "Le VLAN 1"], e: "Sans ip routing, le switch de niveau 3 ne route pas entre ses SVI." },
+    { q: "Quelle démarche de dépannage est la plus efficace ?", o: ["Suivre le chemin du paquet, du PC vers le routeur, en vérifiant chaque étape", "Effacer toute la configuration et recommencer", "Redémarrer tous les équipements", "Changer tous les câbles"], e: "On délimite la panne, puis on vérifie chaque élément traversé avec la bonne commande show." }
+  ] }
+);
+
+/* ---------- Simulation VLAN : un broadcast avec et sans VLAN ---------- */
+function simVlanBc(el) {
+  const P = [[70, 32], [240, 26], [410, 32], [70, 208], [240, 214], [410, 208]], D = [240, 120];
+  const V = [10, 20, 10, 30, 20, 10], VC = { 10: 'v10', 20: 'v20', 30: 'v30' };
+  let mode = 'none', src = 0, sent = false;
+  function draw() {
+    const vl = mode === 'vlan';
+    let links = '', nodes = '', rec = 0;
+    P.forEach((p, i) => {
+      let lc = vl ? VC[V[i]] : '', nc = '';
+      if (sent) {
+        if (i === src) { lc = 'src'; nc = 'src'; }
+        else if (!vl || V[i] === V[src]) { lc = 'out'; nc = 'on'; rec++; }
+        else lc = vl ? VC[V[i]] + ' dim' : '';
+      }
+      links += lineSVG(D[0], D[1], p[0], p[1], lc);
+      nodes += nodeSVG(p[0], p[1], 'PC' + (i + 1), vl ? 'VLAN ' + V[i] : '', nc);
+    });
+    const svg = `<svg class="map" viewBox="0 0 480 240" role="img" aria-label="Un switch relie six PC${vl ? ' répartis en trois VLAN' : ''}">${links}${devSVG(D[0], D[1], 'SWITCH')}${nodes}</svg>`;
+    let msg;
+    if (!sent) msg = vl ? "Le switch est découpé en trois VLAN. Choisissez un PC émetteur, puis envoyez un broadcast (par exemple une requête ARP « Qui a 192.168.x.1 ? »)." : "Aucun VLAN : les six PC sont dans le VLAN 1 par défaut. Choisissez un PC émetteur, puis envoyez un broadcast.";
+    else if (!vl) msg = `Sans VLAN, le broadcast de PC${src + 1} est reçu par les ${rec} autres PC : un seul domaine de diffusion pour tout le switch.`;
+    else msg = rec ? `Avec VLAN, seul${rec > 1 ? 's' : ''} ${rec} PC du VLAN ${V[src]} reçoi${rec > 1 ? 'vent' : 't'} le broadcast de PC${src + 1}. Les autres VLAN ne voient rien : chaque VLAN est un domaine de diffusion.` : `PC${src + 1} est seul dans le VLAN ${V[src]} : son broadcast n'atteint personne. Les autres VLAN ne voient rien.`;
+    el.innerHTML = `<div class="sim">
+      <div class="seg" role="group" aria-label="Configuration du switch">
+        <button data-s="mode" data-v="none" aria-pressed="${!vl}">Sans VLAN</button>
+        <button data-s="mode" data-v="vlan" aria-pressed="${vl}">Avec 3 VLAN</button>
+      </div>
+      <div class="seg" role="group" aria-label="PC émetteur">${P.map((p, i) => `<button data-s="src" data-v="${i}" aria-pressed="${i === src}">PC${i + 1}</button>`).join('')}</div>
+      ${svg}
+      ${legend(vl ? [['--accent', 'Émetteur'], ['--ok', 'Reçoit le broadcast'], ['--c1', 'VLAN 10'], ['--c2', 'VLAN 20'], ['--c3', 'VLAN 30']] : [['--accent', 'Émetteur'], ['--ok', 'Reçoit le broadcast']])}
+      <div class="note">${msg}</div>
+      <div><button class="btn" data-s="send">Envoyer un broadcast depuis PC${src + 1}</button></div>
+    </div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    const a = b.dataset.s;
+    if (a === 'mode') { mode = b.dataset.v; sent = false; }
+    else if (a === 'src') { src = +b.dataset.v; sent = false; }
+    else sent = true;
+    draw();
+  });
+  draw();
+}
+
+/* ---------- Simulation lab réseau : topologie, ping animé et pannes ---------- */
+const LX_R = { router: 28, switch: 24, pc: 26 };
+function simLab(el, t) {
+  const L = t.lab, NS = 'http://www.w3.org/2000/svg';
+  const reduce = (() => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+  Object.keys(L.nodes).forEach(id => { L.nodes[id].id = id; });
+  const HOSTS = Object.keys(L.nodes).filter(id => L.nodes[id].host);
+  const pre = S.labPreset; S.labPreset = null;
+  const st = { sel: (pre && pre.sel) || L.defaultSel, fault: (pre && pre.f) || 'none', colors: true, running: false };
+  const val = (v, f) => typeof v === 'function' ? v(f) : v;
+  const H = {
+    head: x => `<div class="eyebrow">Appareil sélectionné</div><h3 class="lx-h">${x}</h3>`,
+    mono: x => `<code>${esc(x)}</code>`,
+    bad: x => `<span class="lx-bad">${x}</span>`,
+    tag: (c, x) => `<span class="lx-tag ${c || ''}">${x}</span>`,
+    table: (h, rows) => `<div class="scroll"><table class="lx-t">${h ? `<thead><tr>${h.map(x => `<th>${x}</th>`).join('')}</tr></thead>` : ''}<tbody>${rows.map(r => `<tr>${r.map((c, i) => !h && i === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`
+  };
+  el.innerHTML = `<div class="sim lx">
+    <div class="lx-top">${legend(L.legend)}<label class="lx-toggle"><input type="checkbox" checked> Colorer les VLAN</label></div>
+    <div class="lx-svg"><svg viewBox="0 0 ${L.viewBox[0]} ${L.viewBox[1]}" role="img" aria-label="${esc(L.aria)}"></svg></div>
+    <p class="muted lx-hint">Touchez un appareil pour voir sa configuration.</p>
+    <div class="lx-ctrl">
+      <div class="field"><label>Source</label><select class="lx-src"></select></div>
+      <div class="field"><label>Destination</label><select class="lx-dst"></select></div>
+      <div class="field lx-wide"><label>Panne simulée</label><select class="lx-fault"></select></div>
+      <button class="btn lx-run">Lancer le ping</button>
+    </div>
+    <div class="lx-panel"></div>
+    <div class="block"><h3>Ce qui se passe, étape par étape</h3><div class="lx-log"><p class="muted">Lancez un ping pour suivre le trajet du paquet.</p></div></div>
+    <pre class="lx-console">C:\\> en attente d'un ping…</pre>
+  </div>`;
+  const svg = el.querySelector('svg'), q = s => el.querySelector(s);
+  const mk = (tag, at, p) => { const e = document.createElementNS(NS, tag); for (const k in at) if (at[k] != null) e.setAttribute(k, at[k]); if (p) p.appendChild(e); return e; };
+  const tx = (s, at, p) => { const e = mk('text', at, p); e.textContent = s; return e; };
+  const gZ = mk('g', {}, svg), gW = mk('g', {}, svg), gL = mk('g', {}, svg), gN = mk('g', {}, svg), gA = mk('g', {}, svg);
+  const R = id => LX_R[L.nodes[id].type] || 26;
+  function edge(a, b) {
+    const A = L.nodes[a], B = L.nodes[b], dx = B.x - A.x, dy = B.y - A.y, len = Math.hypot(dx, dy) || 1, r = R(a);
+    return { x: A.x + dx / len * r, y: A.y + dy / len * r, ux: dx / len, uy: dy / len, len };
+  }
+  function draw() {
+    gZ.innerHTML = gW.innerHTML = gL.innerHTML = gN.innerHTML = '';
+    (L.zones || []).forEach(z => { mk('rect', { x: z.x, y: z.y, width: z.w, height: z.h, rx: 14, class: 'lx-zone' }, gZ); tx(z.label.toUpperCase(), { x: z.x + 12, y: z.y + 20, class: 'lx-zl' }, gZ); });
+    L.links.forEach(l => {
+      const A = edge(l.a, l.b), B = edge(l.b, l.a), nx = -A.uy, ny = A.ux, f = st.fault;
+      const cls = val(l.cls, f), cols = st.colors && l.colors ? val(l.colors, f) : null, multi = cols && cols.length > 1;
+      if (l.broken && l.broken(f)) mk('line', { x1: A.x, y1: A.y, x2: B.x, y2: B.y, class: 'lx-w broken' }, gW);
+      else if (multi) cols.forEach((c, i) => { const o = (i - (cols.length - 1) / 2) * 7; mk('line', { x1: A.x + nx * o, y1: A.y + ny * o, x2: B.x + nx * o, y2: B.y + ny * o, class: 'lx-w ' + c }, gW); });
+      else mk('line', { x1: A.x, y1: A.y, x2: B.x, y2: B.y, class: 'lx-w ' + (st.colors ? (cols ? cols[0] : cls || '') : '') }, gW);
+      const extra = multi ? (cols.length - 1) * 3.5 + 4 : 0;
+      [[l.pa, l.a, l.b], [l.pb, l.b, l.a]].forEach(([p, from, to]) => {
+        if (!p) return;
+        const P = edge(from, to), gap = P.len - R(from) - R(to);
+        const d = l.pa && l.pb ? Math.max(12, Math.min(gap * .22, 60)) : (gap < 110 ? gap * .5 : Math.min(gap * .42, 120));
+        const side = (P.ux >= 0 ? 1 : -1) * (l.portSide || 1), off = 11 + extra;
+        tx(p, { x: P.x + P.ux * d - P.uy * off * side, y: P.y + P.uy * d + P.ux * off * side + 4, class: 'lx-port', 'text-anchor': 'middle' }, gL);
+      });
+      const lb = l.label && l.label(f);
+      if (lb) {
+        const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2, flip = (nx < 0 ? -1 : 1) * (l.labelSide || 1), lo = 16 + extra, k = nx * flip;
+        tx(lb.t, { x: mx + nx * lo * flip, y: my + ny * lo * flip + 4, class: 'lx-ll' + (lb.bad ? ' bad' : ''), 'text-anchor': k > .3 ? 'start' : k < -.3 ? 'end' : 'middle' }, gL);
+      }
+    });
+    Object.keys(L.nodes).forEach(drawNode);
+  }
+  function shape(n, g) {
+    if (n.type === 'router') {
+      mk('circle', { r: 34, class: 'lx-ring' }, g); mk('circle', { r: 27, class: 'lx-body' }, g);
+      mk('path', { d: 'M-11,-11 L11,11 M11,-11 L-11,11 M4,-11 H11 V-4 M-4,11 H-11 V4', class: 'lx-gl' }, g);
+    } else if (n.type === 'switch') {
+      mk('rect', { x: -44, y: -26, width: 88, height: 52, rx: 12, class: 'lx-ring' }, g); mk('rect', { x: -38, y: -20, width: 76, height: 40, rx: 7, class: 'lx-body' }, g);
+      mk('path', { d: 'M-20,-6 H20 M14,-11 L20,-6 L14,-1 M20,6 H-20 M-14,1 L-20,6 L-14,11', class: 'lx-gl' }, g);
+    } else {
+      mk('rect', { x: -30, y: -28, width: 60, height: 50, rx: 9, class: 'lx-ring' }, g); mk('rect', { x: -24, y: -22, width: 48, height: 32, rx: 4, class: 'lx-body' }, g);
+      mk('path', { d: 'M-9,16 H9 M0,10 V16', class: 'lx-gl' }, g);
+    }
+  }
+  function drawNode(id) {
+    const n = L.nodes[id], f = st.fault;
+    const g = mk('g', { class: 'lx-node' + (st.sel === id ? ' sel' : ''), transform: `translate(${n.x},${n.y})`, tabindex: '0', role: 'button', 'aria-label': 'Voir ' + id }, gN);
+    shape(n, g);
+    if (n.chip) { mk('rect', { x: -17, y: -16, width: 34, height: 18, rx: 9, class: 'lx-chip ' + n.cls }, g); tx(n.chip, { x: 0, y: -3, class: 'lx-ct', 'text-anchor': 'middle' }, g); }
+    const lines = n.host ? L.hostLines(n, f) : (n.lines ? n.lines(f) : []), r = R(id);
+    if (n.label === 'below') {
+      tx(id, { x: 0, y: r + 16, class: 'lx-nl', 'text-anchor': 'middle' }, g);
+      lines.forEach((l, i) => tx(l.t, { x: 0, y: r + 32 + i * 15, class: 'lx-ns' + (l.bad ? ' bad' : ''), 'text-anchor': 'middle' }, g));
+    } else if (n.label === 'above') {
+      const top = -r - 12 - lines.length * 15;
+      tx(id, { x: 0, y: top, class: 'lx-nl', 'text-anchor': 'middle' }, g);
+      lines.forEach((l, i) => tx(l.t, { x: 0, y: top + 15 + i * 15, class: 'lx-ns' + (l.bad ? ' bad' : ''), 'text-anchor': 'middle' }, g));
+    } else {
+      tx(id, { x: r + 18, y: lines.length ? -2 : 5, class: 'lx-nl' }, g);
+      lines.forEach((l, i) => tx(l.t, { x: r + 18, y: 15 + i * 15, class: 'lx-ns' + (l.bad ? ' bad' : '') }, g));
+    }
+    if (n.badge && n.badge(f)) { mk('circle', { cx: 22, cy: -24, r: 10, class: 'lx-badge' }, g); tx('!', { x: 22, y: -19.5, class: 'lx-bt', 'text-anchor': 'middle' }, g); }
+    const pick = () => { st.sel = id; draw(); panel(); };
+    g.addEventListener('click', pick);
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  }
+  function panel() { q('.lx-panel').innerHTML = L.panel(st.sel, st.fault, H); }
+  const sS = q('.lx-src'), sD = q('.lx-dst'), sF = q('.lx-fault'), run = q('.lx-run'), log = q('.lx-log'), con = q('.lx-console');
+  HOSTS.forEach(id => { const n = L.nodes[id]; sS.add(new Option(id + (n.vlan ? ' · VLAN ' + n.vlan : ''), id)); sD.add(new Option(id + ' · ' + n.ip, id)); });
+  L.faults.forEach(x => sF.add(new Option(x.label, x.id)));
+  sS.value = (pre && pre.src) || L.defaultSrc; sD.value = (pre && pre.dst) || L.defaultDst; sF.value = st.fault;
+  function hop(s) {
+    return new Promise(res => {
+      const A = edge(s.a, s.b), B = edge(s.b, s.a), g = mk('g', {}, gA);
+      mk('circle', { r: 9, class: 'lx-pkt ' + (s.cls || '') }, g);
+      if (s.tag) { const w = s.tag.length * 7.2 + 14; mk('rect', { x: 12, y: -10, width: w, height: 20, rx: 4, class: 'lx-tb' }, g); tx(s.tag, { x: 12 + w / 2, y: 4, class: 'lx-tt', 'text-anchor': 'middle' }, g); }
+      const dur = reduce ? 1 : 900, t0 = performance.now();
+      (function f(now) {
+        const k = Math.min(1, (now - t0) / dur), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        g.setAttribute('transform', `translate(${A.x + (B.x - A.x) * e},${A.y + (B.y - A.y) * e})`);
+        if (k < 1) requestAnimationFrame(f); else setTimeout(() => { g.remove(); res(); }, reduce ? 0 : 120);
+      })(t0);
+    });
+  }
+  function failMark(id) {
+    const n = L.nodes[id], r = R(id), g = mk('g', { transform: `translate(${n.x - r - 14},${n.y - r - 6})` }, gA);
+    mk('path', { d: 'M-9,-9 L9,9 M9,-9 L-9,9', class: 'lx-fail' }, g);
+  }
+  async function ping() {
+    if (st.running) return;
+    gA.innerHTML = '';
+    const r = L.plan(sS.value, sD.value, st.fault);
+    if (r.error) { log.innerHTML = `<p class="muted">${esc(r.error)}</p>`; return; }
+    st.running = true; run.disabled = true;
+    const ol = document.createElement('ol'); ol.className = 'log'; log.innerHTML = ''; log.appendChild(ol);
+    const ip = L.nodes[sD.value].ip;
+    con.textContent = `C:\\> ping ${ip}\n\nPinging ${ip} with 32 bytes of data:\n`;
+    for (const s of r.steps) { const li = document.createElement('li'); li.textContent = s.t; ol.appendChild(li); await hop(s); }
+    const li = document.createElement('li'); li.className = r.ok ? 'lx-ok' : 'lx-ko'; li.textContent = r.end; ol.appendChild(li);
+    if (!r.ok && r.failAt) failMark(r.failAt);
+    let out = '';
+    for (let i = 0; i < 4; i++) out += r.ok ? `Reply from ${ip}: bytes=32 time<1ms TTL=${r.ttl}\n` : 'Request timed out.\n';
+    con.textContent += out + `\nPing statistics for ${ip}:\n    Packets: Sent = 4, Received = ${r.ok ? 4 : 0}, Lost = ${r.ok ? 0 : 4} (${r.ok ? 0 : 100}% loss)`;
+    st.running = false; run.disabled = false;
+  }
+  run.addEventListener('click', ping);
+  sF.addEventListener('change', () => { st.fault = sF.value; gA.innerHTML = ''; draw(); panel(); });
+  q('.lx-toggle input').addEventListener('change', e => { st.colors = e.target.checked; draw(); });
+  draw(); panel();
+  if (pre) setTimeout(ping, reduce ? 0 : 400);
+}
+
+/* ---------- Onglet Lab : fiche de TP pour Packet Tracer ---------- */
+function labTabHTML(t) {
+  const s = t.lab.sheet;
+  let h = `<p class="def">${fmt(s.intro)}</p><dl class="lx-meta">${s.meta.map(m => `<dt>${esc(m[0])}</dt><dd>${esc(m[1])}</dd>`).join('')}</dl>
+    <div class="block"><h3>Plan d'adressage</h3>${tableHTML(s.addr)}</div>
+    <div class="block"><h3>Câblage</h3>${tableHTML(s.cabl)}</div>
+    <div class="block"><h3>Énoncé</h3><ol class="lx-steps">${s.steps.map(x => `<li><strong>${esc(x[0])}</strong><p>${fmt(x[1])}</p>${x[2] ? `<p class="muted">${fmt(x[2])}</p>` : ''}</li>`).join('')}</ol></div>
+    <div class="block"><h3>Corrigé IOS</h3><div><button class="btn alt" data-a="corr" aria-expanded="false">Afficher le corrigé</button></div>
+    <div class="lx-corr" hidden>${s.configs.map((c, i) => `<div class="lx-cfg"><div class="lx-cfgh"><strong>${esc(c.title)}</strong><button class="ghost" data-a="copycfg" data-i="${i}">Copier</button></div><pre class="lx-ios">${c.text.split('\n').map(l => /^\s*!/.test(l) ? `<span class="c">${esc(l)}</span>` : esc(l)).join('\n')}</pre></div>`).join('')}</div></div>
+    <div class="block"><h3>Vérifications attendues</h3>${tableHTML(s.verifs)}</div>
+    <div class="block"><h3>Erreurs classiques</h3><div class="review">${s.faults.map(x => `<div class="rv lx-fault"><strong>${esc(x.sym)}</strong><p>${fmt(x.cause)}</p>${x.f ? `<div><button class="btn alt" data-a="labfault" data-f="${x.f}" data-src="${x.src}" data-dst="${x.dst}" data-sel="${x.sel}">Voir dans la simulation</button></div>` : ''}</div>`).join('')}</div></div>`;
+  return h;
+}
+
+const SIMS = { vlanbc: simVlanBc, lab: simLab, hub: simHub, pick: simPick, explorer: simExplorer, mac: simMac, dom: simDom, arp: simArp, osi: simOsi, encaps: simEncaps, map: simMap, bits: simBits, ip: simIp, subnet: simSubnet, vlsm: simVlsm, macinfo: simMacinfo, transfer: simTransfer, topo: simTopo };
 
 /* ---------- Application ---------- */
-const CHAPS = ["Les différents types de réseaux", "Les réseaux locaux", "L'adressage IP", "Les modèles et les protocoles", "La commutation"];
+const CHAPS = ["Les différents types de réseaux", "Les réseaux locaux", "L'adressage IP", "Les modèles et les protocoles", "La commutation", "Les VLAN"];
 const CLEAD = [
   "Composants, catégories, topologies et tendances : le vocabulaire de base.",
   "Ethernet, adresses MAC, vitesse de commutation et Wi-Fi.",
   "Binaire, IPv4, IPv6, sous-réseaux et VLSM.",
   "Les modèles OSI et TCP/IP, et les protocoles du quotidien.",
-  "Le switch, la trame, les domaines et le protocole ARP."
+  "Le switch, la trame, les domaines et le protocole ARP.",
+  "Segmenter un switch, trunks 802.1Q, configuration Cisco, routage inter-VLAN et dépannage."
 ];
 const app = document.getElementById('app');
-const S = { view: 'home', tid: 1, tab: 'cours', quiz: null };
+const S = { view: 'home', tid: 1, tab: 'cours', quiz: null, labPreset: null };
 const theme = id => THEMES.filter(t => t.id === id)[0];
 const inChap = c => THEMES.filter(t => t.ch === c);
 function best(key) { return store.get('cmt-best-' + key); }
@@ -1772,7 +2514,7 @@ function go(view, tid, tab) { S.view = view; if (tid != null) S.tid = tid; if (t
 function homeHTML() {
   let nq = 0; THEMES.forEach(t => nq += t.q.length);
   let h = `<div class="stack"><div class="hero"><div class="eyebrow">OFPPT · Infrastructure digitale · 1re année</div><h1>Réseaux informatiques</h1>
-    <p class="lead">Cinq thèmes, vingt et une leçons. Pour chaque leçon : une fiche de cours, une simulation à manipuler et un QCM corrigé. Avancez à votre rythme.</p>
+    <p class="lead">Six thèmes, vingt-six leçons. Pour chaque leçon : une fiche de cours, une simulation à manipuler et un QCM corrigé. Avancez à votre rythme.</p>
     <button class="btn" data-a="general">Quiz général · 20 questions</button>
     <p class="stats">${CHAPS.length} thèmes · ${THEMES.length} leçons · ${THEMES.length} simulations · ${nq} questions</p></div>`;
   CHAPS.forEach((name, c) => {
@@ -1794,10 +2536,10 @@ function frameHTML() {
 }
 function themeHTML() {
   const t = theme(S.tid), L = inChap(t.ch), k = L.indexOf(t) + 1;
-  const tabs = [['cours', 'Cours'], ['sim', 'Simulation'], ['quiz', 'Quiz']];
+  const tabs = [['cours', 'Cours'], ['sim', 'Simulation']].concat(t.lab && t.lab.sheet ? [['lab', 'Lab']] : []).concat([['quiz', 'Quiz']]);
   let h = `<div class="stack fiche"><button class="ghost" data-a="home">← Toutes les leçons</button>
     <div><div class="eyebrow">${esc(CHAPS[t.ch])} · leçon ${k} sur ${L.length}</div><h2>${esc(t.t)}</h2></div>
-    <div class="tabs" role="tablist">${tabs.map(x => `<button class="tab" role="tab" data-a="tab" data-t="${x[0]}" aria-selected="${S.tab === x[0]}">${x[1]}</button>`).join('')}</div>`;
+    <div class="tabs" role="tablist" style="grid-template-columns:repeat(${tabs.length},1fr)">${tabs.map(x => `<button class="tab" role="tab" data-a="tab" data-t="${x[0]}" aria-selected="${S.tab === x[0]}">${x[1]}</button>`).join('')}</div>`;
   if (S.tab === 'cours') {
     h += `<div class="block"><h3>Définition</h3><p class="def">${fmt(t.def)}</p></div>
       <div class="block"><h3>Points clés</h3><ul class="pts">${t.pts.map(p => `<li>${fmt(p)}</li>`).join('')}</ul></div>`;
@@ -1810,6 +2552,8 @@ function themeHTML() {
       <div class="actions"><button class="btn" data-a="tab" data-t="sim">Passer à la simulation</button></div>`;
   } else if (S.tab === 'sim') {
     h += `<p class="muted">${esc(t.simIntro)}</p><div id="sim"></div><div class="actions"><button class="btn alt" data-a="tab" data-t="quiz">Passer au quiz</button></div>`;
+  } else if (S.tab === 'lab' && t.lab && t.lab.sheet) {
+    h += labTabHTML(t) + `<div class="actions"><button class="btn alt" data-a="tab" data-t="quiz">Passer au quiz</button></div>`;
   } else {
     const b = best('t' + t.id);
     h += `<div class="block"><h3>Quiz de la leçon</h3><p>${t.q.length} questions à choix unique, corrigées une par une. L'ordre des réponses change à chaque tirage.</p>${b ? `<p class="muted">Meilleur score : ${b}</p>` : ''}</div>
@@ -1890,6 +2634,14 @@ app.addEventListener('click', e => {
     if (z.key === 'gen') startGeneral();
     else if (z.key.charAt(0) === 'c') startChapter(+z.key.slice(1));
     else { const t = theme(S.tid); startQuiz(t.q, z.title, z.key); }
+  }
+  else if (a === 'labfault') { S.labPreset = { f: b.dataset.f, src: b.dataset.src, dst: b.dataset.dst, sel: b.dataset.sel }; go('theme', null, 'sim'); }
+  else if (a === 'corr') { const c = b.closest('.block').querySelector('.lx-corr'); c.hidden = !c.hidden; b.setAttribute('aria-expanded', String(!c.hidden)); b.textContent = c.hidden ? 'Afficher le corrigé' : 'Masquer le corrigé'; }
+  else if (a === 'copycfg') {
+    const txt = theme(S.tid).lab.sheet.configs[+b.dataset.i].text, pre = b.closest('.lx-cfg').querySelector('pre');
+    const done = () => { b.textContent = 'Copié'; setTimeout(() => { b.textContent = 'Copier'; }, 1600); };
+    const sel = () => { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Texte sélectionné'; };
+    try { navigator.clipboard.writeText(txt).then(done, sel); } catch (err) { sel(); }
   }
   else if (a === 'quit') { if (z && z.key.charAt(0) === 't') go('theme', null, 'quiz'); else go('home'); }
 });
