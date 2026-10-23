@@ -1,0 +1,1900 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Réseaux Infrastructure Digitale</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=JetBrains+Mono:wght@500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Mise en page : une colonne de lecture, thèmes en lignes, onglets Cours / Simulation / Quiz, une simulation par thème */
+:root {
+  --bg: #EDF2F4;
+  --surface: #FFFFFF;
+  --ink: #12202B;
+  --muted: #53636F;
+  --line: #CFD9DE;
+  --accent: #0B6E8A;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #D9EBF1;
+  --d2: #A4560F;
+  --d2-soft: #F6E3CF;
+  --ok: #17724B;
+  --ok-soft: #DDF1E6;
+  --bad: #B03626;
+  --bad-soft: #F8E0DB;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1920; --surface: #15252E; --ink: #E6EEF1; --muted: #9AAAB3; --line: #2A3D47;
+    --accent: #5CC0DC; --accent-ink: #0E1920; --accent-soft: #17323D;
+    --d2: #E8A25F; --d2-soft: #3A2A19;
+    --ok: #5FCB98; --ok-soft: #15372A; --bad: #F08A7B; --bad-soft: #3E1F1B;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1920; --surface: #15252E; --ink: #E6EEF1; --muted: #9AAAB3; --line: #2A3D47;
+  --accent: #5CC0DC; --accent-ink: #0E1920; --accent-soft: #17323D;
+  --d2: #E8A25F; --d2-soft: #3A2A19;
+  --ok: #5FCB98; --ok-soft: #15372A; --bad: #F08A7B; --bad-soft: #3E1F1B;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 17px/1.55 var(--f-body);
+  padding-block: 20px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+#app { max-width: 720px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.12; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+code { font: 500 .9em var(--f-mono); background: var(--accent-soft); padding: 1px 6px; border-radius: 4px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.eyebrow { font: 500 12px/1.4 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 20px; }
+.btn {
+  background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 10px;
+  min-height: 50px; padding: 12px 20px; font-weight: 700; text-align: center;
+}
+.btn.alt { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.ghost { background: none; border: 0; padding: 8px 0; min-height: 44px; color: var(--accent); font-weight: 600; text-align: left; }
+.chip { font: 500 12px/1 var(--f-mono); padding: 5px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--ink); white-space: nowrap; }
+.chip.ok { background: var(--ok-soft); }
+
+/* Accueil */
+.hero { display: flex; flex-direction: column; gap: 14px; padding-top: 8px; }
+.hero h1 { font-size: clamp(2rem, 8vw, 2.9rem); }
+.hero p.lead { color: var(--muted); max-width: 52ch; }
+.hero .btn { align-self: flex-start; }
+.stats { font: 500 13px/1.4 var(--f-mono); color: var(--muted); }
+.list { display: flex; flex-direction: column; border-top: 1.5px solid var(--line); }
+.row {
+  display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) auto; align-items: center; gap: 12px;
+  text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line);
+  padding: 14px 2px; min-height: 68px;
+}
+.row .n { font: 500 13px var(--f-mono); color: var(--muted); }
+.row strong { display: block; font-family: var(--f-display); font-weight: 600; font-size: 1.06rem; line-height: 1.25; }
+.row small { display: block; color: var(--muted); font-size: .9rem; line-height: 1.35; margin-top: 2px; }
+.row:hover strong { color: var(--accent); }
+
+/* Fiche */
+.fiche h2 { font-size: clamp(1.6rem, 6vw, 2.1rem); }
+.tabs { display: grid; grid-template-columns: repeat(3, 1fr); border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.tab { background: none; border: 0; border-right: 1px solid var(--line); padding: 10px 6px; min-height: 48px; font-weight: 600; }
+.tab:last-child { border-right: 0; }
+.tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+.block { display: flex; flex-direction: column; gap: 8px; }
+.block h3 { font: 500 12px/1.4 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.def { font-size: 1.1rem; }
+.pts { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 8px; }
+.kws { display: flex; flex-wrap: wrap; gap: 8px; }
+.kws span { border: 1.5px solid var(--line); border-radius: 999px; padding: 3px 12px; font-size: .92rem; }
+.tip, .reseau, .piege { border-radius: 8px; padding: 14px 16px; }
+.tip { background: var(--accent-soft); }
+.reseau { border: 1.5px dashed var(--accent); }
+.piege { background: var(--bad-soft); }
+.tip b, .reseau b, .piege b { font: 500 12px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.scroll { overflow-x: auto; border: 1.5px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: .95rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 12px var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; }
+.frame { display: flex; min-width: 560px; }
+.frame span { border-right: 1px solid var(--line); padding: 10px 6px; text-align: center; font: 500 12px/1.3 var(--f-mono); display: flex; flex-direction: column; gap: 2px; justify-content: center; }
+.frame span:last-child { border-right: 0; }
+.frame small { color: var(--muted); font-size: 11px; }
+.frame .a { background: var(--accent-soft); }
+.frame .b { background: var(--d2-soft); }
+
+/* Simulations */
+.sim { background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+svg.map { width: 100%; max-width: 520px; height: auto; display: block; margin-inline: auto; }
+svg text { fill: var(--ink); font: 500 13px var(--f-mono); }
+svg text.sub { fill: var(--muted); font-size: 11px; }
+svg .n rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+svg .n.on rect { stroke: var(--ok); stroke-width: 3; }
+svg .n.src rect { stroke: var(--accent); stroke-width: 3; }
+svg .n.waste rect { stroke: var(--d2); stroke-width: 3; stroke-dasharray: 5 3; }
+svg .n.d1 rect { stroke: var(--accent); stroke-width: 2.5; }
+svg .n.d2 rect { stroke: var(--d2); stroke-width: 2.5; }
+svg .dev rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+svg .link { stroke: var(--line); stroke-width: 3; fill: none; }
+svg .link.src, svg .link.req, svg .link.d1 { stroke: var(--accent); }
+svg .link.out, svg .link.rep { stroke: var(--ok); }
+svg .link.waste, svg .link.data, svg .link.d2 { stroke: var(--d2); }
+svg .mk circle { fill: var(--surface); stroke-width: 2; }
+svg .mk.d1 circle { stroke: var(--accent); }
+svg .mk.d2 circle { stroke: var(--d2); }
+svg .mk text { font-size: 11px; }
+svg text.lab { font-size: 12px; }
+svg text.lab.d1 { fill: var(--accent); }
+svg text.lab.d2 { fill: var(--d2); }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg button { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 14px; min-height: 44px; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.fl { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
+.field label { font: 500 12px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+select { background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; min-height: 46px; width: 100%; }
+.leg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: .88rem; color: var(--muted); }
+.leg i { display: inline-block; width: 16px; height: 4px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.note { border-radius: 8px; padding: 12px 14px; background: var(--accent-soft); }
+.log { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 6px; font-size: .96rem; }
+.mac { font-family: var(--f-mono); font-size: .86rem; }
+.pkt { font: 500 13px/1.5 var(--f-mono); border: 1.5px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; overflow-wrap: anywhere; }
+.pkt b { color: var(--accent); }
+.stats2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.stats2 div { border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; }
+.stats2 b { font: 700 2.2rem/1 var(--f-display); font-variant-numeric: tabular-nums; }
+.stats2 span { font-size: .9rem; color: var(--muted); }
+.step { font: 500 12px var(--f-mono); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+
+/* Quiz */
+.top { display: flex; justify-content: space-between; align-items: center; }
+.count { font: 500 14px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); transition: width .25s; }
+.q { font-size: clamp(1.3rem, 5vw, 1.65rem); }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  display: grid; grid-template-columns: 1.8rem minmax(0, 1fr); gap: 10px; align-items: start; text-align: left;
+  background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 13px 14px; min-height: 52px;
+}
+.opt .l { font: 500 14px/1.6 var(--f-mono); color: var(--muted); }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:disabled { cursor: default; color: var(--ink); }
+.opt.ok { border-color: var(--ok); background: var(--ok-soft); }
+.opt.bad { border-color: var(--bad); background: var(--bad-soft); }
+.fb { border-radius: 10px; padding: 14px 16px; background: var(--surface); border: 1.5px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+.fb.ok { border-color: var(--ok); }
+.fb.bad { border-color: var(--bad); }
+.fb b { font-family: var(--f-display); font-size: 1.05rem; }
+.fb.ok b { color: var(--ok); }
+.fb.bad b { color: var(--bad); }
+.score { font: 700 clamp(3rem, 14vw, 4.5rem)/1 var(--f-display); font-variant-numeric: tabular-nums; }
+.score small { font-size: .4em; color: var(--muted); font-weight: 600; }
+.review { display: flex; flex-direction: column; gap: 14px; }
+.rv { border-top: 1.5px solid var(--line); padding-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+.rv .good { color: var(--ok); font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.chap { display: flex; flex-direction: column; gap: 12px; padding-top: 12px; }
+.chap h2 { font-size: clamp(1.35rem, 5vw, 1.75rem); }
+.chead { display: flex; flex-direction: column; gap: 4px; }
+.cq { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+.dl { display: grid; grid-template-columns: minmax(7rem, 11rem) minmax(0, 1fr); gap: 8px 14px; margin: 0; }
+.dl dt { font: 500 12px/1.6 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.dl dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 460px) { .dl { grid-template-columns: 1fr; gap: 0 } .dl dd { margin-bottom: 8px } }
+.ctitle { font: 700 1.2rem var(--f-display) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ink) !important; }
+input[type="text"], input[type="number"] { font: inherit; color: inherit; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; min-height: 46px; width: 100%; }
+.enc { border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; border: 1.5px solid var(--line); font-size: .92rem; }
+.enc .hd { display: flex; flex-direction: column; gap: 2px; }
+.enc .v { font: 500 12px/1.4 var(--f-mono); color: var(--muted); overflow-wrap: anywhere; }
+.enc.data { background: var(--surface); }
+.enc.tcp { background: var(--accent-soft); border-color: var(--accent); }
+.enc.ip { background: var(--d2-soft); border-color: var(--d2); }
+.enc.eth { background: var(--ok-soft); border-color: var(--ok); }
+.map2 { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(46px, auto); gap: 6px; }
+.mcell { border: 1.5px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px 10px; text-align: left; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.mcell small { font: 500 12px var(--f-mono); color: var(--muted); }
+.mcell.blk { background: var(--accent-soft); justify-content: center; text-align: center; }
+.mcell.on { border-color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
+.bits { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+.bit { border: 1.5px solid var(--line); background: var(--surface); border-radius: 8px; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 4px 0; }
+.bit small { font: 500 11px var(--f-mono); color: var(--muted); }
+.bit b { font: 700 1.4rem var(--f-display); }
+.bit[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.bit[aria-pressed="true"] small { color: var(--accent-ink); }
+.bn { font: 500 .95rem/1.5 var(--f-mono); overflow-wrap: anywhere; }
+.bn .net { color: var(--accent); font-weight: 700; }
+.bn .host { color: var(--d2); }
+.needs { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+svg .n.fail rect { stroke: var(--bad); stroke-width: 3; stroke-dasharray: 5 3; fill: var(--bad-soft); }
+svg .dev.fail rect { stroke: var(--bad); fill: var(--bad-soft); stroke-dasharray: 5 3; }
+svg .link.fail { stroke: var(--bad); stroke-dasharray: 6 5; }
+svg .jn { fill: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+
+<main id="app"></main>
+
+<script>
+(function () {
+'use strict';
+
+/* ---------- Utilitaires ---------- */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const fmt = s => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+const MACS = ['AA:AA:AA:AA:AA:AA', 'BB:BB:BB:BB:BB:BB', 'CC:CC:CC:CC:CC:CC', 'DD:DD:DD:DD:DD:DD'];
+const BCAST = 'FF:FF:FF:FF:FF:FF';
+
+/* ---------- Contenu : dans chaque question, la 1re option est la bonne (l'ordre est mélangé à chaque tirage) ---------- */
+const HEX16 = Array.from({ length: 16 }, (_, i) => [String(i), i.toString(2).padStart(4, '0'), i.toString(16).toUpperCase()]);
+const SCEN2 = [
+  { s: "Un cabinet médical a 6 PC et une imprimante à relier. Aucun VLAN et aucune supervision ne sont demandés.", o: ["Non administrable", "Administrable (niveau 2)", "Niveau 3", "Switch PoE"], a: 0, e: "Un switch non administrable suffit : on branche, ça fonctionne, sans configuration." },
+  { s: "Une entreprise veut séparer la comptabilité, les RH et les invités dans trois VLAN, sur chaque étage.", o: ["Non administrable", "Administrable (niveau 2)", "Niveau 3", "Switch PoE"], a: 1, e: "Il faut créer des VLAN : un switch administrable de niveau 2 en accès." },
+  { s: "Au cœur du réseau, ces trois VLAN doivent communiquer entre eux à haut débit.", o: ["Non administrable", "Administrable (niveau 2)", "Niveau 3", "Switch PoE"], a: 2, e: "Un switch de niveau 3 route entre VLAN en interne, sans routeur externe." },
+  { s: "Un étage doit accueillir 10 téléphones IP et 6 bornes Wi-Fi, sans prise électrique à proximité.", o: ["Non administrable", "Administrable (niveau 2)", "Niveau 3", "Switch PoE"], a: 3, e: "Un switch PoE alimente ces équipements par le câble Ethernet." }
+];
+const SCEN9 = [
+  { s: "Un nouveau PC doit recevoir automatiquement son adresse IP, son masque et sa passerelle.", o: ["DHCP", "DNS", "FTP", "ICMP"], a: 0, e: "DHCP attribue automatiquement la configuration IP." },
+  { s: "Un utilisateur tape www.ofppt.ma. Il faut retrouver l'adresse IP du serveur.", o: ["DNS", "DHCP", "SSH", "SMTP"], a: 0, e: "DNS traduit un nom de domaine en adresse IP." },
+  { s: "Un administrateur veut se connecter à distance à un switch, de façon sécurisée.", o: ["SSH", "Telnet", "HTTP", "FTP"], a: 0, e: "SSH chiffre la session, y compris le mot de passe. Telnet envoie tout en clair." },
+  { s: "Un employé envoie un courriel à un collègue. Quel protocole transporte le message vers le serveur ?", o: ["SMTP", "IMAP", "DNS", "DHCP"], a: 0, e: "SMTP sert à envoyer. POP3 et IMAP servent à recevoir." },
+  { s: "On veut vérifier qu'une machine répond, avec la commande ping.", o: ["ICMP", "ARP", "FTP", "SNMP"], a: 0, e: "Le ping utilise des messages ICMP Echo Request et Echo Reply." },
+  { s: "Le site d'une banque doit chiffrer les échanges avec ses clients.", o: ["HTTPS", "HTTP", "Telnet", "FTP"], a: 0, e: "HTTPS (port 443) ajoute le chiffrement TLS à HTTP." }
+];
+const THEMES = [
+{ id: 1, ch: 4, t: "Définition de la commutation", short: "Le switch, la trame et la table MAC", sim: 'hub',
+  def: "La commutation consiste à acheminer des trames Ethernet d'un port à un autre à l'intérieur d'un réseau local, en s'appuyant sur les adresses MAC. Elle est assurée par le commutateur (switch), un équipement de couche 2 qui apprend où se trouve chaque machine.",
+  pts: [
+    "Le switch travaille en couche 2 (liaison de données) : il manipule des trames, pas des paquets IP.",
+    "Il construit une table d'adresses MAC (table CAM) qui associe chaque adresse MAC à un port.",
+    "Il remplace le hub : le hub répète tout sur tous les ports, le switch envoie la trame uniquement vers le port concerné.",
+    "Chaque port est une liaison dédiée. En full-duplex, on émet et on reçoit en même temps, sans collision.",
+    "Sans VLAN, un message de diffusion (broadcast) est quand même envoyé sur tous les ports."
+  ],
+  table: { h: ["", "Hub", "Switch"], r: [
+    ["Couche OSI", "1 (physique)", "2 (liaison de données)"],
+    ["Envoi des données", "Sur tous les ports", "Vers le port concerné"],
+    ["Collisions", "Un seul domaine partagé", "Un domaine par port"],
+    ["Mode de liaison", "Half-duplex", "Full-duplex possible"],
+    ["Intelligence", "Aucune (simple répéteur)", "Table MAC"]
+  ] },
+  kw: ["Couche 2", "Trame", "Adresse MAC", "Table MAC (CAM)", "Port", "Full-duplex"],
+  ana: "Le hub est un haut-parleur dans une salle : tout le monde entend tout. Le switch est un standardiste : il connaît le poste de chacun et transmet l'appel au bon poste seulement.",
+  res: "Dans une salle de TP de 20 postes, un switch 24 ports relie les PC. PC1 envoie un fichier à PC2 pendant que PC3 en envoie un à PC4, sans se gêner.",
+  piege: "Un switch de couche 2 ne lit pas l'adresse IP. Il décide avec l'adresse MAC de destination. Seul un switch de niveau 3 ou un routeur utilise l'IP.",
+  simIntro: "Comparez ce qui se passe quand PC1 envoie une trame à PC3, avec un hub puis avec un switch dont la table MAC est déjà remplie.",
+  q: [
+    { q: "À quelle couche du modèle OSI travaille un switch classique ?", o: ["Couche 2 (liaison de données)", "Couche 1 (physique)", "Couche 3 (réseau)", "Couche 4 (transport)"], e: "Un switch classique lit l'en-tête Ethernet, donc la couche 2. Le hub est en couche 1, le routeur en couche 3." },
+    { q: "Quelle information le switch utilise-t-il pour choisir le port de sortie ?", o: ["L'adresse MAC de destination", "L'adresse IP de destination", "Le numéro de port TCP", "Le nom de la machine"], e: "La décision se base sur l'adresse MAC de destination inscrite dans la trame, comparée à la table MAC." },
+    { q: "Que contient la table MAC d'un switch ?", o: ["Des associations adresse MAC / port", "Des associations adresse IP / adresse MAC", "Des routes vers des réseaux distants", "La liste des utilisateurs connectés"], e: "La table MAC lie une adresse MAC à un port. L'association IP / MAC se trouve dans la table ARP des machines." },
+    { q: "Quelle est la différence principale entre un hub et un switch ?", o: ["Le hub répète sur tous les ports, le switch envoie vers le port concerné", "Le hub est plus rapide que le switch", "Le hub possède une table MAC, pas le switch", "Le switch travaille en couche 3, le hub en couche 2"], e: "Le hub est un simple répéteur. Le switch apprend les adresses MAC et n'envoie la trame que là où c'est utile." },
+    { q: "Quelle unité de données manipule un switch de couche 2 ?", o: ["La trame", "Le paquet", "Le segment", "Le message applicatif"], e: "Trame en couche 2, paquet en couche 3, segment en couche 4." },
+    { q: "Sur un hub de 12 PC à 100 Mb/s, comment est répartie la bande passante ?", o: ["Elle est partagée entre toutes les machines", "Chaque PC dispose de 100 Mb/s dédiés", "Elle est doublée grâce au full-duplex", "Elle augmente avec le nombre de PC"], e: "Le hub forme un seul domaine de collision en half-duplex : les 12 machines se partagent le même débit." },
+    { q: "Un stagiaire dit : « Mon switch lit l'adresse IP de destination pour envoyer la trame ». Quelle est la correction ?", o: ["Un switch de couche 2 lit l'adresse MAC. L'IP n'est utilisée que par un switch de niveau 3 ou un routeur", "C'est exact, tous les switchs lisent l'IP", "Il lit uniquement le numéro de VLAN", "Il lit le nom de domaine du destinataire"], e: "Le switch de couche 2 n'ouvre pas le paquet IP : il s'arrête à l'en-tête Ethernet." }
+  ] },
+
+{ id: 2, ch: 4, t: "Les différents types de switch", short: "Administrable, niveau 3, PoE, empilable", sim: 'pick', scen: SCEN2,
+  def: "On classe les switchs selon leur capacité de gestion, leur couche de fonctionnement et leur format physique. Le bon choix dépend du besoin : un petit bureau n'a pas les mêmes exigences qu'un cœur de réseau d'entreprise.",
+  pts: [
+    "Non administrable (unmanaged) : on branche et ça marche, sans aucune configuration. Pour la maison ou un petit bureau.",
+    "Administrable (managed) : configuré en ligne de commande (CLI, SSH) ou par interface web. Il offre VLAN, sécurité de port, STP et supervision.",
+    "Niveau 3 (multilayer) : fait la commutation et le routage entre VLAN grâce à des interfaces virtuelles (SVI).",
+    "PoE (Power over Ethernet) : alimente téléphones IP, caméras et bornes Wi-Fi par le câble réseau (802.3af : 15,4 W, 802.3at : 30 W, 802.3bt : 60 à 90 W).",
+    "Format : fixe, empilable (plusieurs switchs vus comme un seul) ou modulaire (châssis avec cartes, pour les grands réseaux).",
+    "Place dans l'architecture : accès (relie les postes), distribution (regroupe les switchs d'accès), cœur (backbone rapide)."
+  ],
+  table: { h: ["Type", "Usage typique", "Ce qu'il offre"], r: [
+    ["Non administrable", "Maison, petit bureau", "Branchement direct, aucune configuration"],
+    ["Administrable (niveau 2)", "Réseau d'accès en entreprise ou école", "VLAN, STP, sécurité de port, supervision"],
+    ["Niveau 3", "Distribution et cœur", "Tout le niveau 2, plus le routage entre VLAN"],
+    ["PoE", "Téléphones IP, caméras, bornes Wi-Fi", "Alimentation électrique par le câble Ethernet"],
+    ["Empilable / modulaire", "Grands réseaux", "Extension du nombre de ports, administration unifiée"]
+  ] },
+  kw: ["Administrable", "Niveau 3", "PoE", "Empilable", "Modulaire", "Accès / distribution / cœur"],
+  ana: "Un switch non administrable est une multiprise : on branche et ça marche. Un switch administrable est un tableau électrique : on décide qui est alimenté, qui est isolé et qui est surveillé.",
+  res: "Dans un lycée : des switchs administrables dans chaque salle, un switch PoE pour les caméras, et un switch de niveau 3 au centre pour relier les VLAN (administration, élèves, Wi-Fi).",
+  piege: "Un switch de niveau 3 route bien entre VLAN, mais il ne remplace pas toujours le routeur : l'accès à Internet (WAN) reste souvent assuré par un routeur ou un pare-feu.",
+  simIntro: "Pour chaque situation, choisissez le type de switch le plus adapté.",
+  q: [
+    { q: "Quel switch convient à un petit bureau qui n'a besoin ni de VLAN ni de configuration ?", o: ["Un switch non administrable", "Un switch de niveau 3", "Un switch modulaire", "Un routeur"], e: "Un switch non administrable suffit : aucune configuration, coût réduit." },
+    { q: "Quelle fonction est propre aux switchs administrables ?", o: ["La création de VLAN et la configuration en CLI ou par interface web", "L'alimentation des équipements en 220 V", "Le fonctionnement sans câble", "Le remplacement des cartes réseau des PC"], e: "Un switch administrable se configure : VLAN, sécurité de port, STP, supervision." },
+    { q: "Que permet un switch de niveau 3 en plus d'un switch de niveau 2 ?", o: ["Router le trafic entre VLAN", "Émettre en Wi-Fi", "Remplacer le câblage", "Augmenter la longueur maximale du câble"], e: "Il combine commutation et routage : le trafic entre VLAN est routé en interne." },
+    { q: "À quoi sert le PoE ?", o: ["À alimenter un équipement (téléphone IP, caméra, borne Wi-Fi) par le câble réseau", "À doubler le débit des ports", "À chiffrer les trames", "À sauvegarder la configuration"], e: "Power over Ethernet : l'alimentation passe par le câble Ethernet, sans prise électrique à proximité." },
+    { q: "Que permet un switch empilable (stackable) ?", o: ["Relier plusieurs switchs pour qu'ils se comportent comme un seul équipement", "Empiler plusieurs câbles dans une seule gaine", "Router vers Internet", "Convertir la fibre en cuivre"], e: "L'empilage fait apparaître plusieurs switchs comme un seul : plus de ports, une seule administration." },
+    { q: "Dans le modèle hiérarchique, quel switch relie directement les postes des utilisateurs ?", o: ["Le switch d'accès", "Le switch de cœur", "Le switch de distribution", "Le routeur de bordure"], e: "La couche accès connecte les utilisateurs. La distribution regroupe les accès, le cœur assure le transport rapide." },
+    { q: "Un administrateur doit isoler des caméras IP dans un VLAN et les alimenter par le câble. Quel switch choisir ?", o: ["Un switch administrable avec PoE", "Un switch non administrable avec PoE", "Un hub", "Un switch non administrable sans PoE"], e: "Il faut deux fonctions : le PoE pour l'alimentation et l'administration pour créer le VLAN. Un switch non administrable ne sait pas créer de VLAN." }
+  ] },
+
+{ id: 3, ch: 4, t: "Le transfert de trame", short: "Apprentissage, inondation, transfert, modes", sim: 'mac',
+  def: "Quand une trame arrive sur un port, le switch suit toujours le même cycle : il apprend l'adresse MAC source, cherche l'adresse MAC de destination dans sa table, puis la transmet (forward), la diffuse (flood) ou l'ignore (filter).",
+  pts: [
+    "Apprentissage : l'adresse MAC source est enregistrée avec le port d'arrivée. L'entrée est effacée après un temps de vieillissement (300 s par défaut sur Cisco).",
+    "Destination connue : la trame sort uniquement par le port associé. C'est le transfert (forwarding).",
+    "Destination inconnue ou broadcast `FF:FF:FF:FF:FF:FF` : la trame sort par tous les ports sauf celui d'arrivée. C'est l'inondation (flooding).",
+    "Destination située sur le même port que la source : la trame est filtrée (non retransmise).",
+    "Le switch apprend toujours l'adresse source, jamais l'adresse de destination."
+  ],
+  extra: 'frame',
+  table: { h: ["Mode", "Principe", "Avantage", "Limite"], r: [
+    ["Store-and-forward", "Reçoit toute la trame et vérifie le FCS", "Élimine les trames erronées", "Latence plus élevée"],
+    ["Cut-through", "Transmet dès que la MAC de destination est lue", "Latence minimale", "Peut propager des trames corrompues"],
+    ["Fragment-free", "Lit les 64 premiers octets avant d'envoyer", "Évite les fragments de collision", "Compromis entre les deux"]
+  ] },
+  kw: ["Apprentissage", "Inondation (flooding)", "Transfert (forwarding)", "Filtrage", "Store-and-forward", "Cut-through", "FCS", "Vieillissement"],
+  ana: "Le switch est un facteur. Il note l'adresse de l'expéditeur sur chaque lettre (apprentissage). S'il connaît la boîte du destinataire, il y dépose la lettre. Sinon, il en glisse une copie dans toutes les boîtes sauf celle d'origine.",
+  res: "Au premier ping entre PC1 et PC3, la table MAC est vide : le switch inonde la trame. Dès que PC3 répond, le switch connaît les deux machines et ne fait plus que du transfert direct.",
+  piege: "Le switch n'envoie jamais la trame sur le port d'où elle vient, même en cas d'inondation. Et il apprend l'adresse source, pas l'adresse de destination.",
+  simIntro: "Le switch démarre avec une table MAC vide. Envoyez des trames et observez l'apprentissage, l'inondation et le transfert. Essai guidé : A vers C, puis C vers A, puis A vers C.",
+  q: [
+    { q: "Quand le switch reçoit une trame, que enregistre-t-il dans sa table MAC ?", o: ["L'adresse MAC source avec le port d'arrivée", "L'adresse MAC de destination avec le port de sortie", "L'adresse IP source", "Le contenu de la trame"], e: "L'apprentissage porte sur l'adresse source : c'est elle qui prouve où se trouve l'expéditeur." },
+    { q: "L'adresse MAC de destination n'est pas dans la table. Que fait le switch ?", o: ["Il envoie la trame sur tous les ports sauf celui d'arrivée", "Il détruit la trame", "Il la renvoie à l'expéditeur", "Il demande l'adresse au routeur"], e: "C'est l'inondation (flooding) : la trame sort partout sauf par le port d'entrée. Le destinataire, s'il existe, la reconnaîtra." },
+    { q: "Quelle est l'adresse MAC de broadcast ?", o: ["FF:FF:FF:FF:FF:FF", "00:00:00:00:00:00", "255.255.255.255", "01:00:5E:00:00:01"], e: "FF:FF:FF:FF:FF:FF. 255.255.255.255 est un broadcast IP, 01:00:5E... est une plage multicast." },
+    { q: "Quel mode lit toute la trame et vérifie le FCS avant de la transmettre ?", o: ["Store-and-forward", "Cut-through", "Fragment-free", "Flooding"], e: "Store-and-forward stocke la trame entière, contrôle le FCS, puis l'envoie. C'est le plus sûr." },
+    { q: "Quel mode commence à transmettre dès que l'adresse MAC de destination est lue ?", o: ["Cut-through", "Store-and-forward", "Fragment-free", "Learning"], e: "Cut-through réduit la latence au minimum, mais peut propager des trames défectueuses." },
+    { q: "La destination est connue, mais sur le même port que la source. Que fait le switch ?", o: ["Il filtre la trame : il ne la retransmet pas", "Il l'inonde sur tous les ports", "Il la renvoie par le même port", "Il efface sa table MAC"], e: "Les deux machines sont derrière le même port : la trame a déjà atteint le destinataire, inutile de la retransmettre." },
+    { q: "À quoi sert le champ FCS d'une trame Ethernet ?", o: ["À détecter les trames corrompues", "À indiquer l'adresse de destination", "À donner la priorité de la trame", "À identifier le VLAN"], e: "Le FCS (Frame Check Sequence) est un contrôle d'erreur calculé sur la trame. S'il est faux, la trame est rejetée." },
+    { q: "Le switch démarre avec une table vide. PC1 envoie une trame à PC3, puis PC3 répond. Combien d'adresses MAC le switch a-t-il apprises ?", o: ["Deux : celles de PC1 et de PC3", "Une seule : celle de PC3", "Aucune", "Trois"], e: "PC1 est appris avec sa première trame (adresse source), PC3 avec sa réponse. Chaque machine est apprise quand elle émet." }
+  ] },
+
+{ id: 4, ch: 4, t: "Les domaines de commutation", short: "Domaines de collision et de diffusion", sim: 'dom',
+  def: "Un domaine de collision regroupe les équipements dont les transmissions peuvent entrer en collision. Un domaine de diffusion (broadcast) regroupe les équipements qui reçoivent un broadcast émis par l'un d'eux. Le switch segmente les collisions. Seuls les VLAN et les routeurs segmentent la diffusion.",
+  pts: [
+    "Hub : un seul domaine de collision et un seul domaine de diffusion pour tous ses ports.",
+    "Switch : chaque port est son propre domaine de collision, mais tous les ports d'un même VLAN restent dans le même domaine de diffusion.",
+    "VLAN : un switch administrable découpe le réseau en plusieurs domaines de diffusion indépendants.",
+    "Routeur : chaque interface forme un domaine de diffusion. Le routeur ne transmet pas les broadcasts.",
+    "Un domaine de diffusion trop grand ralentit le réseau (ARP, DHCP, etc.) : on le découpe.",
+    "La détection de collision (CSMA/CD) n'existe qu'en half-duplex, par exemple derrière un hub."
+  ],
+  table: { h: ["Équipement", "Domaines de collision", "Domaines de diffusion"], r: [
+    ["Hub", "Un seul pour tous les ports", "Un seul"],
+    ["Switch", "Un par port", "Un seul (un par VLAN si VLAN)"],
+    ["Routeur", "Un par interface", "Un par interface"]
+  ] },
+  kw: ["Domaine de collision", "Domaine de diffusion", "Broadcast", "VLAN", "Routeur", "CSMA/CD"],
+  ana: "Un hub, c'est une seule ligne téléphonique partagée par tout le monde. Un switch donne une ligne privée à chacun : plus de collision. Mais une annonce au micro (broadcast) s'entend toujours dans tout le bâtiment, sauf si on le sépare en étages (VLAN).",
+  res: "Un switch 24 ports avec tous les PC dans le VLAN 1 donne 24 domaines de collision et 1 domaine de diffusion. Avec 3 VLAN : toujours 24 domaines de collision, mais 3 domaines de diffusion.",
+  piege: "Ajouter des switchs ne réduit pas le domaine de diffusion : tous les switchs reliés dans le même VLAN forment un seul grand domaine de diffusion.",
+  simIntro: "Huit PC, quatre façons de les relier. Changez de topologie et comparez. Les pastilles numérotées sont les domaines de collision, les couleurs sont les domaines de diffusion.",
+  q: [
+    { q: "Combien de domaines de collision pour un hub de 8 ports avec 8 PC ?", o: ["1", "8", "2", "16"], e: "Le hub répète tout sur tous les ports : un seul domaine de collision partagé." },
+    { q: "Combien de domaines de collision pour un switch de 8 ports avec 8 PC ?", o: ["8", "1", "2", "16"], e: "Chaque port du switch est son propre domaine de collision." },
+    { q: "Parmi ces équipements, lequel sépare les domaines de diffusion ?", o: ["Un routeur", "Un hub", "Un switch non administrable", "Un répéteur"], e: "Le routeur ne transmet pas les broadcasts. Un switch administrable peut aussi les séparer, mais avec des VLAN." },
+    { q: "Un switch administrable contient 3 VLAN actifs, avec 24 PC répartis entre eux. Combien de domaines de diffusion ?", o: ["3", "1", "24", "6"], e: "Un VLAN correspond à un domaine de diffusion." },
+    { q: "Deux switchs sont reliés par un câble, tous les PC étant dans le même VLAN. Combien de domaines de diffusion ?", o: ["1", "2", "Autant que de ports", "Cela dépend des câbles"], e: "Relier des switchs agrandit le même domaine de diffusion : seul un VLAN ou un routeur le coupe." },
+    { q: "Quel est l'effet d'un domaine de diffusion trop grand ?", o: ["Le trafic de broadcast ralentit le réseau", "Les adresses MAC deviennent identiques", "Les collisions disparaissent", "Le switch tombe en panne"], e: "Chaque broadcast est traité par toutes les machines du domaine : le trafic inutile augmente avec la taille." },
+    { q: "Un routeur relie deux switchs de 4 PC chacun (une interface par switch). Combien de domaines de diffusion ?", o: ["2", "1", "4", "8"], e: "Chaque interface du routeur délimite un domaine de diffusion : un par switch." },
+    { q: "Dans quel cas le CSMA/CD est-il réellement utilisé ?", o: ["En half-duplex, par exemple derrière un hub", "En full-duplex sur un port de switch", "Sur une liaison fibre uniquement", "Entre deux routeurs"], e: "Le full-duplex supprime les collisions : la détection n'est utile qu'en half-duplex." }
+  ] },
+
+{ id: 5, ch: 4, t: "Le protocole ARP", short: "Trouver une adresse MAC à partir d'une IP", sim: 'arp',
+  def: "ARP (Address Resolution Protocol) permet de retrouver l'adresse MAC d'une machine à partir de son adresse IP, à l'intérieur d'un même réseau local. Sans l'adresse MAC, impossible de construire la trame Ethernet.",
+  pts: [
+    "L'hôte consulte d'abord sa table ARP (cache).",
+    "Si l'adresse est absente : ARP Request en broadcast (destination `FF:FF:FF:FF:FF:FF`) pour demander « Qui a l'adresse IP X ? ».",
+    "Seule la machine concernée répond, par une ARP Reply en unicast, avec son adresse MAC.",
+    "L'hôte enregistre la correspondance IP / MAC dans sa table ARP, pour quelques minutes seulement.",
+    "Pour une destination hors du réseau local, l'hôte résout l'adresse MAC de la passerelle, pas celle de la destination finale.",
+    "Commandes : `arp -a` (Windows, Linux), `show ip arp` (Cisco).",
+    "ARP n'a aucune authentification : d'où l'attaque ARP spoofing (empoisonnement de cache). Parades : Dynamic ARP Inspection, entrées statiques."
+  ],
+  table: { h: ["", "ARP Request", "ARP Reply"], r: [
+    ["Rôle", "Demande la MAC d'une adresse IP", "Donne la MAC demandée"],
+    ["Envoi", "Broadcast (FF:FF:FF:FF:FF:FF)", "Unicast vers le demandeur"],
+    ["MAC cible dans le message", "00:00:00:00:00:00 (inconnue)", "MAC du demandeur"]
+  ] },
+  kw: ["ARP Request", "ARP Reply", "Table ARP", "Broadcast", "Passerelle", "ARP spoofing"],
+  ana: "Vous connaissez le prénom d'un camarade (l'IP) mais pas sa place dans la salle (la MAC). Vous criez « Qui est Karim ? » (broadcast). Karim lève la main et vous répond directement (unicast). Vous notez sa place dans votre carnet (la table ARP).",
+  res: "PC1 (192.168.1.10) veut pinger 192.168.1.20. Avant d'envoyer, il lance une ARP Request. PC2 répond, PC1 note la MAC dans sa table, puis le ping (ICMP) part.",
+  piege: "L'ARP Request est en broadcast, mais l'ARP Reply est en unicast. Et ARP ne traverse pas un routeur : il ne fonctionne qu'à l'intérieur d'un domaine de diffusion.",
+  simIntro: "Suivez pas à pas ce que fait PC1 avant d'envoyer son premier paquet. Comparez une destination dans le même réseau et une destination sur Internet.",
+  q: [
+    { q: "Quel est le rôle du protocole ARP ?", o: ["Trouver l'adresse MAC correspondant à une adresse IP", "Attribuer automatiquement des adresses IP", "Traduire un nom de domaine en adresse IP", "Chiffrer les trames"], e: "ARP associe une adresse IP connue à une adresse MAC inconnue. L'attribution d'IP, c'est DHCP, la résolution de noms, c'est DNS." },
+    { q: "Quelle est l'adresse MAC de destination d'une ARP Request ?", o: ["FF:FF:FF:FF:FF:FF", "00:00:00:00:00:00", "L'adresse MAC du routeur", "L'adresse MAC de la cible"], e: "La MAC de la cible est justement inconnue : la demande part en broadcast." },
+    { q: "Comment est envoyée l'ARP Reply ?", o: ["En unicast vers le demandeur", "En broadcast vers tout le réseau", "En multicast vers les routeurs", "Elle n'est jamais envoyée"], e: "La machine concernée connaît déjà la MAC du demandeur (écrite dans la requête) : elle répond directement." },
+    { q: "Où l'hôte garde-t-il les correspondances IP / MAC apprises ?", o: ["Dans sa table (cache) ARP", "Dans la table MAC du switch", "Dans la table de routage", "Dans le serveur DNS"], e: "Chaque hôte tient sa propre table ARP, avec une durée de vie limitée." },
+    { q: "Un PC (192.168.1.10/24) veut joindre 8.8.8.8. Quelle adresse MAC cherche-t-il avec ARP ?", o: ["Celle de la passerelle par défaut", "Celle du serveur 8.8.8.8", "Celle du switch", "Celle du serveur DNS"], e: "8.8.8.8 est hors du réseau local : la trame est adressée à la passerelle, qui fera suivre. L'IP de destination reste 8.8.8.8." },
+    { q: "Quelle commande affiche la table ARP sous Windows ?", o: ["arp -a", "ipconfig /all", "tracert", "netstat -r"], e: "`arp -a` liste les correspondances IP / MAC. `netstat -r` affiche la table de routage, `ipconfig /all` la configuration des interfaces." },
+    { q: "Une ARP Request peut-elle traverser un routeur ?", o: ["Non, elle reste dans le domaine de diffusion", "Oui, toujours", "Oui, si le routeur est de niveau 3", "Seulement en Wi-Fi"], e: "Un routeur ne transmet pas les broadcasts : ARP ne fonctionne qu'à l'intérieur d'un réseau local." },
+    { q: "Que fait un attaquant lors d'un ARP spoofing ?", o: ["Il envoie de fausses réponses ARP pour associer sa MAC à l'IP d'une autre machine", "Il sature la table MAC avec des milliers d'adresses", "Il casse le mot de passe du switch", "Il coupe le câble réseau"], e: "ARP n'a pas d'authentification : un faux ARP Reply peut détourner le trafic. La saturation de la table MAC est une autre attaque, le MAC flooding." },
+    { q: "Une ARP Request arrive sur un switch. Comment est-elle traitée ?", o: ["Elle est diffusée sur tous les ports du VLAN, sauf celui d'arrivée", "Elle est envoyée seulement vers la machine cible", "Elle est supprimée", "Elle est transmise au routeur uniquement"], e: "Destination FF:FF:FF:FF:FF:FF : le switch inonde la trame, comme tout broadcast." }
+  ] },
+{ id: 6, ch: 3, t: "Modèle OSI et ses couches", short: "Les 7 couches, les unités de données, l'encapsulation", sim: 'osi',
+  def: "Le modèle OSI (Open Systems Interconnection), publié par l'ISO, décrit la communication réseau en 7 couches. Chaque couche a un rôle précis et ne dialogue qu'avec ses voisines. Il sert de langage commun pour comprendre, concevoir et dépanner un réseau.",
+  pts: [
+    "Les 7 couches, de bas en haut : Physique, Liaison de données, Réseau, Transport, Session, Présentation, Application.",
+    "À l'émission, chaque couche ajoute son en-tête à la donnée (encapsulation). À la réception, chaque couche retire le sien (désencapsulation).",
+    "Unités de données (PDU) : données (couches 5 à 7), segment (4), paquet (3), trame (2), bits (1).",
+    "Équipements : câbles et hub (1), switch (2), routeur (3).",
+    "Moyen mnémotechnique, de la couche 1 à la 7 : « Please Do Not Throw Sausage Pizza Away ».",
+    "Le modèle OSI est un modèle de référence : il ne s'installe pas, il sert à raisonner."
+  ],
+  table: { h: ["N°", "Couche", "Unité", "Rôle", "Exemples"], r: [
+    ["7", "Application", "Données", "Interface avec les logiciels, services réseau", "HTTP, SMTP, DNS"],
+    ["6", "Présentation", "Données", "Format, compression, chiffrement", "JPEG, ASCII"],
+    ["5", "Session", "Données", "Ouverture, maintien et fermeture des dialogues", "NetBIOS, RPC"],
+    ["4", "Transport", "Segment", "Communication entre applications (ports), fiabilité", "TCP, UDP"],
+    ["3", "Réseau", "Paquet", "Adressage logique et routage", "IP, ICMP, routeur"],
+    ["2", "Liaison de données", "Trame", "Adressage MAC, accès au support", "Ethernet, switch"],
+    ["1", "Physique", "Bits", "Transmission des signaux sur le support", "Câbles, hub, fibre, radio"]
+  ] },
+  kw: ["Encapsulation", "Désencapsulation", "PDU", "Segment", "Paquet", "Trame", "ISO"],
+  ana: "Envoyer une lettre : vous écrivez le message (application), vous le mettez dans une enveloppe avec l'adresse (réseau), la poste la charge dans un camion (liaison) qui roule sur la route (physique). À l'arrivée, on fait le chemin inverse.",
+  res: "Quand vous ouvrez un site web, la page est découpée en segments (couche 4), placée dans des paquets IP (couche 3), puis dans des trames Ethernet (couche 2) envoyées sous forme de bits sur le câble (couche 1).",
+  piege: "La couche 1 est la plus basse (physique), la couche 7 la plus haute (application). Et l'utilisateur n'est pas « dans » la couche application : elle fournit des services aux logiciels.",
+  simIntro: "Explorez les 7 couches, puis testez-vous : à quelle couche appartient chaque élément ?",
+  q: [
+    { q: "Combien de couches comporte le modèle OSI ?", o: ["7", "4", "5", "6"], e: "Le modèle OSI compte 7 couches. Le modèle TCP/IP en compte 4." },
+    { q: "Quelle couche gère l'adressage logique (IP) et le choix du chemin ?", o: ["Réseau (couche 3)", "Liaison de données (couche 2)", "Transport (couche 4)", "Physique (couche 1)"], e: "La couche Réseau s'occupe des adresses IP et du routage." },
+    { q: "Quelle est l'unité de données de la couche Transport ?", o: ["Le segment", "Le paquet", "La trame", "Le bit"], e: "Segment en couche 4, paquet en couche 3, trame en couche 2, bit en couche 1." },
+    { q: "Un câble Ethernet est débranché. Quelle couche est en cause ?", o: ["Physique (couche 1)", "Réseau (couche 3)", "Transport (couche 4)", "Application (couche 7)"], e: "Le câble et les signaux relèvent de la couche Physique. En dépannage, on commence souvent par là." },
+    { q: "Quelle couche s'occupe du format des données, de la compression et du chiffrement ?", o: ["Présentation (couche 6)", "Session (couche 5)", "Application (couche 7)", "Transport (couche 4)"], e: "La couche Présentation met les données en forme." },
+    { q: "Que désigne l'encapsulation ?", o: ["L'ajout d'un en-tête par chaque couche lors de l'envoi", "Le chiffrement des données", "La compression d'un fichier", "Le retrait d'un câble"], e: "Chaque couche ajoute ses informations de contrôle (en-tête) avant de passer la donnée à la couche inférieure." },
+    { q: "Quel est l'ordre correct, de la couche 1 à la couche 7 ?", o: ["Physique, Liaison, Réseau, Transport, Session, Présentation, Application", "Application, Présentation, Session, Transport, Réseau, Liaison, Physique", "Physique, Réseau, Liaison, Transport, Session, Application, Présentation", "Liaison, Physique, Réseau, Transport, Présentation, Session, Application"], e: "De bas en haut : Physique, Liaison de données, Réseau, Transport, Session, Présentation, Application." }
+  ] },
+
+{ id: 7, ch: 3, t: "Modèle TCP/IP et ses couches", short: "Les 4 couches, TCP et UDP, l'encapsulation", sim: 'encaps',
+  def: "Le modèle TCP/IP est celui qui fonctionne réellement sur Internet. Il regroupe les fonctions en 4 couches : Application, Transport, Internet et Accès réseau. Son nom vient de ses deux protocoles principaux, TCP et IP.",
+  pts: [
+    "Application : fournit les services aux logiciels (HTTP, DNS, DHCP, SMTP, FTP).",
+    "Transport : TCP (fiable, avec connexion) ou UDP (rapide, sans connexion). Les applications sont identifiées par des ports.",
+    "Internet : adressage IP et routage des paquets (IP, ICMP).",
+    "Accès réseau : accès au support, adresses MAC (Ethernet, Wi-Fi). Le protocole ARP fait le lien entre les adresses IP et MAC.",
+    "TCP ouvre la connexion en trois temps (SYN, SYN-ACK, ACK), envoie des accusés de réception et retransmet ce qui est perdu.",
+    "UDP n'a ni connexion ni retransmission : il convient à la voix, à la vidéo en direct et aux requêtes DNS."
+  ],
+  table: { h: ["Couche TCP/IP", "Rôle", "Protocoles", "Unité"], r: [
+    ["Application", "Services aux applications", "HTTP, HTTPS, DNS, DHCP, SMTP, FTP", "Données"],
+    ["Transport", "Communication entre applications (ports)", "TCP, UDP", "Segment (TCP) ou datagramme (UDP)"],
+    ["Internet", "Adressage IP et routage", "IP, ICMP", "Paquet"],
+    ["Accès réseau", "Accès au support, adresses MAC", "Ethernet, Wi-Fi", "Trame"]
+  ] },
+  kw: ["TCP", "UDP", "IP", "Port", "Encapsulation", "Connexion en trois temps"],
+  ana: "TCP, c'est le courrier recommandé : accusé de réception, renvoi en cas de perte. UDP, c'est la carte postale : rapide, sans garantie.",
+  res: "Un navigateur télécharge une page : TCP établit la connexion avec le serveur (port 443), IP route les paquets d'un réseau à l'autre, et Ethernet ou Wi-Fi transporte les trames sur chaque lien.",
+  piege: "Certains cours présentent TCP/IP à 5 couches en séparant Physique et Liaison de données. Ici, on utilise le modèle à 4 couches. Et TCP/IP n'est pas un seul protocole : c'est une famille.",
+  simIntro: "Suivez le trajet d'un message web : à chaque étape, une couche ajoute son en-tête. Passez en mode réception pour voir le chemin inverse.",
+  q: [
+    { q: "Combien de couches comporte le modèle TCP/IP (version à 4 couches) ?", o: ["4", "7", "5", "3"], e: "Application, Transport, Internet, Accès réseau." },
+    { q: "Quelle couche TCP/IP utilise les numéros de port ?", o: ["Transport", "Internet", "Accès réseau", "Application"], e: "TCP et UDP identifient les applications par des ports : c'est la couche Transport." },
+    { q: "Quel protocole est fiable et orienté connexion ?", o: ["TCP", "UDP", "IP", "ICMP"], e: "TCP établit une connexion, accuse réception et retransmet. UDP ne le fait pas." },
+    { q: "Pour quel usage UDP est-il particulièrement adapté ?", o: ["La voix sur IP et la vidéo en direct", "Le transfert d'un fichier bancaire", "L'envoi de courriels", "La sauvegarde de base de données"], e: "Pour la voix et la vidéo en direct, la rapidité compte plus que la retransmission des paquets perdus." },
+    { q: "Quelles sont les trois étapes de l'ouverture d'une connexion TCP ?", o: ["SYN, SYN-ACK, ACK", "ACK, SYN, FIN", "REQUEST, REPLY, DONE", "HELLO, OK, START"], e: "C'est la poignée de main en trois temps (three-way handshake)." },
+    { q: "Quelle couche TCP/IP gère l'adressage IP et le routage ?", o: ["Internet", "Transport", "Accès réseau", "Application"], e: "La couche Internet utilise IP pour adresser et router les paquets." },
+    { q: "Quel est l'ordre de l'encapsulation d'un message web à l'émission ?", o: ["Données, segment, paquet, trame, bits", "Bits, trame, paquet, segment, données", "Données, paquet, segment, trame, bits", "Données, trame, paquet, segment, bits"], e: "Application (données), Transport (segment), Internet (paquet), Accès réseau (trame), puis les bits sur le support." }
+  ] },
+
+{ id: 8, ch: 3, t: "Comparaison entre OSI et TCP/IP", short: "Correspondance des couches, points communs et différences", sim: 'map',
+  def: "OSI et TCP/IP décrivent la même réalité avec un découpage différent. OSI est un modèle de référence en 7 couches. TCP/IP est le modèle pratique d'Internet, en 4 couches. Les trois couches hautes d'OSI correspondent à la seule couche Application de TCP/IP, et les deux couches basses à la couche Accès réseau.",
+  pts: [
+    "Application TCP/IP = Application + Présentation + Session (OSI 7, 6, 5).",
+    "Transport = Transport (OSI 4). Internet = Réseau (OSI 3).",
+    "Accès réseau = Liaison de données + Physique (OSI 2, 1).",
+    "OSI a été défini avant les protocoles, comme modèle de référence. TCP/IP est né des protocoles utilisés sur ARPANET, puis a été formalisé.",
+    "OSI sert à enseigner, à normaliser et à dépanner couche par couche. TCP/IP est ce qui fonctionne réellement sur les réseaux.",
+    "Les deux modèles reposent sur des couches et sur l'encapsulation."
+  ],
+  table: { h: ["Critère", "OSI", "TCP/IP"], r: [
+    ["Nombre de couches", "7", "4"],
+    ["Origine", "ISO, modèle de référence", "DARPA et ARPANET, standard de fait"],
+    ["Usage", "Enseignement, dépannage, normalisation", "Fonctionnement réel d'Internet"],
+    ["Couches hautes", "Application, Présentation, Session séparées", "Une seule couche Application"],
+    ["Couches basses", "Liaison de données et Physique séparées", "Une seule couche Accès réseau"]
+  ] },
+  kw: ["Correspondance", "Modèle de référence", "Standard de fait", "ISO", "DARPA"],
+  ana: "OSI est le plan détaillé de l'architecte. TCP/IP est la maison réellement construite : mêmes pièces, mais certaines sont regroupées.",
+  res: "Un technicien dit « problème de couche 2 » (vocabulaire OSI) pour une panne de switch ou d'adresse MAC. Le même problème se situe dans la couche Accès réseau en TCP/IP.",
+  piege: "Ne mettez pas le routeur et le switch dans la même couche : le routeur travaille en couche 3 (Internet), le switch en couche 2 (Accès réseau).",
+  simIntro: "Touchez une couche TCP/IP ou une couche OSI pour voir la correspondance.",
+  q: [
+    { q: "Quelle couche TCP/IP regroupe les couches OSI 5, 6 et 7 ?", o: ["Application", "Transport", "Internet", "Accès réseau"], e: "Session, Présentation et Application forment la couche Application de TCP/IP." },
+    { q: "Quelle couche TCP/IP correspond à la couche Réseau d'OSI ?", o: ["Internet", "Transport", "Accès réseau", "Application"], e: "IP et le routage se trouvent dans la couche Internet, équivalent de la couche 3." },
+    { q: "À quelle couche TCP/IP correspondent la Liaison de données et la Physique d'OSI ?", o: ["Accès réseau", "Internet", "Transport", "Application"], e: "Les deux couches basses d'OSI sont regroupées dans l'Accès réseau." },
+    { q: "Quel modèle est réellement utilisé sur Internet ?", o: ["TCP/IP", "OSI", "Les deux de la même manière", "Aucun des deux"], e: "TCP/IP est le standard de fait. OSI sert surtout de modèle de référence." },
+    { q: "Combien de couches ont respectivement OSI et TCP/IP ?", o: ["7 et 4", "4 et 7", "7 et 5", "5 et 4"], e: "OSI : 7 couches. TCP/IP : 4 couches dans la version la plus courante." },
+    { q: "Pour quel usage le modèle OSI est-il surtout employé ?", o: ["Enseigner et dépanner couche par couche", "Remplacer TCP/IP sur Internet", "Chiffrer les données", "Attribuer les adresses IP"], e: "OSI donne un vocabulaire commun et une méthode de dépannage structurée." },
+    { q: "Où se situe le protocole HTTP dans les deux modèles ?", o: ["Couche 7 OSI et couche Application TCP/IP", "Couche 4 OSI et couche Transport TCP/IP", "Couche 3 OSI et couche Internet TCP/IP", "Couche 2 OSI et couche Accès réseau TCP/IP"], e: "HTTP est un protocole applicatif : couche 7 d'OSI, couche Application de TCP/IP." }
+  ] },
+
+{ id: 9, ch: 3, t: "Protocoles et services réseau", short: "DHCP, DNS, HTTP, SSH, SMTP et les ports", sim: 'pick', scen: SCEN9,
+  def: "Un protocole est un ensemble de règles qui permet à deux équipements de communiquer. Un service réseau est une fonction offerte aux utilisateurs grâce à un ou plusieurs protocoles : attribution d'adresses, résolution de noms, web, messagerie, transfert de fichiers.",
+  pts: [
+    "DHCP attribue automatiquement l'adresse IP, le masque, la passerelle et le serveur DNS.",
+    "DNS traduit un nom de domaine en adresse IP.",
+    "HTTP sert le web. HTTPS ajoute le chiffrement TLS.",
+    "SSH permet l'accès distant sécurisé. Telnet fait la même chose sans chiffrement.",
+    "SMTP envoie les courriels. POP3 et IMAP les reçoivent.",
+    "FTP transfère des fichiers (SFTP en version sécurisée).",
+    "ICMP transporte les messages de contrôle et de diagnostic (ping, tracert). Il n'utilise pas de port.",
+    "Un port identifie le service sur la machine (0 à 65535). Les ports de 0 à 1023 sont les ports bien connus."
+  ],
+  table: { h: ["Protocole", "Port", "Transport", "Rôle"], r: [
+    ["DHCP", "67 / 68", "UDP", "Attribution automatique d'adresses IP"],
+    ["DNS", "53", "UDP et TCP", "Résolution de noms"],
+    ["HTTP", "80", "TCP", "Pages web"],
+    ["HTTPS", "443", "TCP", "Web chiffré"],
+    ["FTP", "20 / 21", "TCP", "Transfert de fichiers"],
+    ["SSH", "22", "TCP", "Accès distant sécurisé"],
+    ["Telnet", "23", "TCP", "Accès distant en clair"],
+    ["SMTP", "25", "TCP", "Envoi de courriels"],
+    ["POP3 / IMAP", "110 / 143", "TCP", "Réception de courriels"]
+  ] },
+  kw: ["Protocole", "Service", "Port", "DHCP", "DNS", "HTTP / HTTPS", "SSH"],
+  ana: "Les protocoles sont les langues et les règles de politesse. DNS est l'annuaire (nom vers numéro). DHCP est l'accueil de l'hôtel qui vous donne un numéro de chambre en arrivant.",
+  res: "Un stagiaire branche son PC : DHCP lui donne une adresse IP, DNS traduit www.exemple.ma en adresse IP, HTTPS charge la page de façon sécurisée.",
+  piege: "Telnet envoie tout en clair, y compris les mots de passe : on lui préfère SSH. De même, HTTP n'est pas chiffré, contrairement à HTTPS.",
+  simIntro: "Pour chaque situation, choisissez le protocole adapté.",
+  q: [
+    { q: "Quel est le port par défaut de HTTPS ?", o: ["443", "80", "22", "25"], e: "HTTPS utilise le port 443, HTTP le port 80." },
+    { q: "Quel protocole attribue automatiquement les adresses IP ?", o: ["DHCP", "DNS", "ARP", "SMTP"], e: "DHCP distribue adresse, masque, passerelle et DNS." },
+    { q: "Quel service traduit un nom de domaine en adresse IP ?", o: ["DNS", "DHCP", "FTP", "ICMP"], e: "DNS est l'annuaire du réseau." },
+    { q: "Pourquoi préférer SSH à Telnet ?", o: ["SSH chiffre les échanges, Telnet les envoie en clair", "SSH est plus ancien", "Telnet est plus sécurisé", "SSH ne demande pas de mot de passe"], e: "Avec Telnet, un mot de passe peut être lu sur le réseau. SSH chiffre la session." },
+    { q: "Quels protocoles servent à recevoir ses courriels ?", o: ["POP3 et IMAP", "SMTP et DNS", "FTP et HTTP", "DHCP et ICMP"], e: "SMTP envoie. POP3 et IMAP permettent de relever les messages." },
+    { q: "À quoi sert un numéro de port ?", o: ["À identifier un service ou une application sur une machine", "À identifier la carte réseau", "À choisir le câble", "À donner la vitesse de la liaison"], e: "L'adresse IP désigne la machine, le port désigne le service sur cette machine." },
+    { q: "Quel protocole utilise la commande ping ?", o: ["ICMP", "TCP", "DHCP", "SMTP"], e: "ping envoie des messages ICMP Echo Request et attend des Echo Reply." }
+  ] },
+
+{ id: 10, ch: 2, t: "Systèmes numériques", short: "Binaire, décimal, hexadécimal et conversions", sim: 'bits',
+  def: "Un ordinateur ne comprend que le binaire (0 et 1). En réseau, on rencontre trois systèmes de numération : le décimal (base 10), le binaire (base 2) et l'hexadécimal (base 16). Savoir passer de l'un à l'autre est indispensable pour comprendre les adresses IP et MAC.",
+  pts: [
+    "Décimal : chiffres de 0 à 9. Binaire : 0 et 1. Hexadécimal : 0 à 9 puis A à F (A = 10, F = 15).",
+    "Un bit vaut 0 ou 1. Un octet (byte) contient 8 bits et prend des valeurs de 0 à 255.",
+    "Poids des bits d'un octet, de gauche à droite : 128, 64, 32, 16, 8, 4, 2, 1.",
+    "Binaire vers décimal : on additionne les poids des bits à 1. Exemple : `11000000` = 128 + 64 = 192.",
+    "Décimal vers binaire : on soustrait les poids de gauche à droite. Exemple : 172 = 128 + 32 + 8 + 4, soit `10101100`.",
+    "Un chiffre hexadécimal représente 4 bits. Un octet s'écrit donc avec 2 chiffres hexadécimaux (`FF` = 255). Les adresses MAC et IPv6 sont en hexadécimal."
+  ],
+  table: { h: ["Décimal", "Binaire (4 bits)", "Hexadécimal"], r: HEX16 },
+  kw: ["Bit", "Octet", "Binaire", "Décimal", "Hexadécimal", "Poids binaire"],
+  ana: "Les poids binaires sont des poids de balance : 128, 64, 32, 16, 8, 4, 2, 1. Pour peser 172 g, on pose les poids 128, 32, 8 et 4 : ce sont les bits à 1.",
+  res: "L'adresse IP 192.168.1.10 s'écrit en binaire 11000000.10101000.00000001.00001010 : quatre octets. L'adresse MAC AA:BB:CC:DD:EE:FF est écrite en hexadécimal.",
+  piege: "Un octet va de 0 à 255, pas de 1 à 256. Et en hexadécimal, `10` vaut 16 en décimal, pas 10.",
+  simIntro: "Touchez les bits pour les allumer ou les éteindre, ou saisissez un nombre. Essayez un défi de conversion.",
+  q: [
+    { q: "Combien de bits contient un octet ?", o: ["8", "4", "16", "32"], e: "1 octet = 8 bits." },
+    { q: "Quelle est la valeur décimale de 11000000 ?", o: ["192", "128", "224", "64"], e: "128 + 64 = 192." },
+    { q: "Comment s'écrit 172 en binaire (sur 8 bits) ?", o: ["10101100", "10101010", "11001100", "10011100"], e: "172 = 128 + 32 + 8 + 4, soit 10101100." },
+    { q: "Quelle est la plus grande valeur d'un octet ?", o: ["255", "256", "127", "128"], e: "11111111 en binaire = 255." },
+    { q: "Quelle est la valeur décimale de FF en hexadécimal ?", o: ["255", "15", "256", "16"], e: "F = 15 : 15 × 16 + 15 = 255." },
+    { q: "Quelle est la valeur décimale de 00001010 ?", o: ["10", "8", "12", "5"], e: "8 + 2 = 10." },
+    { q: "Combien de bits représente un chiffre hexadécimal ?", o: ["4", "2", "8", "16"], e: "16 valeurs possibles = 4 bits. D'où 2 chiffres hexadécimaux pour un octet." },
+    { q: "Comment s'écrit 26 en hexadécimal ?", o: ["1A", "A1", "1F", "26"], e: "26 = 16 + 10 = 1 × 16 + A, soit 1A." }
+  ] },
+
+{ id: 11, ch: 2, t: "Adressage IPv4 et IPv6", short: "Classes, adresses privées, notation IPv6", sim: 'ip',
+  def: "Une adresse IP identifie une interface réseau et permet le routage. IPv4 utilise 32 bits, écrits en 4 octets décimaux. IPv6, créé pour remédier à la pénurie d'adresses IPv4, utilise 128 bits écrits en hexadécimal.",
+  pts: [
+    "IPv4 : 32 bits, 4 octets, par exemple 192.168.1.10. Environ 4,3 milliards d'adresses possibles.",
+    "Une adresse IPv4 comporte une partie réseau et une partie machine, séparées par le masque de sous-réseau (255.255.255.0 ou /24).",
+    "Classes : A (1 à 126, /8), B (128 à 191, /16), C (192 à 223, /24), D (224 à 239, multicast), E (240 à 255, réservée). 127 est réservé au bouclage.",
+    "Adresses privées (RFC 1918) : 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16. Elles ne sont pas routées sur Internet : le NAT les traduit.",
+    "Adresses spéciales : 127.0.0.1 (loopback), 169.254.x.x (APIPA, quand le DHCP ne répond pas), 255.255.255.255 (broadcast limité).",
+    "IPv6 : 128 bits, 8 groupes de 16 bits en hexadécimal, séparés par `:`.",
+    "Abréviation IPv6 : on supprime les zéros de tête de chaque groupe, puis on remplace une seule suite de groupes à zéro par `::`. Exemple : `2001:db8::1`.",
+    "IPv6 n'a pas de broadcast : il utilise l'unicast, le multicast et l'anycast."
+  ],
+  table: { h: ["Classe", "Premier octet", "Masque par défaut", "Usage"], r: [
+    ["A", "1 à 126", "255.0.0.0 (/8)", "Très grands réseaux"],
+    ["B", "128 à 191", "255.255.0.0 (/16)", "Réseaux moyens"],
+    ["C", "192 à 223", "255.255.255.0 (/24)", "Petits réseaux"],
+    ["D", "224 à 239", "Sans objet", "Multicast"],
+    ["E", "240 à 255", "Sans objet", "Expérimental"]
+  ] },
+  kw: ["IPv4", "IPv6", "Masque", "Classes", "Adresse privée", "Loopback", "APIPA", "Multicast"],
+  ana: "L'adresse IP est l'adresse postale d'une maison : la rue et la ville (partie réseau), puis le numéro (partie machine). Le masque indique où s'arrête la rue et où commence le numéro.",
+  res: "Dans une entreprise, les PC reçoivent des adresses privées 192.168.x.x. Quand ils sortent sur Internet, le routeur les traduit en une adresse publique (NAT).",
+  piege: "Une adresse en 169.254.x.x signifie que le PC n'a pas reçu d'adresse du DHCP (APIPA). Et 127.0.0.1 désigne la machine elle-même.",
+  simIntro: "Saisissez une adresse IPv4 pour l'analyser, ou une adresse IPv6 pour la compresser et la développer.",
+  q: [
+    { q: "Quelle est la taille d'une adresse IPv4 ?", o: ["32 bits", "128 bits", "48 bits", "64 bits"], e: "IPv4 : 32 bits. IPv6 : 128 bits. Une adresse MAC : 48 bits." },
+    { q: "Quelle est la taille d'une adresse IPv6 ?", o: ["128 bits", "32 bits", "64 bits", "256 bits"], e: "IPv6 utilise 128 bits." },
+    { q: "Laquelle de ces adresses est privée ?", o: ["172.20.5.4", "172.32.1.1", "11.0.0.1", "192.169.1.1"], e: "La plage privée 172.16.0.0/12 va de 172.16.0.0 à 172.31.255.255. 172.32.x.x et 192.169.x.x sont publiques." },
+    { q: "De quelle classe est l'adresse 150.10.5.1 ?", o: ["B", "A", "C", "D"], e: "Le premier octet 150 est entre 128 et 191 : classe B." },
+    { q: "Que signifie une adresse 169.254.12.7 sur un PC ?", o: ["Le PC n'a pas reçu d'adresse du DHCP (APIPA)", "Le PC utilise une adresse publique", "Le PC est en bouclage", "Le PC est connecté en IPv6"], e: "APIPA : adresse automatique de secours quand aucun serveur DHCP ne répond." },
+    { q: "Quelle est la forme abrégée de 2001:0db8:0000:0000:0000:0000:0000:0001 ?", o: ["2001:db8::1", "2001:db8:1", "2001::db8::1", "2001:db8:0:1"], e: "On supprime les zéros de tête et on remplace la suite de groupes à zéro par :: (une seule fois)." },
+    { q: "Qu'utilise IPv6 à la place du broadcast ?", o: ["Le multicast (et l'anycast)", "Le loopback", "L'APIPA", "Le NAT"], e: "IPv6 n'a pas de broadcast : les messages à un groupe passent par le multicast." }
+  ] },
+
+{ id: 12, ch: 2, t: "Segmentation d'un réseau en sous-réseaux", short: "Masque, bits empruntés, blocs et hôtes", sim: 'subnet',
+  def: "Segmenter (faire du subnetting), c'est découper un réseau IP en plusieurs sous-réseaux plus petits, en empruntant des bits à la partie machine. On obtient moins de diffusion, plus de sécurité et une meilleure organisation.",
+  pts: [
+    "Le masque (ou préfixe CIDR) indique combien de bits sont réservés au réseau : `/24` = 24 bits réseau et 8 bits machine.",
+    "Emprunter n bits à la partie machine donne 2^n sous-réseaux.",
+    "Nombre de machines utilisables par sous-réseau = 2^h − 2 (h = nombre de bits machine). On retire l'adresse réseau et l'adresse de diffusion.",
+    "Adresse réseau : tous les bits machine à 0. Adresse de diffusion (broadcast) : tous les bits machine à 1. Les hôtes utilisables se trouvent entre les deux.",
+    "Taille d'un bloc (le « saut ») = 256 − valeur de l'octet du masque concerné. Exemple : /26, masque 255.255.255.192, blocs de 64.",
+    "Méthode : 1) compter les sous-réseaux voulus, 2) chercher n tel que 2^n ≥ ce nombre, 3) nouveau préfixe = ancien préfixe + n, 4) lister les blocs."
+  ],
+  table: { h: ["Préfixe", "Masque", "Hôtes utilisables", "Taille du bloc"], r: [
+    ["/24", "255.255.255.0", "254", "256"],
+    ["/25", "255.255.255.128", "126", "128"],
+    ["/26", "255.255.255.192", "62", "64"],
+    ["/27", "255.255.255.224", "30", "32"],
+    ["/28", "255.255.255.240", "14", "16"],
+    ["/29", "255.255.255.248", "6", "8"],
+    ["/30", "255.255.255.252", "2", "4"]
+  ] },
+  kw: ["Subnetting", "Masque", "CIDR", "Adresse réseau", "Broadcast", "Bits empruntés", "Hôtes utilisables"],
+  ana: "Découper un terrain en parcelles : chaque parcelle (sous-réseau) a une borne de début (adresse réseau) et une borne de fin (broadcast). Plus on fait de parcelles, plus elles sont petites.",
+  res: "Une école reçoit 192.168.10.0/24 et veut 4 réseaux (administration, labo 1, labo 2, Wi-Fi). Elle emprunte 2 bits : /26, soit 4 sous-réseaux de 62 machines.",
+  piege: "Le nombre d'hôtes utilisables est 2^h − 2, pas 2^h. Et on emprunte des bits à la partie machine, jamais à la partie réseau.",
+  simIntro: "Saisissez une adresse et un préfixe pour obtenir l'adresse réseau, le broadcast et la plage d'hôtes, puis découpez le réseau en sous-réseaux.",
+  q: [
+    { q: "Combien d'hôtes utilisables dans un réseau /24 ?", o: ["254", "256", "255", "253"], e: "2^8 − 2 = 254 : on retire l'adresse réseau et le broadcast." },
+    { q: "Quel est le masque d'un réseau /26 ?", o: ["255.255.255.192", "255.255.255.128", "255.255.255.224", "255.255.255.240"], e: "/26 = 26 bits à 1, soit 255.255.255.11000000 = 255.255.255.192." },
+    { q: "Combien de sous-réseaux obtient-on en empruntant 3 bits ?", o: ["8", "3", "6", "16"], e: "2^3 = 8 sous-réseaux." },
+    { q: "Quelle est l'adresse de broadcast du réseau 192.168.1.64/26 ?", o: ["192.168.1.127", "192.168.1.128", "192.168.1.65", "192.168.1.255"], e: "Le bloc /26 fait 64 adresses : de .64 à .127. Le broadcast est la dernière, .127." },
+    { q: "Quelle est l'adresse réseau de 192.168.1.130/25 ?", o: ["192.168.1.128", "192.168.1.0", "192.168.1.130", "192.168.1.129"], e: "En /25, les blocs font 128 : .0 et .128. L'adresse .130 est dans le bloc qui commence à .128." },
+    { q: "Combien d'hôtes utilisables dans un réseau /28 ?", o: ["14", "16", "30", "6"], e: "4 bits machine : 2^4 − 2 = 14." },
+    { q: "On veut 6 sous-réseaux à partir d'un /24. Combien de bits faut-il emprunter ?", o: ["3", "2", "4", "6"], e: "2^2 = 4 est insuffisant, 2^3 = 8 suffit. Il faut emprunter 3 bits (nouveau préfixe /27)." },
+    { q: "Quelle est la taille du bloc d'un réseau /27 ?", o: ["32 adresses", "64 adresses", "16 adresses", "30 adresses"], e: "5 bits machine : 2^5 = 32 adresses dans le bloc, dont 30 utilisables." }
+  ] },
+
+{ id: 13, ch: 2, t: "VLSM", short: "Masques de longueurs variables, allocation par besoin", sim: 'vlsm',
+  def: "VLSM (Variable Length Subnet Mask) permet d'utiliser des masques de longueurs différentes dans un même réseau. Chaque sous-réseau reçoit la taille juste nécessaire, au lieu d'une taille unique pour tous. On évite ainsi de gaspiller des adresses.",
+  pts: [
+    "Subnetting classique : tous les sous-réseaux ont la même taille. VLSM : la taille est adaptée à chaque besoin.",
+    "Méthode : 1) classer les besoins du plus grand au plus petit, 2) pour chacun, choisir le plus petit préfixe dont 2^h − 2 est supérieur ou égal au besoin, 3) attribuer les blocs les uns après les autres, sans chevauchement, en commençant par le plus grand.",
+    "Chaque bloc commence à une adresse multiple de sa taille (alignement).",
+    "Une liaison point à point entre deux routeurs utilise un /30 (2 hôtes).",
+    "VLSM exige des protocoles de routage qui transmettent le masque (RIPv2, OSPF, EIGRP)."
+  ],
+  table: { h: ["Besoin", "Préfixe", "Réseau", "Plage utilisable", "Broadcast"], r: [
+    ["LAN A : 100 machines", "/25", "192.168.1.0", ".1 à .126", ".127"],
+    ["LAN B : 50 machines", "/26", "192.168.1.128", ".129 à .190", ".191"],
+    ["LAN C : 25 machines", "/27", "192.168.1.192", ".193 à .222", ".223"],
+    ["LAN D : 10 machines", "/28", "192.168.1.224", ".225 à .238", ".239"]
+  ] },
+  kw: ["VLSM", "Préfixe variable", "Plus grand d'abord", "Alignement", "/30", "Gaspillage"],
+  ana: "Au lieu de donner le même lot de tissu à tous les clients, on découpe à la mesure de chaque commande. On commence par les plus grosses pièces, puis on range les chutes pour les petites.",
+  res: "Une entreprise relie trois sites : un LAN de 100 PC, un de 50, un de 25, et deux liaisons entre routeurs. Avec VLSM : /25, /26, /27 pour les LAN et /30 pour chaque liaison.",
+  piege: "On alloue toujours le plus grand besoin en premier. Si on commence par le plus petit, les blocs ne sont plus alignés et on perd des adresses.",
+  simIntro: "Indiquez un réseau de base et vos besoins en machines : la simulation calcule les sous-réseaux, du plus grand au plus petit.",
+  q: [
+    { q: "Que signifie VLSM ?", o: ["Variable Length Subnet Mask", "Virtual LAN Switch Mode", "Very Large Subnet Mask", "Variable Link State Metric"], e: "Masque de sous-réseau de longueur variable." },
+    { q: "Quel est l'avantage principal du VLSM ?", o: ["Il évite le gaspillage d'adresses", "Il chiffre les données", "Il augmente le débit", "Il supprime le besoin de routeur"], e: "Chaque sous-réseau a la taille adaptée à son besoin." },
+    { q: "Par quel besoin commence-t-on l'allocation en VLSM ?", o: ["Le plus grand", "Le plus petit", "Le plus récent", "Peu importe l'ordre"], e: "Commencer par les plus grands blocs garantit l'alignement et évite les pertes." },
+    { q: "Quel préfixe convient à un LAN de 50 machines ?", o: ["/26", "/27", "/25", "/28"], e: "/26 offre 62 hôtes. /27 n'en offre que 30." },
+    { q: "Quel préfixe convient à une liaison point à point entre deux routeurs ?", o: ["/30", "/29", "/24", "/28"], e: "Un /30 offre exactement 2 hôtes utilisables." },
+    { q: "Quel préfixe convient à un LAN de 25 machines ?", o: ["/27", "/28", "/26", "/25"], e: "/27 offre 30 hôtes. /28 n'en offre que 14." },
+    { q: "Après 192.168.1.0/25, quelle est l'adresse réseau suivante disponible ?", o: ["192.168.1.128", "192.168.1.127", "192.168.1.100", "192.168.1.129"], e: "Le /25 occupe de .0 à .127. Le bloc suivant commence à .128." }
+  ] },
+{ id: 14, ch: 1, t: "Ethernet et ses versions", short: "Norme 802.3, débits, câbles cuivre et fibre", sim: 'explorer', exLabel: "Norme Ethernet",
+  items: [
+    { k: "10BASE-T", f: [["Débit", "10 Mb/s"], ["Support", "Paires torsadées (Cat3 ou mieux)"], ["Distance max", "100 m"], ["Connecteur", "RJ45"], ["Usage", "Ancien, abandonné aujourd'hui"]], n: "Première version sur paires torsadées." },
+    { k: "100BASE-TX", f: [["Débit", "100 Mb/s (Fast Ethernet)"], ["Support", "Paires torsadées Cat5"], ["Distance max", "100 m"], ["Connecteur", "RJ45"], ["Usage", "Anciens postes, téléphones IP"]], n: "Utilise 2 paires sur les 4 du câble." },
+    { k: "1000BASE-T", f: [["Débit", "1 Gb/s (Gigabit Ethernet)"], ["Support", "Paires torsadées Cat5e ou mieux"], ["Distance max", "100 m"], ["Connecteur", "RJ45"], ["Usage", "Standard actuel des postes de travail"]], n: "Utilise les 4 paires du câble en même temps." },
+    { k: "10GBASE-T", f: [["Débit", "10 Gb/s"], ["Support", "Paires torsadées Cat6a (Cat6 jusqu'à 55 m)"], ["Distance max", "100 m"], ["Connecteur", "RJ45"], ["Usage", "Serveurs, liaisons entre switchs"]], n: "Gigabit pour les serveurs et le cœur de réseau." },
+    { k: "1000BASE-SX", f: [["Débit", "1 Gb/s"], ["Support", "Fibre optique multimode"], ["Distance max", "Jusqu'à 550 m"], ["Connecteur", "LC ou SC"], ["Usage", "Liaisons entre salles, étages ou bâtiments proches"]], n: "Laser à courte longueur d'onde." },
+    { k: "1000BASE-LX", f: [["Débit", "1 Gb/s"], ["Support", "Fibre optique monomode"], ["Distance max", "5 km"], ["Connecteur", "LC ou SC"], ["Usage", "Liaisons entre bâtiments éloignés"]], n: "Longue distance, insensible aux interférences." }
+  ],
+  def: "Ethernet est la technologie de réseau local la plus répandue. Définie par la norme IEEE 802.3, elle précise le câblage, les signaux et le format des trames. Ses versions se distinguent par le débit, le support (cuivre ou fibre) et la distance maximale.",
+  pts: [
+    "Le nom d'une norme se lit ainsi : débit, `BASE` (transmission en bande de base), support. Exemple : `100BASE-TX` = 100 Mb/s sur paires torsadées.",
+    "Débits : Ethernet 10 Mb/s, Fast Ethernet 100 Mb/s, Gigabit Ethernet 1 Gb/s, 10 Gigabit Ethernet 10 Gb/s.",
+    "Cuivre (paires torsadées, connecteur RJ45) : 100 m maximum entre l'équipement et le switch.",
+    "Fibre optique : plus longues distances et insensible aux interférences. Multimode (SX) sur quelques centaines de mètres, monomode (LX) sur plusieurs kilomètres.",
+    "Catégories de câbles : Cat5 (100 Mb/s), Cat5e (1 Gb/s), Cat6 (1 Gb/s, et 10 Gb/s sur courte distance), Cat6a (10 Gb/s sur 100 m).",
+    "Câble droit (PC vers switch) ou croisé (PC vers PC) : les ports modernes détectent seuls le type de câble (Auto-MDIX)."
+  ],
+  table: { h: ["Norme", "Débit", "Support", "Distance max"], r: [
+    ["10BASE-T", "10 Mb/s", "Paires torsadées Cat3 ou mieux", "100 m"],
+    ["100BASE-TX", "100 Mb/s", "Paires torsadées Cat5", "100 m"],
+    ["1000BASE-T", "1 Gb/s", "Paires torsadées Cat5e", "100 m"],
+    ["10GBASE-T", "10 Gb/s", "Paires torsadées Cat6a", "100 m"],
+    ["1000BASE-SX", "1 Gb/s", "Fibre multimode", "550 m"],
+    ["1000BASE-LX", "1 Gb/s", "Fibre monomode", "5 km"]
+  ] },
+  kw: ["IEEE 802.3", "100BASE-TX", "Cat5e / Cat6", "RJ45", "Fibre multimode", "Fibre monomode", "Auto-MDIX"],
+  ana: "Les versions d'Ethernet sont des routes de capacités différentes : la route de campagne (10 Mb/s), la nationale (100 Mb/s), l'autoroute (1 Gb/s), l'autoroute à six voies (10 Gb/s). Le câble est le revêtement.",
+  res: "Dans une salle de TP : câbles Cat5e en 1000BASE-T vers le switch (moins de 100 m), et fibre monomode entre deux bâtiments éloignés de 2 km.",
+  piege: "Un câble cuivre de 150 m dépasse la limite des 100 m : il faut un switch intermédiaire ou de la fibre. La limite vaut pour un segment de câble, pas pour tout le réseau.",
+  simIntro: "Choisissez une norme Ethernet pour voir son débit, son support et sa distance maximale.",
+  q: [
+    { q: "Quelle norme IEEE définit Ethernet ?", o: ["802.3", "802.11", "802.1Q", "802.15"], e: "802.3 : Ethernet. 802.11 : Wi-Fi. 802.1Q : VLAN. 802.15 : Bluetooth." },
+    { q: "Quelle est la distance maximale d'un segment de câble à paires torsadées ?", o: ["100 m", "10 m", "500 m", "1 km"], e: "100 m entre l'équipement et le switch (ou entre deux switchs)." },
+    { q: "Que signifie 1000BASE-T ?", o: ["1 Gb/s sur paires torsadées", "1 Mb/s sur fibre", "1000 m de câble", "Un câble de catégorie 1000"], e: "Débit 1000 Mb/s, transmission en bande de base, T pour paires torsadées." },
+    { q: "Quel support choisir pour relier deux bâtiments distants de 2 km ?", o: ["Fibre optique monomode", "Câble Cat6 à paires torsadées", "Câble Cat5e", "Câble croisé"], e: "Le cuivre est limité à 100 m. La fibre monomode porte sur plusieurs kilomètres." },
+    { q: "Que signifie « BASE » dans 100BASE-TX ?", o: ["Transmission en bande de base", "Catégorie de base du câble", "Débit de base garanti", "Base de données réseau"], e: "La transmission en bande de base envoie le signal numérique directement, sans modulation." },
+    { q: "Quel débit correspond au Fast Ethernet ?", o: ["100 Mb/s", "10 Mb/s", "1 Gb/s", "10 Gb/s"], e: "Fast Ethernet = 100 Mb/s. Gigabit Ethernet = 1 Gb/s." },
+    { q: "Quel est un avantage de la fibre optique par rapport au cuivre ?", o: ["Elle est insensible aux interférences électromagnétiques et porte plus loin", "Elle est moins chère à installer", "Elle transporte du courant électrique", "Elle se branche sur n'importe quelle prise RJ45"], e: "La fibre transporte de la lumière : pas d'interférences électriques et de longues distances." }
+  ] },
+
+{ id: 15, ch: 1, t: "Adresse MAC Ethernet", short: "48 bits, OUI, unicast, multicast et broadcast", sim: 'macinfo',
+  def: "L'adresse MAC (Media Access Control) est l'identifiant de 48 bits d'une carte réseau, écrit en 12 chiffres hexadécimaux, par exemple 00:1A:2B:3C:4D:5E. Elle sert en couche 2 à adresser les trames dans le réseau local.",
+  pts: [
+    "48 bits = 6 octets = 12 chiffres hexadécimaux, séparés par `:` ou `-` (ou par des points chez Cisco : 001A.2B3C.4D5E).",
+    "Les 3 premiers octets forment l'OUI (Organizationally Unique Identifier), attribué par l'IEEE au constructeur. Les 3 derniers identifient la carte.",
+    "Premier octet, bit I/G (le dernier bit) : 0 = unicast, 1 = multicast ou broadcast.",
+    "Premier octet, bit U/L (l'avant-dernier bit) : 0 = adresse universelle gravée par le constructeur, 1 = adresse administrée localement (modifiée par logiciel).",
+    "Broadcast : `FF:FF:FF:FF:FF:FF`. Multicast IPv4 : commence par `01:00:5E`.",
+    "L'adresse MAC ne dépasse pas le réseau local : elle change à chaque saut de routeur. L'adresse IP, elle, reste la même de bout en bout.",
+    "Commandes : `ipconfig /all` (Windows), `ip link` (Linux), `show interfaces` (Cisco)."
+  ],
+  table: { h: ["Type", "Exemple", "Caractéristique"], r: [
+    ["Unicast universelle", "00:1A:2B:3C:4D:5E", "Une carte réseau précise"],
+    ["Broadcast", "FF:FF:FF:FF:FF:FF", "Toutes les machines du réseau local"],
+    ["Multicast IPv4", "01:00:5E:00:00:05", "Un groupe de machines"],
+    ["Administrée localement", "02:11:22:33:44:55", "Modifiée par logiciel (machine virtuelle, par exemple)"]
+  ] },
+  kw: ["MAC", "OUI", "48 bits", "Unicast", "Multicast", "Broadcast", "Hexadécimal"],
+  ana: "L'adresse MAC est le numéro de série d'une carte réseau, comme le numéro de châssis d'une voiture. L'adresse IP est l'immatriculation : elle change selon l'endroit.",
+  res: "Sur la table MAC d'un switch, des adresses commençant par 00:50:56 appartiennent à VMware : ce sont probablement des machines virtuelles.",
+  piege: "Une adresse MAC peut être modifiée par logiciel : elle ne prouve pas à elle seule l'identité d'une machine. Et elle n'est pas conservée après un routeur.",
+  simIntro: "Saisissez une adresse MAC (ou choisissez un exemple) pour la décomposer : constructeur, carte, unicast ou multicast.",
+  q: [
+    { q: "Quelle est la taille d'une adresse MAC ?", o: ["48 bits", "32 bits", "64 bits", "128 bits"], e: "48 bits, soit 6 octets." },
+    { q: "Combien de chiffres hexadécimaux comporte une adresse MAC ?", o: ["12", "6", "8", "16"], e: "6 octets × 2 chiffres hexadécimaux = 12 chiffres." },
+    { q: "Que désigne l'OUI ?", o: ["Les 3 premiers octets, qui identifient le constructeur", "Les 3 derniers octets, qui identifient la carte", "Le VLAN de la machine", "Le type de câble"], e: "L'OUI est attribué par l'IEEE à chaque constructeur." },
+    { q: "Quelle est l'adresse MAC de broadcast ?", o: ["FF:FF:FF:FF:FF:FF", "00:00:00:00:00:00", "AA:AA:AA:AA:AA:AA", "01:00:5E:00:00:00"], e: "Tous les bits à 1 : la trame est destinée à toutes les machines du réseau local." },
+    { q: "Une adresse commençant par 01:00:5E est :", o: ["Une adresse multicast IPv4", "Une adresse de broadcast", "Une adresse universelle unicast", "Une adresse IPv6"], e: "Le préfixe 01:00:5E est réservé au multicast IPv4. Le bit I/G du premier octet vaut 1." },
+    { q: "Quand un paquet traverse un routeur, que devient l'adresse MAC de destination ?", o: ["Elle est remplacée à chaque saut, l'adresse IP reste la même", "Elle reste inchangée de bout en bout", "Elle est supprimée définitivement", "Elle est remplacée par l'adresse IP"], e: "Le routeur reconstruit une nouvelle trame avec les MAC du lien suivant. L'IP de destination ne change pas." },
+    { q: "Quelle commande affiche l'adresse MAC d'une carte sous Windows ?", o: ["ipconfig /all", "ping", "tracert", "nslookup"], e: "ipconfig /all affiche l'adresse physique de chaque interface." }
+  ] },
+
+{ id: 16, ch: 1, t: "Méthodes de transmission et vitesse de commutation", short: "Duplex, CSMA/CD, débits et modes du switch", sim: 'transfer',
+  def: "Une liaison Ethernet peut transmettre en simplex, en half-duplex ou en full-duplex. La vitesse de commutation dépend du mode de transfert du switch (store-and-forward, cut-through, fragment-free) et du débit du lien.",
+  pts: [
+    "Simplex : un seul sens (télévision hertzienne). Half-duplex : les deux sens, mais pas en même temps (hub, talkie-walkie). Full-duplex : les deux sens simultanément (switch), sans collision.",
+    "Le full-duplex double le débit cumulé : à 100 Mb/s, on envoie 100 Mb/s et on reçoit 100 Mb/s en même temps.",
+    "Types de transmission : unicast (un vers un), multicast (un vers un groupe), broadcast (un vers tous).",
+    "CSMA/CD (half-duplex) : écouter avant d'émettre, détecter la collision, attendre un temps aléatoire, réémettre.",
+    "Auto-négociation : deux équipements s'accordent sur le meilleur débit et le meilleur mode duplex. Un duplex mismatch (un côté half, l'autre full) provoque des collisions tardives et des lenteurs.",
+    "Temps de transfert théorique = taille × 8 ÷ débit. Un transfert de 1 Go dure environ 80 s à 100 Mb/s, et 8 s à 1 Gb/s.",
+    "Vitesse de commutation : cut-through (le plus rapide, il lit la MAC destination), fragment-free (64 octets), store-and-forward (toute la trame, plus lent mais plus sûr)."
+  ],
+  table: { h: ["Mode", "Sens", "Collisions", "Équipement typique"], r: [
+    ["Simplex", "Un seul sens", "Sans objet", "Diffusion télévisuelle"],
+    ["Half-duplex", "Deux sens, en alternance", "Possibles (CSMA/CD)", "Hub"],
+    ["Full-duplex", "Deux sens simultanés", "Aucune", "Switch"]
+  ] },
+  kw: ["Half-duplex", "Full-duplex", "CSMA/CD", "Auto-négociation", "Débit", "Latence", "Duplex mismatch"],
+  ana: "Half-duplex : une route à une voie avec des feux alternés. Full-duplex : une route à deux voies, chacun dans son sens. Store-and-forward : le contrôleur lit tout le colis avant de le laisser partir. Cut-through : il lit l'étiquette et le laisse partir aussitôt.",
+  res: "Un fichier de 1 Go prend environ 80 secondes à 100 Mb/s et environ 8 secondes à 1 Gb/s. Un lien configuré à 100 Mb/s half-duplex d'un côté et full-duplex de l'autre ralentit fortement.",
+  piege: "Le débit annoncé est théorique : le débit réel est plus faible (en-têtes, collisions, charge). Et Mb/s (mégabits) n'est pas Mo/s (mégaoctets) : il faut diviser par 8.",
+  simIntro: "Faites varier le débit, la taille du fichier et le mode duplex pour voir le temps de transfert et le délai de commutation.",
+  q: [
+    { q: "Quel mode permet d'émettre et de recevoir en même temps ?", o: ["Full-duplex", "Half-duplex", "Simplex", "Multicast"], e: "En full-duplex, deux chemins distincts permettent d'émettre et de recevoir simultanément." },
+    { q: "Dans quel mode CSMA/CD est-il nécessaire ?", o: ["Half-duplex", "Full-duplex", "Simplex", "Aucun mode"], e: "Les collisions n'existent qu'en half-duplex, par exemple derrière un hub." },
+    { q: "Combien de temps faut-il, en théorie, pour envoyer 100 Mo à 100 Mb/s ?", o: ["8 secondes", "1 seconde", "80 secondes", "100 secondes"], e: "100 Mo = 800 Mb. 800 ÷ 100 = 8 s." },
+    { q: "Quel mode de commutation est le plus rapide ?", o: ["Cut-through", "Store-and-forward", "Fragment-free", "Tous identiques"], e: "Cut-through transmet dès que la MAC de destination est lue." },
+    { q: "Quel mode de commutation vérifie le FCS avant d'envoyer la trame ?", o: ["Store-and-forward", "Cut-through", "Fragment-free", "Aucun"], e: "Store-and-forward attend la trame entière et contrôle le FCS." },
+    { q: "À quoi sert l'auto-négociation ?", o: ["Choisir un débit et un mode duplex communs aux deux équipements", "Attribuer une adresse IP", "Chiffrer le lien", "Choisir le câble"], e: "Les deux extrémités s'accordent sur les meilleurs paramètres communs." },
+    { q: "Un message destiné à un groupe de machines est de type :", o: ["Multicast", "Unicast", "Broadcast", "Simplex"], e: "Unicast : un seul destinataire. Multicast : un groupe. Broadcast : tout le réseau local." }
+  ] },
+
+{ id: 17, ch: 1, t: "Introduction aux réseaux sans fil (802.11x)", short: "Wi-Fi, bandes 2,4 et 5 GHz, normes, sécurité", sim: 'explorer', exLabel: "Norme Wi-Fi",
+  items: [
+    { k: "802.11b", f: [["Bande", "2,4 GHz"], ["Débit théorique max", "11 Mb/s"], ["Année", "1999"], ["Nom commercial", "Sans objet"]], n: "Première norme grand public, aujourd'hui obsolète." },
+    { k: "802.11a", f: [["Bande", "5 GHz"], ["Débit théorique max", "54 Mb/s"], ["Année", "1999"], ["Nom commercial", "Sans objet"]], n: "Plus rapide mais portée plus courte. Incompatible avec b et g." },
+    { k: "802.11g", f: [["Bande", "2,4 GHz"], ["Débit théorique max", "54 Mb/s"], ["Année", "2003"], ["Nom commercial", "Sans objet"]], n: "Compatible avec 802.11b." },
+    { k: "802.11n", f: [["Bande", "2,4 et 5 GHz"], ["Débit théorique max", "600 Mb/s"], ["Année", "2009"], ["Nom commercial", "Wi-Fi 4"]], n: "Introduit le MIMO (plusieurs antennes)." },
+    { k: "802.11ac", f: [["Bande", "5 GHz"], ["Débit théorique max", "Environ 6,9 Gb/s"], ["Année", "2013"], ["Nom commercial", "Wi-Fi 5"]], n: "Canaux plus larges, MU-MIMO en voie descendante." },
+    { k: "802.11ax", f: [["Bande", "2,4 et 5 GHz (6 GHz avec le Wi-Fi 6E)"], ["Débit théorique max", "9,6 Gb/s"], ["Année", "2019"], ["Nom commercial", "Wi-Fi 6"]], n: "Meilleure gestion d'un grand nombre d'appareils (OFDMA)." }
+  ],
+  def: "Un réseau local sans fil (WLAN) transmet les données par ondes radio, selon la famille de normes IEEE 802.11, appelée Wi-Fi. Les appareils se connectent à un point d'accès (AP), qui relie le monde sans fil au réseau filaire.",
+  pts: [
+    "Deux bandes principales : 2,4 GHz (portée plus grande mais très encombrée) et 5 GHz (plus rapide, portée plus courte). Le Wi-Fi 6E ajoute la bande 6 GHz.",
+    "Normes : 802.11b (11 Mb/s), a et g (54 Mb/s), n (600 Mb/s), ac (plusieurs Gb/s), ax (Wi-Fi 6, jusqu'à 9,6 Gb/s).",
+    "Le Wi-Fi utilise CSMA/CA (évitement de collision) : en radio, on ne peut pas détecter une collision pendant l'émission.",
+    "Éléments : station (client), point d'accès (AP), SSID (nom du réseau), canal.",
+    "Sur 2,4 GHz, seuls 3 canaux ne se chevauchent pas (1, 6 et 11) : on les choisit pour limiter les interférences.",
+    "Sécurité : WEP (obsolète), WPA2 (chiffrement AES), WPA3 (le plus récent). Il ne faut jamais laisser un réseau ouvert pour des données sensibles.",
+    "Modes : infrastructure (via un point d'accès) et ad hoc (d'appareil à appareil)."
+  ],
+  table: { h: ["Norme", "Nom Wi-Fi", "Bande", "Débit théorique max", "Année"], r: [
+    ["802.11b", "Sans objet", "2,4 GHz", "11 Mb/s", "1999"],
+    ["802.11a", "Sans objet", "5 GHz", "54 Mb/s", "1999"],
+    ["802.11g", "Sans objet", "2,4 GHz", "54 Mb/s", "2003"],
+    ["802.11n", "Wi-Fi 4", "2,4 et 5 GHz", "600 Mb/s", "2009"],
+    ["802.11ac", "Wi-Fi 5", "5 GHz", "Environ 6,9 Gb/s", "2013"],
+    ["802.11ax", "Wi-Fi 6", "2,4 et 5 GHz (6 GHz en 6E)", "9,6 Gb/s", "2019"]
+  ] },
+  kw: ["802.11", "Wi-Fi", "SSID", "Point d'accès", "CSMA/CA", "2,4 GHz", "5 GHz", "WPA2 / WPA3"],
+  ana: "Les bandes de fréquences sont des routes : la 2,4 GHz est une route longue mais encombrée, la 5 GHz est une route plus rapide mais plus courte.",
+  res: "Dans un lycée, des bornes Wi-Fi alimentées en PoE au plafond diffusent le SSID « Eleves » en 5 GHz pour le débit, et en 2,4 GHz pour les anciens appareils.",
+  piege: "Le débit annoncé est partagé entre tous les utilisateurs de la borne et diminue avec la distance et les obstacles. Et en Wi-Fi on évite les collisions (CSMA/CA), on ne les détecte pas.",
+  simIntro: "Choisissez une norme Wi-Fi pour voir sa bande, son débit et son année.",
+  q: [
+    { q: "Quelle norme IEEE définit le Wi-Fi ?", o: ["802.11", "802.3", "802.1Q", "802.15"], e: "802.11 : réseaux locaux sans fil. 802.3 : Ethernet." },
+    { q: "Quelle bande offre la plus grande portée mais est la plus encombrée ?", o: ["2,4 GHz", "5 GHz", "6 GHz", "60 GHz"], e: "Le 2,4 GHz traverse mieux les obstacles, mais il est partagé avec de nombreux appareils." },
+    { q: "Quelle méthode d'accès au support utilise le Wi-Fi ?", o: ["CSMA/CA", "CSMA/CD", "Le jeton", "Aucune"], e: "En radio, on évite les collisions (CA = Collision Avoidance) car on ne peut pas les détecter." },
+    { q: "Que désigne le SSID ?", o: ["Le nom du réseau sans fil", "L'adresse MAC du point d'accès", "Le mot de passe du réseau", "Le canal radio"], e: "Le SSID est le nom du réseau Wi-Fi affiché sur les appareils." },
+    { q: "Quels canaux 2,4 GHz ne se chevauchent pas ?", o: ["1, 6 et 11", "1, 2 et 3", "2, 4 et 6", "5, 6 et 7"], e: "Ces trois canaux sont suffisamment espacés pour ne pas interférer entre eux." },
+    { q: "Quelle est la norme de sécurité Wi-Fi la plus récente ?", o: ["WPA3", "WEP", "WPA", "Aucune : réseau ouvert"], e: "WPA3 succède à WPA2. WEP est obsolète et facilement cassé." },
+    { q: "Quelle norme est commercialisée sous le nom Wi-Fi 6 ?", o: ["802.11ax", "802.11n", "802.11ac", "802.11g"], e: "802.11n : Wi-Fi 4, 802.11ac : Wi-Fi 5, 802.11ax : Wi-Fi 6." },
+    { q: "Quel équipement relie les clients sans fil au réseau filaire ?", o: ["Le point d'accès", "Le hub", "Le répéteur optique", "Le modem câble"], e: "Le point d'accès fait le pont entre le Wi-Fi et le LAN Ethernet." }
+  ] },
+
+{ id: 18, ch: 0, t: "Les composants d'un réseau informatique", short: "Terminaux, serveurs, équipements, supports et logiciels", sim: 'explorer', exLabel: "Composant",
+  items: [
+    { k: "Terminal", f: [["Rôle", "Émet ou reçoit des données pour l'utilisateur"], ["Couche OSI", "7 (application)"], ["Exemples", "PC, smartphone, imprimante réseau, caméra IP"]], n: "Aussi appelé hôte ou client." },
+    { k: "Serveur", f: [["Rôle", "Fournit un service aux clients"], ["Couche OSI", "7 (application)"], ["Exemples", "Serveur de fichiers, web, messagerie, DHCP, DNS"]], n: "Il reste en écoute et répond aux demandes des clients." },
+    { k: "Carte réseau", f: [["Rôle", "Relie la machine au réseau, porte l'adresse MAC"], ["Couche OSI", "1 et 2"], ["Exemples", "Carte Ethernet RJ45, carte Wi-Fi"]], n: "En anglais : NIC (Network Interface Card)." },
+    { k: "Switch", f: [["Rôle", "Relie les machines d'un même réseau local"], ["Couche OSI", "2 (liaison de données)"], ["Exemples", "Switch 24 ports, switch PoE"]], n: "Il décide avec les adresses MAC." },
+    { k: "Routeur", f: [["Rôle", "Relie des réseaux différents et choisit le chemin"], ["Couche OSI", "3 (réseau)"], ["Exemples", "Routeur d'agence, box Internet"]], n: "Il décide avec les adresses IP." },
+    { k: "Point d'accès", f: [["Rôle", "Relie les appareils Wi-Fi au réseau filaire"], ["Couche OSI", "1 et 2"], ["Exemples", "Borne Wi-Fi au plafond"]], n: "Souvent alimenté en PoE." },
+    { k: "Pare-feu", f: [["Rôle", "Filtre le trafic selon des règles de sécurité"], ["Couche OSI", "3 à 7 selon le type"], ["Exemples", "Pare-feu matériel, pare-feu logiciel"]], n: "Placé entre le réseau interne et Internet." },
+    { k: "Support", f: [["Rôle", "Transporte les signaux"], ["Couche OSI", "1 (physique)"], ["Exemples", "Paires torsadées, fibre optique, ondes radio"]], n: "Le choix dépend de la distance, du débit et de l'environnement." }
+  ],
+  def: "Un réseau informatique relie des équipements pour qu'ils échangent des données et partagent des ressources. Il se compose de quatre familles d'éléments : les terminaux, les équipements d'interconnexion, les supports de transmission et les logiciels (protocoles et services).",
+  pts: [
+    "Terminaux (hôtes) : PC, serveurs, imprimantes, smartphones, caméras IP. Ils émettent ou reçoivent des données.",
+    "Serveur : fournit un service (fichiers, web, messagerie). Client : demande ce service.",
+    "Équipements d'interconnexion : switch (relie les machines d'un même réseau local), routeur (relie des réseaux différents), point d'accès Wi-Fi, pare-feu (filtre le trafic), modem (relie à l'opérateur).",
+    "Supports : câble à paires torsadées (cuivre), fibre optique, ondes radio (Wi-Fi, 4G, 5G).",
+    "Carte réseau (NIC) : interface de chaque machine, elle porte l'adresse MAC.",
+    "Logiciels : système d'exploitation réseau, protocoles (TCP/IP), services (DHCP, DNS).",
+    "Ressources partagées : fichiers, imprimantes, applications, connexion Internet."
+  ],
+  table: { h: ["Composant", "Rôle", "Couche OSI"], r: [
+    ["Carte réseau (NIC)", "Relie la machine au réseau, porte l'adresse MAC", "1 et 2"],
+    ["Câble, fibre, radio", "Transporte les signaux", "1"],
+    ["Hub", "Répète les signaux (obsolète)", "1"],
+    ["Switch", "Commute les trames dans le réseau local", "2"],
+    ["Point d'accès", "Relie les clients Wi-Fi au réseau local", "1 et 2"],
+    ["Routeur", "Relie des réseaux et choisit le chemin", "3"],
+    ["Pare-feu", "Filtre le trafic selon des règles", "3 à 7"],
+    ["Serveur", "Fournit des services", "7"]
+  ] },
+  kw: ["Terminal", "Serveur", "Switch", "Routeur", "Pare-feu", "Support", "Carte réseau (NIC)", "Ressource partagée"],
+  ana: "Un réseau routier : les voitures sont les données, les routes sont les supports, les carrefours sont les switchs et les routeurs, les panneaux sont les protocoles.",
+  res: "Une salle de TP : 20 PC (terminaux) reliés par des câbles Cat5e à un switch, lui-même relié à un routeur qui donne accès à Internet. Un serveur héberge les fichiers des stagiaires.",
+  piege: "Ne confondez pas switch et routeur : le switch relie des machines d'un même réseau, le routeur relie des réseaux différents.",
+  simIntro: "Touchez un composant pour voir son rôle et sa couche OSI.",
+  q: [
+    { q: "Quel équipement relie des réseaux différents ?", o: ["Le routeur", "Le switch", "Le hub", "La carte réseau"], e: "Le routeur travaille avec les adresses IP et relie des réseaux distincts." },
+    { q: "Quel équipement relie les machines d'un même réseau local ?", o: ["Le switch", "Le routeur", "Le modem", "Le pare-feu"], e: "Le switch commute les trames entre les machines d'un même LAN." },
+    { q: "Qu'est-ce qu'un serveur ?", o: ["Une machine qui fournit un service aux clients", "Un câble réseau", "Un équipement qui répète les signaux", "Un logiciel de dessin"], e: "Le serveur reste en écoute et répond aux demandes des clients." },
+    { q: "Quel composant filtre le trafic selon des règles de sécurité ?", o: ["Le pare-feu", "Le hub", "Le répéteur", "Le point d'accès"], e: "Le pare-feu autorise ou bloque les flux selon des règles." },
+    { q: "Quel est le rôle de la carte réseau (NIC) ?", o: ["Relier la machine au réseau et porter l'adresse MAC", "Router les paquets", "Attribuer les adresses IP", "Alimenter le switch"], e: "La carte réseau est l'interface de la machine ; elle possède l'adresse MAC." },
+    { q: "Quel support est insensible aux interférences électromagnétiques ?", o: ["La fibre optique", "Le câble à paires torsadées", "Le câble coaxial", "Les ondes radio"], e: "La fibre transporte de la lumière, pas du courant électrique." },
+    { q: "Quel équipement relie des clients Wi-Fi au réseau filaire ?", o: ["Le point d'accès", "Le hub", "Le pare-feu", "Le modem optique"], e: "Le point d'accès fait le pont entre le Wi-Fi et le réseau Ethernet." }
+  ] },
+
+{ id: 19, ch: 0, t: "La catégorisation des types de réseaux", short: "PAN, LAN, MAN, WAN, client-serveur, intranet", sim: 'pick',
+  scen: [
+    { s: "Un casque sans fil se connecte à un téléphone, à un mètre de distance.", o: ["PAN", "LAN", "MAN", "WAN"], a: 0, e: "PAN : réseau personnel, quelques mètres (Bluetooth)." },
+    { s: "Les 25 PC d'une salle de TP sont reliés par un switch.", o: ["PAN", "LAN", "MAN", "WAN"], a: 1, e: "LAN : réseau local, limité à un bâtiment ou un campus." },
+    { s: "Une commune relie ses écoles et ses bureaux administratifs dans toute la ville par fibre optique.", o: ["PAN", "LAN", "MAN", "WAN"], a: 2, e: "MAN : réseau métropolitain, à l'échelle d'une ville." },
+    { s: "Une banque relie ses agences de Fès, Casablanca et Tanger.", o: ["PAN", "LAN", "MAN", "WAN"], a: 3, e: "WAN : réseau étendu, sur de grandes distances, avec des liaisons d'opérateur." },
+    { s: "Un cabinet de 5 personnes partage des fichiers sans serveur dédié : chaque poste partage ses propres dossiers.", o: ["Poste à poste", "Client-serveur", "Intranet", "Extranet"], a: 0, e: "Dans un réseau poste à poste, chaque machine est à la fois client et serveur." },
+    { s: "Une entreprise ouvre une partie de son réseau privé à ses fournisseurs.", o: ["Extranet", "Intranet", "Internet", "PAN"], a: 0, e: "Un extranet est un intranet ouvert à des partenaires externes." }
+  ],
+  def: "On classe les réseaux selon leur étendue géographique (PAN, LAN, MAN, WAN), selon leur mode de fonctionnement (client-serveur ou poste à poste) et selon leur accessibilité (Internet, intranet, extranet).",
+  pts: [
+    "PAN (Personal Area Network) : quelques mètres autour d'une personne (Bluetooth, USB).",
+    "LAN (Local Area Network) : un bâtiment ou un campus, avec des débits élevés, géré par l'organisation. Un WLAN est un LAN sans fil.",
+    "MAN (Metropolitan Area Network) : une ville ou une agglomération, il relie plusieurs LAN.",
+    "WAN (Wide Area Network) : de très grandes distances, du pays au monde entier. Internet est le plus grand WAN. Les liaisons sont louées à un opérateur.",
+    "Poste à poste (peer-to-peer) : chaque machine est à la fois client et serveur. Simple, adapté à moins de 10 postes, peu sécurisé.",
+    "Client-serveur : des serveurs centralisés fournissent les services. Administration et sécurité sont centralisées.",
+    "Internet : réseau public mondial. Intranet : réseau privé d'une organisation. Extranet : intranet ouvert à des partenaires. VPN : tunnel chiffré à travers un réseau public.",
+    "SAN (Storage Area Network) : réseau dédié au stockage des serveurs."
+  ],
+  table: { h: ["Type", "Étendue", "Exemple", "Technologie typique"], r: [
+    ["PAN", "Quelques mètres", "Casque Bluetooth et téléphone", "Bluetooth, USB"],
+    ["LAN", "Bâtiment, campus", "Salle de TP, entreprise", "Ethernet, Wi-Fi"],
+    ["MAN", "Ville", "Réseau d'une commune", "Fibre, liens d'opérateur"],
+    ["WAN", "Pays, monde", "Internet, liaison entre agences", "Fibre, 4G / 5G, VPN"]
+  ] },
+  kw: ["PAN", "LAN", "MAN", "WAN", "Poste à poste", "Client-serveur", "Intranet", "Extranet", "VPN"],
+  ana: "Du plus petit au plus grand : une pièce (PAN), un immeuble (LAN), une ville (MAN), un pays ou le monde (WAN).",
+  res: "Un lycée a un LAN dans chaque bâtiment, relie ses bâtiments en MAN par fibre, et accède à Internet (WAN) par un opérateur. Les agences d'une banque communiquent à travers un VPN.",
+  piege: "Internet n'est pas le web : le web est un service (HTTP) qui fonctionne sur Internet. Et un intranet n'est pas accessible depuis l'extérieur, sauf par VPN.",
+  simIntro: "Pour chaque situation, choisissez le bon type de réseau.",
+  q: [
+    { q: "Quel type de réseau couvre un bâtiment ou un campus ?", o: ["LAN", "WAN", "PAN", "MAN"], e: "LAN : Local Area Network." },
+    { q: "Quel est le plus grand réseau public mondial ?", o: ["Internet", "Un intranet", "Un LAN", "Un extranet"], e: "Internet relie des milliers de réseaux dans le monde entier : c'est un WAN." },
+    { q: "Que signifie WAN ?", o: ["Wide Area Network", "Wireless Area Network", "Web Access Node", "Wide Antenna Network"], e: "Réseau étendu, sur de grandes distances." },
+    { q: "Dans un réseau poste à poste :", o: ["Chaque machine est à la fois client et serveur", "Un serveur central gère tout", "Aucune machine ne partage de ressource", "Les machines ne peuvent pas communiquer"], e: "Pas de serveur dédié : chaque poste peut offrir et demander des ressources." },
+    { q: "Quel est l'avantage principal du modèle client-serveur ?", o: ["Administration et sécurité centralisées", "Il ne coûte rien", "Il ne nécessite aucun réseau", "Il fonctionne sans serveur"], e: "Les serveurs centralisent les services, les comptes et la sécurité." },
+    { q: "Qu'est-ce qu'un extranet ?", o: ["Une partie d'un réseau privé ouverte à des partenaires externes", "Un réseau personnel", "Un autre nom d'Internet", "Un réseau sans fil"], e: "Intranet = interne. Extranet = intranet partagé avec des partenaires choisis." },
+    { q: "Qu'est-ce qu'un VPN ?", o: ["Un tunnel chiffré à travers un réseau public", "Un câble réseau", "Un type de switch", "Une adresse IP privée"], e: "Le VPN (Virtual Private Network) protège les échanges sur un réseau non sûr, comme Internet." }
+  ] },
+
+{ id: 20, ch: 0, t: "Les topologies réseau et critères de sélection", short: "Bus, étoile, anneau, maillée, arbre et pannes", sim: 'topo',
+  def: "La topologie décrit la forme d'un réseau. La topologie physique est la disposition réelle des câbles et des équipements. La topologie logique est la façon dont les données circulent. Le choix dépend du coût, de la fiabilité, de l'évolutivité et de la facilité de dépannage.",
+  pts: [
+    "Bus : un seul câble principal pour tous. Peu coûteux, mais une coupure du câble arrête le réseau. Obsolète.",
+    "Étoile : tous les équipements sont reliés à un switch central. C'est la topologie la plus utilisée en LAN : facile à dépanner et à étendre. Le switch central est un point unique de défaillance.",
+    "Anneau : chaque équipement est relié à ses deux voisins. Le trafic est ordonné, mais une panne ou une coupure rompt un anneau simple (le double anneau y résiste).",
+    "Maillée (complète ou partielle) : plusieurs chemins entre les équipements. Très fiable (cœur de réseau, WAN), mais coûteuse et complexe : un maillage complet de n équipements demande n(n − 1) ÷ 2 liaisons.",
+    "Arbre (hiérarchique) : des étoiles reliées entre elles. Fréquente dans les réseaux d'entreprise (accès, distribution, cœur).",
+    "Hybride : combinaison de plusieurs topologies.",
+    "Critères de choix : coût, fiabilité, évolutivité, performances, facilité d'administration et de dépannage, taille du réseau."
+  ],
+  table: { h: ["Topologie", "Avantage", "Inconvénient", "Usage"], r: [
+    ["Bus", "Peu de câble, simple", "Une coupure arrête tout", "Obsolète"],
+    ["Étoile", "Facile à dépanner et à étendre", "Dépend du switch central", "LAN actuels"],
+    ["Anneau", "Accès équitable au réseau", "Panne ou coupure : anneau rompu", "Anciens LAN, réseaux d'opérateurs"],
+    ["Maillée", "Très fiable, plusieurs chemins", "Coût et complexité", "WAN, cœur de réseau"],
+    ["Arbre", "Hiérarchique, évolutive", "Un switch en panne isole sa branche", "Réseaux d'entreprise"]
+  ] },
+  kw: ["Topologie physique", "Topologie logique", "Étoile", "Bus", "Anneau", "Maillée", "Point unique de défaillance"],
+  ana: "Étoile : une roue de vélo, dont le moyeu est le switch. Bus : une rue unique avec des maisons de chaque côté. Maillée : un quartier où plusieurs routes relient chaque rue.",
+  res: "Dans un lycée, chaque salle est une étoile (PC vers switch), les switchs sont reliés en arbre au switch de cœur, et deux liens redondants vers le cœur ajoutent un maillage partiel.",
+  piege: "La topologie physique et la topologie logique peuvent différer : un réseau Ethernet câblé en étoile autour d'un hub fonctionne logiquement comme un bus.",
+  simIntro: "Choisissez une topologie, puis simulez une panne pour voir son effet sur le réseau.",
+  q: [
+    { q: "Quelle topologie est la plus utilisée dans les LAN actuels ?", o: ["Étoile", "Bus", "Anneau", "Maillée complète"], e: "L'étoile autour d'un switch est facile à câbler, à dépanner et à étendre." },
+    { q: "Quel est le point faible de la topologie en étoile ?", o: ["Le switch central, point unique de défaillance", "Le câble principal", "Le nombre de machines", "L'adresse MAC"], e: "Si le switch central tombe, toutes les machines perdent le réseau." },
+    { q: "Que se passe-t-il quand le câble principal d'un bus est coupé ?", o: ["Le réseau est coupé ou fortement perturbé", "Rien, les données passent par un autre chemin", "Seul un PC est isolé", "Le réseau devient plus rapide"], e: "Le bus n'a qu'un seul chemin : la coupure sépare les machines." },
+    { q: "Combien de liaisons faut-il pour un maillage complet de 5 équipements ?", o: ["10", "5", "20", "25"], e: "n(n − 1) ÷ 2 = 5 × 4 ÷ 2 = 10." },
+    { q: "Quelle topologie offre plusieurs chemins entre les équipements ?", o: ["Maillée", "Bus", "Étoile", "Anneau simple"], e: "Le maillage permet de contourner une liaison ou un équipement en panne." },
+    { q: "Que décrit la topologie logique ?", o: ["La façon dont les données circulent", "La disposition des câbles dans les murs", "La couleur des câbles", "Le nombre de ports d'un switch"], e: "La topologie physique est la forme réelle, la topologie logique est le chemin des données." },
+    { q: "Quels sont des critères de choix d'une topologie ?", o: ["Coût, fiabilité, évolutivité et facilité de dépannage", "Couleur des câbles et marque des PC", "Nombre de prises électriques", "Taille des écrans"], e: "On compare le coût, la tolérance aux pannes, la possibilité d'extension et la maintenance." },
+    { q: "Que combine une topologie en arbre ?", o: ["Des étoiles reliées de façon hiérarchique", "Des bus en anneau", "Des liaisons Wi-Fi uniquement", "Un seul switch pour tous"], e: "Un switch de cœur relie des switchs de distribution, qui relient des switchs d'accès." }
+  ] },
+
+{ id: 21, ch: 0, t: "Les tendances des réseaux", short: "Cloud, IoT, BYOD, SDN, 5G, zero trust", sim: 'explorer', exLabel: "Tendance",
+  items: [
+    { k: "Cloud", f: [["Principe", "Serveurs et services loués à la demande via Internet"], ["Avantage", "Pas de matériel à acheter, capacité extensible"], ["Défi", "Dépendance à la connexion et à un fournisseur"], ["Exemple", "Messagerie et stockage en ligne"]], n: "Trois modèles : IaaS, PaaS, SaaS." },
+    { k: "IoT", f: [["Principe", "Des objets connectés (capteurs, caméras) reliés au réseau"], ["Avantage", "Supervision et automatisation à distance"], ["Défi", "Des milliers d'appareils, souvent peu sécurisés"], ["Exemple", "Caméras IP, thermostats, capteurs industriels"]], n: "Internet des objets." },
+    { k: "BYOD", f: [["Principe", "Les utilisateurs apportent leurs appareils personnels"], ["Avantage", "Confort et réduction des coûts"], ["Défi", "Authentification et séparation du trafic"], ["Exemple", "Smartphones des élèves sur un VLAN dédié"]], n: "Bring Your Own Device." },
+    { k: "SDN", f: [["Principe", "Séparer le plan de contrôle (décisions) du plan de données (transfert)"], ["Avantage", "Gestion centralisée et programmable du réseau"], ["Défi", "Sécuriser et rendre fiable le contrôleur"], ["Exemple", "Contrôleur OpenDaylight et protocole OpenFlow"]], n: "Réseau défini par logiciel." },
+    { k: "5G", f: [["Principe", "Réseau mobile à très haut débit et faible latence"], ["Avantage", "Mobilité, débits élevés, grand nombre d'objets"], ["Défi", "Couverture, coût des infrastructures"], ["Exemple", "Accès Internet fixe sans fil, objets connectés mobiles"]], n: "Cinquième génération de réseaux mobiles." },
+    { k: "Zero trust", f: [["Principe", "Ne faire confiance à aucun utilisateur ni appareil par défaut"], ["Avantage", "Limite les dégâts en cas d'intrusion"], ["Défi", "Mise en œuvre complexe, gestion des identités"], ["Exemple", "Authentification forte et segmentation du réseau"]], n: "« Ne jamais faire confiance, toujours vérifier »." },
+    { k: "IA et automatisation", f: [["Principe", "Configurer et superviser le réseau par scripts et analyses automatiques"], ["Avantage", "Moins d'erreurs, détection rapide des pannes"], ["Défi", "Compétences en scripts (Python, Ansible), qualité des données"], ["Exemple", "Déploiement automatique de configurations de switchs"]], n: "Réseaux pilotés par des outils d'automatisation." }
+  ],
+  def: "Les réseaux évoluent vers plus de mobilité, de virtualisation et d'automatisation. Les grandes tendances sont le cloud, l'Internet des objets, le BYOD, la virtualisation et les réseaux définis par logiciel (SDN), la 5G, la sécurité « zero trust » et l'automatisation.",
+  pts: [
+    "Cloud computing : serveurs et services loués à la demande par Internet (IaaS, PaaS, SaaS).",
+    "IoT (Internet des objets) : des milliers de capteurs, de caméras et d'objets connectés, souvent peu sécurisés.",
+    "BYOD (Bring Your Own Device) : les utilisateurs emploient leurs appareils personnels sur le réseau ; cela exige authentification et segmentation.",
+    "Virtualisation : plusieurs machines ou équipements virtuels sur un même matériel.",
+    "SDN : le plan de contrôle est séparé du plan de données et centralisé dans un contrôleur (OpenDaylight, par exemple) qui programme les switchs (OpenFlow).",
+    "5G et Wi-Fi 6 : débits élevés, faible latence, mobilité.",
+    "Cybersécurité : zero trust (« ne jamais faire confiance, toujours vérifier »), chiffrement, segmentation.",
+    "Automatisation et IA : configuration par scripts (Python, Ansible), supervision prédictive.",
+    "Edge computing : traiter les données près de leur source pour réduire la latence."
+  ],
+  kw: ["Cloud", "IoT", "BYOD", "SDN", "OpenFlow", "5G", "Zero trust", "Automatisation"],
+  ana: "Le cloud, c'est louer l'électricité du réseau plutôt que posséder la centrale. Le SDN, c'est un chef d'orchestre (le contrôleur) qui dirige tous les musiciens (les switchs) depuis un même pupitre.",
+  res: "Un lycée connecte les élèves en BYOD sur un VLAN isolé, héberge sa messagerie dans le cloud et pilote ses switchs avec un contrôleur.",
+  piege: "Plus il y a d'appareils connectés (IoT, BYOD), plus la surface d'attaque augmente : chaque tendance demande de nouvelles mesures de sécurité. Et le cloud ne supprime pas le réseau : il en dépend.",
+  simIntro: "Touchez une tendance pour voir son principe, son avantage et son défi.",
+  q: [
+    { q: "Que signifie BYOD ?", o: ["Bring Your Own Device", "Build Your Own Domain", "Backup Your Online Data", "Browse Your Own Directory"], e: "Utiliser ses appareils personnels sur le réseau de l'organisation." },
+    { q: "Quel est le principe central du SDN ?", o: ["Séparer le plan de contrôle du plan de données", "Remplacer tous les câbles par du Wi-Fi", "Supprimer les adresses IP", "Chiffrer toutes les trames"], e: "Les décisions sont prises par un contrôleur central, les équipements se contentent de transférer." },
+    { q: "Lequel de ces outils est un contrôleur SDN ?", o: ["OpenDaylight", "Wireshark", "Packet Tracer", "OpenSSH"], e: "OpenDaylight est un contrôleur SDN open source. Wireshark analyse le trafic, Packet Tracer simule des réseaux." },
+    { q: "Qu'est-ce que le cloud computing ?", o: ["Utiliser des serveurs et des services à la demande via Internet", "Installer un serveur dans chaque salle", "Relier des PC par Bluetooth", "Remplacer le DNS"], e: "Les ressources informatiques sont louées et accessibles par Internet." },
+    { q: "Que désigne l'IoT ?", o: ["La connexion d'objets (capteurs, caméras) à Internet", "Un protocole de routage", "Un type de câble", "Un système d'exploitation"], e: "L'Internet des objets relie des appareils du quotidien ou industriels au réseau." },
+    { q: "Que prône le modèle zero trust ?", o: ["Ne faire confiance à personne par défaut et vérifier à chaque accès", "Faire confiance à tout appareil du réseau interne", "Supprimer les mots de passe", "Ouvrir tous les ports"], e: "Chaque utilisateur et chaque appareil est authentifié et autorisé à chaque accès." },
+    { q: "Quel protocole relie un contrôleur SDN aux switchs ?", o: ["OpenFlow", "ARP", "DHCP", "SMTP"], e: "OpenFlow est un protocole SDN qui permet au contrôleur de programmer les tables des switchs." }
+  ] }
+];
+
+/* ---------- Dessin SVG ---------- */
+function nodeSVG(x, y, l1, l2, cls, w, h) {
+  w = w || 84; h = h || 40;
+  return `<g class="n ${cls || ''}"><rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="6"/>` +
+    (l2 ? `<text x="${x}" y="${y - 3}" text-anchor="middle">${l1}</text><text class="sub" x="${x}" y="${y + 12}" text-anchor="middle">${l2}</text>`
+        : `<text x="${x}" y="${y + 4}" text-anchor="middle">${l1}</text>`) + `</g>`;
+}
+function devSVG(x, y, l, w, h, cls) {
+  w = w || 110; h = h || 34;
+  return `<g class="dev ${cls || ''}"><rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="6"/><text x="${x}" y="${y + 4}" text-anchor="middle">${l}</text></g>`;
+}
+function lineSVG(x1, y1, x2, y2, c) { return `<line class="link ${c || ''}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; }
+function legend(items) { return `<div class="leg">${items.map(i => `<span><i style="background:var(${i[0]})"></i>${i[1]}</span>`).join('')}</div>`; }
+
+/* ---------- Simulation 1 : hub contre switch ---------- */
+function simHub(el) {
+  let type = 'hub', sent = false;
+  const P = [[70, 34], [410, 34], [70, 186], [410, 186]], D = [240, 110];
+  function draw() {
+    let links = '', nodes = '';
+    P.forEach((p, i) => {
+      let lc = '', nc = '';
+      if (sent) {
+        if (i === 0) { lc = 'src'; nc = 'src'; }
+        else if (i === 2) { lc = 'out'; nc = 'on'; }
+        else if (type === 'hub') { lc = 'waste'; nc = 'waste'; }
+      }
+      links += lineSVG(D[0], D[1], p[0], p[1], lc);
+      nodes += nodeSVG(p[0], p[1], 'PC' + (i + 1), '', nc);
+    });
+    const svg = `<svg class="map" viewBox="0 0 480 220" role="img" aria-label="PC1 envoie une trame à PC3 à travers un ${type === 'hub' ? 'hub' : 'switch'}">${links}${devSVG(D[0], D[1], type === 'hub' ? 'HUB' : 'SWITCH')}${nodes}</svg>`;
+    let msg;
+    if (!sent) msg = type === 'hub' ? "Un hub relie 4 PC. Cliquez sur « Envoyer » pour voir où va la trame." : "Un switch relie 4 PC. Sa table MAC est déjà remplie. Cliquez sur « Envoyer » pour voir où va la trame.";
+    else if (type === 'hub') msg = "Le hub répète le signal sur tous ses ports : PC2 et PC4 reçoivent aussi la trame, pour rien. Pendant ce temps, personne d'autre ne peut parler : un seul domaine de collision.";
+    else msg = "Le switch connaît déjà la place de PC3 dans sa table MAC : il envoie la trame sur ce seul port. PC2 et PC4 ne voient rien et peuvent communiquer en même temps.";
+    el.innerHTML = `<div class="sim">
+      <div class="seg" role="group" aria-label="Équipement central">
+        <button data-s="type" data-v="hub" aria-pressed="${type === 'hub'}">Hub</button>
+        <button data-s="type" data-v="switch" aria-pressed="${type === 'switch'}">Switch</button>
+      </div>
+      ${svg}
+      ${legend([['--accent', 'Émetteur (PC1)'], ['--ok', 'Destinataire (PC3)'], ['--d2', 'Reçoit pour rien']])}
+      <div class="note">${msg}</div>
+      <div><button class="btn" data-s="send">Envoyer de PC1 vers PC3</button></div>
+    </div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'type') { type = b.dataset.v; sent = false; }
+    else sent = true;
+    draw();
+  });
+  draw();
+}
+
+/* ---------- Simulation 3 : apprentissage de la table MAC ---------- */
+function macStep(table, s, d) {
+  const out = { learn: 'known', action: '', reason: '', ports: [] };
+  const sm = MACS[s];
+  if (table[sm] === undefined) { table[sm] = s + 1; out.learn = 'new'; }
+  const others = [0, 1, 2, 3].filter(i => i !== s);
+  if (d === 4) { out.action = 'flood'; out.reason = 'broadcast'; out.ports = others; }
+  else {
+    const dp = table[MACS[d]];
+    if (dp === undefined) { out.action = 'flood'; out.reason = 'unknown'; out.ports = others; }
+    else if (dp === s + 1) { out.action = 'filter'; }
+    else { out.action = 'forward'; out.ports = [dp - 1]; }
+  }
+  return out;
+}
+function simMac(el) {
+  const table = {};
+  const P = [[70, 34], [410, 34], [70, 186], [410, 186]], D = [240, 110];
+  const port = i => 'Fa0/' + (i + 1);
+  const name = i => 'PC ' + 'ABCD'[i];
+  function mapHTML(r, s, d) {
+    let links = '', nodes = '';
+    P.forEach((p, i) => {
+      let lc = '', nc = '';
+      if (r) {
+        if (i === s) { lc = 'src'; nc = 'src'; }
+        else if (r.ports.indexOf(i) >= 0) {
+          lc = 'out';
+          nc = (d === 4 || i === d) ? 'on' : 'waste';
+        }
+      }
+      links += lineSVG(D[0], D[1], p[0], p[1], lc);
+      nodes += nodeSVG(p[0], p[1], name(i), port(i), nc);
+    });
+    return `<svg class="map" viewBox="0 0 480 220" role="img" aria-label="Switch relié à quatre PC">${links}${devSVG(D[0], D[1], 'SWITCH')}${nodes}</svg>`;
+  }
+  function tableHTML() {
+    const keys = Object.keys(table);
+    if (!keys.length) return `<p class="muted">Table MAC vide : le switch ne connaît encore personne.</p>`;
+    return `<div class="scroll"><table style="min-width:0"><thead><tr><th>Adresse MAC</th><th>Port</th></tr></thead><tbody>${keys.map(k => `<tr><td class="mac">${k}</td><td>${port(table[k] - 1)}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  function logHTML(r, s, d) {
+    if (!r) return '';
+    const L = [];
+    L.push(r.learn === 'new' ? `Apprentissage : ${name(s)} (<span class="mac">${MACS[s]}</span>) est joignable par ${port(s)}. Entrée ajoutée à la table.`
+                              : `Apprentissage : ${name(s)} est déjà dans la table, rien à ajouter.`);
+    if (r.reason === 'broadcast') L.push(`Destination <span class="mac">${BCAST}</span> : c'est un broadcast. La trame sort par tous les ports sauf ${port(s)} (inondation).`);
+    else if (r.reason === 'unknown') L.push(`Destination ${name(d)} (<span class="mac">${MACS[d]}</span>) absente de la table. La trame sort par tous les ports sauf ${port(s)} (inondation).`);
+    else if (r.action === 'forward') L.push(`Destination ${name(d)} connue sur ${port(d)}. La trame sort uniquement par ce port (transfert).`);
+    return `<ol class="log">${L.map(x => `<li>${x}</li>`).join('')}</ol>`;
+  }
+  const opts = n => [0, 1, 2, 3].map(i => `<option value="${i}"${i === n ? ' selected' : ''}>${name(i)}</option>`).join('');
+  el.innerHTML = `<div class="sim">
+    <div class="fl">
+      <div class="field"><label for="ls-s">Expéditeur</label><select id="ls-s">${opts(0)}</select></div>
+      <div class="field"><label for="ls-d">Destinataire</label><select id="ls-d">${opts(2)}<option value="4">Broadcast (tous)</option></select></div>
+    </div>
+    <div class="fl"><button class="btn" data-s="send">Envoyer la trame</button><button class="btn alt" data-s="reset">Vider la table MAC</button></div>
+    <div id="ls-map">${mapHTML(null)}</div>
+    ${legend([['--accent', 'Émetteur'], ['--ok', 'Reçoit la trame'], ['--d2', 'Reçoit une copie sans être le destinataire']])}
+    <div id="ls-log"><p class="muted">Aucune trame envoyée pour l'instant.</p></div>
+    <div class="block"><h3>Table MAC du switch</h3><div id="ls-tab">${tableHTML()}</div></div>
+  </div>`;
+  const sS = el.querySelector('#ls-s'), sD = el.querySelector('#ls-d');
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'reset') {
+      Object.keys(table).forEach(k => delete table[k]);
+      el.querySelector('#ls-map').innerHTML = mapHTML(null);
+      el.querySelector('#ls-log').innerHTML = `<p class="muted">Table vidée. Le switch ne connaît plus personne.</p>`;
+      el.querySelector('#ls-tab').innerHTML = tableHTML();
+      return;
+    }
+    const s = +sS.value, d = +sD.value;
+    if (s === d) { el.querySelector('#ls-log').innerHTML = `<div class="note">Choisissez un destinataire différent de l'expéditeur.</div>`; return; }
+    const r = macStep(table, s, d);
+    el.querySelector('#ls-map').innerHTML = mapHTML(r, s, d);
+    el.querySelector('#ls-log').innerHTML = logHTML(r, s, d);
+    el.querySelector('#ls-tab').innerHTML = tableHTML();
+  });
+}
+
+/* ---------- Simulation 4 : domaines de collision et de diffusion ---------- */
+const KINDS = {
+  hub: { label: 'Hub', txt: "Le hub répète tout sur tous ses ports : les 8 PC partagent un seul domaine de collision et un seul domaine de diffusion." },
+  sw: { label: 'Switch', txt: "Chaque port du switch est son propre domaine de collision. Mais sans VLAN, tous les PC reçoivent les broadcasts : un seul domaine de diffusion." },
+  vlan: { label: 'Switch + 2 VLAN', txt: "Les collisions restent isolées par port. Les deux VLAN coupent la diffusion en deux domaines : un broadcast du VLAN 10 n'atteint pas le VLAN 20." },
+  rt: { label: '2 switchs + routeur', txt: "Chaque liaison est un domaine de collision, y compris les deux liaisons vers le routeur. Le routeur sépare la diffusion : un domaine par interface." }
+};
+function domainSVG(kind) {
+  let links = '', marks = '', nodes = '', labels = '', devs = '';
+  const ids = new Set(), doms = new Set();
+  function link(x1, y1, x2, y2, dom, id) {
+    ids.add(id); doms.add(dom);
+    links += lineSVG(x1, y1, x2, y2, dom);
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    marks += `<g class="mk ${dom}"><circle cx="${mx}" cy="${my}" r="10"/><text x="${mx}" y="${my + 4}" text-anchor="middle">${id}</text></g>`;
+  }
+  if (kind !== 'rt') {
+    devs += devSVG(240, 45, kind === 'hub' ? 'HUB' : 'SWITCH');
+    for (let i = 0; i < 8; i++) {
+      const x = 30 + i * 60, dom = (kind === 'vlan' && i >= 4) ? 'd2' : 'd1';
+      link(240, 62, x, 148, dom, kind === 'hub' ? 1 : i + 1);
+      nodes += nodeSVG(x, 165, 'PC' + (i + 1), '', dom, 46, 34);
+    }
+    if (kind === 'vlan') {
+      labels += `<text class="lab d1" x="105" y="224" text-anchor="middle">VLAN 10 · diffusion A</text><text class="lab d2" x="375" y="224" text-anchor="middle">VLAN 20 · diffusion B</text>`;
+    } else {
+      labels += `<text class="lab d1" x="240" y="224" text-anchor="middle">Un seul domaine de diffusion</text>`;
+    }
+  } else {
+    devs += devSVG(240, 28, 'ROUTEUR');
+    [[124, 'd1', 41], [357, 'd2', 274]].forEach((g, gi) => {
+      const sx = g[0], dom = g[1];
+      link(240, 45, sx, 83, dom, 9 + gi);
+      devs += devSVG(sx, 100, 'SWITCH', 90);
+      for (let k = 0; k < 4; k++) {
+        const x = g[2] + k * 55, n = gi * 4 + k;
+        link(sx, 117, x, 170, dom, n + 1);
+        nodes += nodeSVG(x, 190, 'PC' + (n + 1), '', dom, 46, 34);
+      }
+      labels += `<text class="lab ${dom}" x="${sx}" y="228" text-anchor="middle">Diffusion ${gi ? 'B' : 'A'}</text>`;
+    });
+  }
+  return { svg: `<svg class="map" viewBox="0 0 480 240" role="img" aria-label="Topologie ${KINDS[kind].label}">${links}${devs}${marks}${nodes}${labels}</svg>`, col: ids.size, bro: doms.size };
+}
+function simDom(el) {
+  let kind = 'hub';
+  function draw() {
+    const r = domainSVG(kind);
+    el.innerHTML = `<div class="sim">
+      <div class="seg" role="group" aria-label="Topologie">${Object.keys(KINDS).map(k => `<button data-s="k" data-v="${k}" aria-pressed="${k === kind}">${KINDS[k].label}</button>`).join('')}</div>
+      ${r.svg}
+      <div class="stats2"><div><b>${r.col}</b><span>domaine${r.col > 1 ? 's' : ''} de collision</span></div><div><b>${r.bro}</b><span>domaine${r.bro > 1 ? 's' : ''} de diffusion</span></div></div>
+      <div class="note">${KINDS[kind].txt}</div>
+    </div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    kind = b.dataset.v; draw();
+  });
+  draw();
+}
+
+/* ---------- Simulation 5 : ARP pas à pas ---------- */
+const AMAC = 'AA:AA:AA:AA:AA:AA', BMAC = 'BB:BB:BB:BB:BB:BB', CMAC = 'CC:CC:CC:CC:CC:CC', A_IP = '192.168.1.10';
+function arpSteps(mode) {
+  const lan = mode === 'lan';
+  const T = lan ? { ip: '192.168.1.20', mac: BMAC, link: 'l2' } : { ip: '192.168.1.1', mac: CMAC, link: 'l3' };
+  const dest = lan ? '192.168.1.20' : '8.8.8.8';
+  return [
+    { t: 'Départ',
+      d: lan ? "PC1 (192.168.1.10/24) veut envoyer un ping vers 192.168.1.20. Cette adresse est dans son réseau 192.168.1.0/24 : il doit joindre PC2 directement."
+             : "PC1 (192.168.1.10/24) veut joindre 8.8.8.8. Cette adresse n'est pas dans son réseau 192.168.1.0/24 : il doit passer par sa passerelle par défaut, le routeur 192.168.1.1.",
+      l: {} },
+    { t: 'Consultation de la table ARP',
+      d: lan ? "PC1 cherche 192.168.1.20 dans sa table ARP. Elle est vide : il ne connaît pas la MAC de PC2 et doit la demander."
+             : "PC1 cherche 192.168.1.1 (la passerelle, pas 8.8.8.8) dans sa table ARP. Elle est vide : il doit demander la MAC du routeur.",
+      l: {} },
+    { t: 'ARP Request en broadcast',
+      d: `PC1 diffuse la question à tout le réseau : « Qui a l'adresse ${T.ip} ? ». Le switch envoie la trame sur tous ses ports, donc PC2 et le routeur la reçoivent. ${lan ? 'Seul PC2 est concerné.' : 'Seul le routeur est concerné.'}`,
+      pkt: [['Ethernet', `dst ${BCAST} · src ${AMAC}`], ['ARP', "opération 1 (Request)"], ['Expéditeur ARP', `IP ${A_IP} · MAC ${AMAC}`], ['Cible ARP', `IP ${T.ip} · MAC 00:00:00:00:00:00 (inconnue)`]],
+      l: { l1: 'req', l2: 'req', l3: 'req' } },
+    { t: 'ARP Reply en unicast',
+      d: lan ? "PC2 reconnaît son adresse et répond directement à PC1, en unicast. Le routeur ignore la demande."
+             : "Le routeur reconnaît son adresse et répond directement à PC1, en unicast. PC2 ignore la demande.",
+      pkt: [['Ethernet', `dst ${AMAC} · src ${T.mac}`], ['ARP', "opération 2 (Reply)"], ['Expéditeur ARP', `IP ${T.ip} · MAC ${T.mac}`], ['Cible ARP', `IP ${A_IP} · MAC ${AMAC}`]],
+      l: { l1: 'rep', [T.link]: 'rep' } },
+    { t: 'Mise à jour de la table ARP',
+      d: "PC1 enregistre la correspondance dans sa table ARP. Il la gardera quelques minutes et n'aura pas à redemander.",
+      l: {} },
+    { t: 'Envoi de la trame de données',
+      d: lan ? "Avec la MAC de PC2, PC1 peut enfin construire la trame Ethernet et envoyer son ping."
+             : "PC1 envoie le paquet destiné à 8.8.8.8 dans une trame adressée à la MAC du routeur. La MAC est celle de la passerelle, mais l'adresse IP de destination reste 8.8.8.8.",
+      pkt: [['Ethernet', `dst ${T.mac} · src ${AMAC}`], ['IP', `src ${A_IP} · dst ${dest}`], ['ICMP', 'Echo Request (ping)']],
+      l: { l1: 'data', [T.link]: 'data' } }
+  ];
+}
+function simArp(el) {
+  let mode = 'lan', i = 0;
+  function draw() {
+    const S = arpSteps(mode), st = S[i], last = i === S.length - 1;
+    const T = mode === 'lan' ? ['192.168.1.20', BMAC] : ['192.168.1.1', CMAC];
+    const l = st.l || {};
+    const svg = `<svg class="map" viewBox="0 0 480 220" role="img" aria-label="PC1, switch, PC2 et routeur">
+      ${lineSVG(70, 110, 230, 110, l.l1)}${lineSVG(230, 110, 410, 45, l.l2)}${lineSVG(230, 110, 410, 175, l.l3)}
+      ${devSVG(230, 110, 'SW', 56)}
+      ${nodeSVG(70, 110, 'PC1', '192.168.1.10', '', 104, 44)}${nodeSVG(410, 45, 'PC2', '192.168.1.20', '', 104, 44)}${nodeSVG(410, 175, 'Routeur', '192.168.1.1', '', 104, 44)}
+    </svg>`;
+    const tab = i >= 4
+      ? `<div class="scroll"><table style="min-width:0"><thead><tr><th>Adresse IP</th><th>Adresse MAC</th></tr></thead><tbody><tr><td>${T[0]}</td><td class="mac">${T[1]}</td></tr></tbody></table></div>`
+      : `<p class="muted">Table ARP de PC1 : vide.</p>`;
+    el.innerHTML = `<div class="sim">
+      <div class="seg" role="group" aria-label="Destination">
+        <button data-s="m" data-v="lan" aria-pressed="${mode === 'lan'}">Même réseau (192.168.1.20)</button>
+        <button data-s="m" data-v="wan" aria-pressed="${mode === 'wan'}">Autre réseau (8.8.8.8)</button>
+      </div>
+      ${svg}
+      ${legend([['--accent', 'ARP Request'], ['--ok', 'ARP Reply'], ['--d2', 'Données']])}
+      <div class="block"><div class="step">Étape ${i + 1} sur ${S.length}</div><h3 style="font:700 1.2rem var(--f-display);letter-spacing:0;text-transform:none;color:var(--ink)">${st.t}</h3><p>${esc(st.d)}</p></div>
+      ${st.pkt ? `<div class="pkt">${st.pkt.map(p => `<div><b>${p[0]}</b> ${esc(p[1])}</div>`).join('')}</div>` : ''}
+      ${tab}
+      <p class="muted mac">PC1 = ${AMAC} · PC2 = ${BMAC} · Routeur = ${CMAC}</p>
+      <div><button class="btn" data-s="${last ? 'restart' : 'next'}">${last ? 'Recommencer' : 'Étape suivante'}</button></div>
+    </div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    const a = b.dataset.s;
+    if (a === 'm') { mode = b.dataset.v; i = 0; }
+    else if (a === 'next') i++;
+    else i = 0;
+    draw();
+  });
+  draw();
+}
+/* ---------- Simulation générique : choisir la bonne réponse dans une situation ---------- */
+function simPick(el, t) {
+  const SC = t.scen;
+  let i = 0, sel = null, score = 0;
+  function draw() {
+    if (i >= SC.length) {
+      el.innerHTML = `<div class="sim"><div class="eyebrow">Terminé</div><p class="score">${score}<small> / ${SC.length}</small></p><p>${score === SC.length ? "Toutes les situations sont réussies." : "Relisez la fiche, puis recommencez."}</p><div><button class="btn" data-s="again">Recommencer</button></div></div>`;
+      return;
+    }
+    const c = SC[i], ans = sel !== null;
+    let h = `<div class="sim"><div class="eyebrow">Situation ${i + 1} sur ${SC.length}</div><p class="def">${esc(c.s)}</p><div class="opts">`;
+    c.o.forEach((o, k) => {
+      let cl = ''; if (ans) { if (k === c.a) cl = ' ok'; else if (k === sel) cl = ' bad'; }
+      h += `<button class="opt${cl}" data-s="pick" data-k="${k}" ${ans ? 'disabled' : ''}><span class="l">${'ABCD'[k]}</span><span>${esc(o)}</span></button>`;
+    });
+    h += `</div>`;
+    if (ans) h += `<div class="fb ${sel === c.a ? 'ok' : 'bad'}"><b>${sel === c.a ? 'Correct.' : 'Pas tout à fait.'}</b><p>${esc(c.e)}</p></div><div><button class="btn" data-s="next">${i + 1 >= SC.length ? 'Voir le score' : 'Situation suivante'}</button></div>`;
+    el.innerHTML = h + `</div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    const a = b.dataset.s;
+    if (a === 'pick' && sel === null) { sel = +b.dataset.k; if (sel === SC[i].a) score++; }
+    else if (a === 'next') { i++; sel = null; }
+    else if (a === 'again') { i = 0; sel = null; score = 0; }
+    draw();
+  });
+  draw();
+}
+
+/* ---------- Simulation générique : explorateur de fiches ---------- */
+function simExplorer(el, t) {
+  const items = t.items; let k = 0;
+  function draw() {
+    const it = items[k];
+    el.innerHTML = `<div class="sim">
+      <div class="seg" role="group" aria-label="${esc(t.exLabel || 'Choix')}">${items.map((x, j) => `<button data-s="k" data-v="${j}" aria-pressed="${j === k}">${esc(x.k)}</button>`).join('')}</div>
+      <div class="block"><h3 class="ctitle">${esc(it.k)}</h3>
+      <dl class="dl">${it.f.map(f => `<dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd>`).join('')}</dl></div>
+      ${it.n ? `<div class="note">${esc(it.n)}</div>` : ''}
+    </div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    k = +b.dataset.v; draw();
+  });
+  draw();
+}
+
+/* ---------- Simulation OSI : explorer et tester ---------- */
+const OSI = [
+  { n: 7, k: "Application", pdu: "Données", role: "Fournit les services réseau aux logiciels (web, messagerie, noms de domaine).", ex: "HTTP, SMTP, DNS, DHCP, FTP", eq: "Serveurs, applications" },
+  { n: 6, k: "Présentation", pdu: "Données", role: "Met les données en forme : format, compression, chiffrement.", ex: "JPEG, MP3, ASCII", eq: "Aucun équipement dédié" },
+  { n: 5, k: "Session", pdu: "Données", role: "Ouvre, maintient et ferme les dialogues entre deux machines.", ex: "NetBIOS, RPC", eq: "Aucun équipement dédié" },
+  { n: 4, k: "Transport", pdu: "Segment", role: "Découpe les données, identifie les applications par des ports, assure la fiabilité (TCP) ou la rapidité (UDP).", ex: "TCP, UDP", eq: "Pare-feu (filtrage par ports)" },
+  { n: 3, k: "Réseau", pdu: "Paquet", role: "Adresse logiquement les machines (IP) et choisit le chemin (routage).", ex: "IP, ICMP, OSPF", eq: "Routeur, switch de niveau 3" },
+  { n: 2, k: "Liaison de données", pdu: "Trame", role: "Adresse les machines du réseau local (MAC), contrôle les erreurs, gère l'accès au support.", ex: "Ethernet, Wi-Fi, ARP", eq: "Switch, carte réseau, point d'accès" },
+  { n: 1, k: "Physique", pdu: "Bits", role: "Transmet les bits sous forme de signaux électriques, lumineux ou radio.", ex: "Câbles, connecteur RJ45, fibre", eq: "Hub, répéteur, câbles" }
+];
+const OSI_TEST = [
+  ["HTTP", 7], ["DNS", 7], ["Un switch", 2], ["Un câble Ethernet", 1], ["Une adresse IP", 3], ["Une adresse MAC", 2],
+  ["TCP", 4], ["UDP", 4], ["Un routeur", 3], ["Un hub", 1], ["Une trame", 2], ["Un paquet", 3], ["Un segment", 4],
+  ["Le chiffrement et la compression des données", 6], ["Un numéro de port", 4], ["La fibre optique", 1], ["SMTP", 7]
+];
+function simOsi(el) {
+  let mode = 'explore', sel = 7, pool = shuffle(OSI_TEST), pi = 0, pick = null, score = 0, total = 0;
+  function draw() {
+    let body = '';
+    if (mode === 'explore') {
+      const L = OSI.filter(x => x.n === sel)[0];
+      body = `<div class="opts">${OSI.map(x => `<button class="opt${x.n === sel ? ' sel' : ''}" data-s="l" data-v="${x.n}"><span class="l">${x.n}</span><span>${x.k}</span></button>`).join('')}</div>
+        <div class="block"><h3 class="ctitle">${L.n} · ${L.k}</h3><dl class="dl"><dt>Unité</dt><dd>${L.pdu}</dd><dt>Rôle</dt><dd>${esc(L.role)}</dd><dt>Protocoles</dt><dd>${esc(L.ex)}</dd><dt>Équipements</dt><dd>${esc(L.eq)}</dd></dl></div>`;
+    } else {
+      const it = pool[pi % pool.length], ans = pick !== null;
+      body = `<div class="eyebrow">Score : ${score} / ${total}</div><p class="def">À quelle couche appartient : <b>${esc(it[0])}</b> ?</p><div class="opts">${OSI.map(x => {
+        let c = ''; if (ans) { if (x.n === it[1]) c = ' ok'; else if (x.n === pick) c = ' bad'; }
+        return `<button class="opt${c}" data-s="a" data-v="${x.n}" ${ans ? 'disabled' : ''}><span class="l">${x.n}</span><span>${x.k}</span></button>`;
+      }).join('')}</div>` +
+        (ans ? `<div class="fb ${pick === it[1] ? 'ok' : 'bad'}"><b>${pick === it[1] ? 'Correct.' : 'Pas tout à fait.'}</b><p>${esc(it[0])} se place en couche ${it[1]} : ${OSI.filter(x => x.n === it[1])[0].k}.</p></div><div><button class="btn" data-s="next">Élément suivant</button></div>` : '');
+    }
+    el.innerHTML = `<div class="sim"><div class="seg" role="group" aria-label="Mode"><button data-s="mode" data-v="explore" aria-pressed="${mode === 'explore'}">Explorer</button><button data-s="mode" data-v="test" aria-pressed="${mode === 'test'}">Tester</button></div>${body}</div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    const a = b.dataset.s;
+    if (a === 'mode') { mode = b.dataset.v; pick = null; }
+    else if (a === 'l') sel = +b.dataset.v;
+    else if (a === 'a' && pick === null) { pick = +b.dataset.v; total++; if (pick === pool[pi % pool.length][1]) score++; }
+    else if (a === 'next') { pi++; pick = null; }
+    draw();
+  });
+  draw();
+}
+
+/* ---------- Simulation encapsulation / désencapsulation ---------- */
+function encNest(stage) {
+  if (stage === 4) return `<div class="pkt"><div><b>Bits</b> 01000111 01000101 01010100 00100000 ...</div><div>La trame est convertie en signaux électriques, lumineux ou radio sur le support.</div></div>`;
+  let h = `<div class="enc data"><b>Données</b><span class="v">GET /index.html</span></div>`;
+  if (stage >= 1) h = `<div class="enc tcp"><div class="hd"><b>En-tête TCP</b><span class="v">port source 49152 · port destination 80</span></div>${h}</div>`;
+  if (stage >= 2) h = `<div class="enc ip"><div class="hd"><b>En-tête IP</b><span class="v">source 192.168.1.10 · destination 203.0.113.5</span></div>${h}</div>`;
+  if (stage >= 3) h = `<div class="enc eth"><div class="hd"><b>En-tête Ethernet</b><span class="v">MAC destination CC:CC:CC:CC:CC:CC (routeur) · MAC source AA:AA:AA:AA:AA:AA</span></div>${h}<div class="hd"><b>FCS</b><span class="v">contrôle d'erreur</span></div></div>`;
+  return h;
+}
+function simEncaps(el) {
+  let mode = 'send', i = 0;
+  const SEND = [
+    ["L'application prépare le message", "Le navigateur veut afficher une page : il produit la requête GET /index.html. C'est la donnée, sans aucun en-tête."],
+    ["Transport : ajout de l'en-tête TCP", "TCP découpe si besoin, numérote et ajoute les ports : 49152 pour le navigateur, 80 pour le serveur web. On obtient un segment."],
+    ["Internet : ajout de l'en-tête IP", "IP ajoute l'adresse IP source et l'adresse IP de destination. On obtient un paquet, qui peut traverser des routeurs."],
+    ["Accès réseau : ajout de l'en-tête et de la fin Ethernet", "Ethernet ajoute les adresses MAC (ici celle du routeur, car le serveur est sur un autre réseau) et le FCS. On obtient une trame."],
+    ["Physique : envoi des bits", "La carte réseau transforme la trame en signaux sur le câble ou en ondes radio."]
+  ];
+  const RECV = [
+    ["Les bits arrivent sur le support", "La carte réseau du destinataire reçoit les signaux et reconstitue la suite de bits."],
+    ["Accès réseau : la trame est lue", "La carte réseau vérifie le FCS et contrôle que la MAC de destination est bien la sienne."],
+    ["Internet : le paquet est extrait", "L'en-tête Ethernet est retiré. IP vérifie que l'adresse de destination est la sienne."],
+    ["Transport : le segment est extrait", "L'en-tête IP est retiré. TCP lit le port de destination (80) pour choisir l'application."],
+    ["Application : le message est livré", "L'en-tête TCP est retiré. Le serveur web reçoit la requête GET /index.html."]
+  ];
+  function draw() {
+    const S = mode === 'send' ? SEND : RECV, st = S[i], stage = mode === 'send' ? i : 4 - i, last = i === S.length - 1;
+    el.innerHTML = `<div class="sim">
+      <div class="seg" role="group" aria-label="Sens"><button data-s="mode" data-v="send" aria-pressed="${mode === 'send'}">Envoi (encapsulation)</button><button data-s="mode" data-v="recv" aria-pressed="${mode === 'recv'}">Réception (désencapsulation)</button></div>
+      <div class="step">Étape ${i + 1} sur ${S.length}</div>
+      ${encNest(stage)}
+      <div class="block"><h3 class="ctitle">${st[0]}</h3><p>${esc(st[1])}</p></div>
+      <div><button class="btn" data-s="${last ? 'restart' : 'next'}">${last ? 'Recommencer' : 'Étape suivante'}</button></div>
+    </div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    const a = b.dataset.s;
+    if (a === 'mode') { mode = b.dataset.v; i = 0; } else if (a === 'next') i++; else i = 0;
+    draw();
+  });
+  draw();
+}
+
+/* ---------- Simulation correspondance OSI / TCP/IP ---------- */
+function simMap(el) {
+  const TC = [
+    { k: "Application", o: [7, 6, 5], r: 1, len: 3, txt: "La couche Application de TCP/IP regroupe les trois couches hautes d'OSI : Application (7), Présentation (6) et Session (5). Dans TCP/IP, c'est le logiciel lui-même qui gère le format des données, le chiffrement et le dialogue." },
+    { k: "Transport", o: [4], r: 4, len: 1, txt: "Transport correspond directement à la couche 4 d'OSI : TCP, UDP et les ports." },
+    { k: "Internet", o: [3], r: 5, len: 1, txt: "Internet correspond à la couche Réseau (3) d'OSI : adressage IP et routage." },
+    { k: "Accès réseau", o: [2, 1], r: 6, len: 2, txt: "Accès réseau regroupe la Liaison de données (2) et la Physique (1) : Ethernet, Wi-Fi, adresses MAC, câbles et signaux." }
+  ];
+  let sel = 0;
+  function tcOf(n) { return TC.map((t, j) => t.o.indexOf(n) >= 0 ? j : -1).filter(j => j >= 0)[0]; }
+  function draw() {
+    let cells = '';
+    OSI.forEach((x, r) => {
+      const j = tcOf(x.n);
+      cells += `<button class="mcell${j === sel ? ' on' : ''}" style="grid-column:1;grid-row:${r + 1}" data-s="s" data-v="${j}"><small>${x.n}</small> ${x.k}</button>`;
+    });
+    TC.forEach((t, j) => {
+      cells += `<button class="mcell blk${j === sel ? ' on' : ''}" style="grid-column:2;grid-row:${t.r} / span ${t.len}" data-s="s" data-v="${j}">${t.k}</button>`;
+    });
+    el.innerHTML = `<div class="sim"><div class="map2"><div class="mh" style="grid-column:1;grid-row:1" hidden></div>${cells}</div>
+      <div class="eyebrow">OSI (à gauche) · TCP/IP (à droite)</div><div class="note">${esc(TC[sel].txt)}</div></div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    sel = +b.dataset.v; draw();
+  });
+  draw();
+}
+
+/* ---------- Outils numériques ---------- */
+const ipToInt = o => o[0] * 16777216 + o[1] * 65536 + o[2] * 256 + o[3];
+const intToIp = n => [Math.floor(n / 16777216) % 256, Math.floor(n / 65536) % 256, Math.floor(n / 256) % 256, n % 256].join('.');
+const maskOf = p => 4294967296 - Math.pow(2, 32 - p);
+function parseIp4(s) {
+  const m = String(s).trim().match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/); if (!m) return null;
+  const o = m.slice(1).map(Number); return o.some(x => x > 255) ? null : o;
+}
+function subnetOf(ipn, p) {
+  const size = Math.pow(2, 32 - p), net = Math.floor(ipn / size) * size;
+  return { size, net, bc: net + size - 1, first: net + 1, last: net + size - 2, hosts: size - 2 };
+}
+function ip6expand(s) {
+  s = String(s).trim().toLowerCase();
+  if (!/^[0-9a-f:]+$/.test(s)) return null;
+  const parts = s.split('::'); if (parts.length > 2) return null;
+  let head = parts[0] ? parts[0].split(':') : [], tail = parts.length === 2 && parts[1] ? parts[1].split(':') : [];
+  if (parts.length === 1) { if (head.length !== 8) return null; }
+  else { if (head.length + tail.length > 7) return null; head = head.concat(Array(8 - head.length - tail.length).fill('0'), tail); }
+  if (head.length !== 8 || head.some(g => g.length < 1 || g.length > 4)) return null;
+  return head.map(g => g.padStart(4, '0'));
+}
+function ip6compress(g) {
+  const sh = g.map(x => x.replace(/^0+(?=.)/, ''));
+  let bs = -1, bl = 0;
+  for (let i = 0; i < 8;) { if (sh[i] === '0') { let j = i; while (j < 8 && sh[j] === '0') j++; if (j - i > bl) { bl = j - i; bs = i; } i = j; } else i++; }
+  if (bl < 2) return sh.join(':');
+  return sh.slice(0, bs).join(':') + '::' + sh.slice(bs + bl).join(':');
+}
+
+/* ---------- Simulation systèmes numériques ---------- */
+function simBits(el) {
+  const W = [128, 64, 32, 16, 8, 4, 2, 1];
+  let bits = [0, 0, 0, 0, 0, 0, 0, 0], target = null;
+  const val = () => bits.reduce((a, b, i) => a + b * W[i], 0);
+  el.innerHTML = `<div class="sim">
+    <div class="bits">${W.map((w, i) => `<button class="bit" data-s="b" data-v="${i}" aria-pressed="false" aria-label="Bit de poids ${w}"><small>${w}</small><b>0</b></button>`).join('')}</div>
+    <div class="field"><label for="bt-n">Valeur décimale (0 à 255)</label><input id="bt-n" type="number" min="0" max="255" value="0" inputmode="numeric"></div>
+    <div class="stats2"><div><b id="bt-dec">0</b><span>décimal</span></div><div><b id="bt-hex">00</b><span>hexadécimal</span></div></div>
+    <p class="mac" id="bt-sum"></p>
+    <div id="bt-ch" class="note" hidden></div>
+    <div><button class="btn alt" data-s="chal">Nouveau défi de conversion</button></div></div>`;
+  const btns = el.querySelectorAll('.bit'), inp = el.querySelector('#bt-n');
+  function upd(setInput) {
+    const v = val();
+    btns.forEach((b, i) => { b.setAttribute('aria-pressed', bits[i] ? 'true' : 'false'); b.querySelector('b').textContent = bits[i]; });
+    el.querySelector('#bt-dec').textContent = v;
+    el.querySelector('#bt-hex').textContent = v.toString(16).toUpperCase().padStart(2, '0');
+    const on = W.filter((w, i) => bits[i]);
+    el.querySelector('#bt-sum').textContent = on.length ? on.join(' + ') + ' = ' + v : 'Aucun bit à 1 : 0';
+    if (setInput) inp.value = v;
+    const ch = el.querySelector('#bt-ch');
+    if (target !== null) { ch.hidden = false; ch.textContent = v === target ? `Bravo : ${target} s'écrit ${bits.join('')} en binaire.` : `Défi : allumez les bits pour obtenir ${target}.`; } else ch.hidden = true;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'b') { const i = +b.dataset.v; bits[i] = bits[i] ? 0 : 1; }
+    else { target = 1 + Math.floor(Math.random() * 254); bits = [0, 0, 0, 0, 0, 0, 0, 0]; }
+    upd(true);
+  });
+  el.addEventListener('input', e => {
+    if (e.target.id !== 'bt-n') return;
+    let n = parseInt(e.target.value, 10); if (isNaN(n)) return;
+    n = Math.max(0, Math.min(255, n)); bits = W.map(() => 0);
+    let r = n; W.forEach((w, i) => { if (r >= w) { bits[i] = 1; r -= w; } });
+    upd(false);
+  });
+  upd(true);
+}
+
+/* ---------- Simulation adressage IPv4 / IPv6 ---------- */
+function v4HTML(s) {
+  const o = parseIp4(s);
+  if (!o) return `<div class="note">Adresse invalide : écrivez 4 nombres de 0 à 255 séparés par des points.</div>`;
+  const a = o[0]; let cls, mask;
+  if (a === 0) { cls = "Sans classe (0.x.x.x)"; mask = "Sans objet"; }
+  else if (a < 128) { cls = "A"; mask = "255.0.0.0 (/8)"; }
+  else if (a < 192) { cls = "B"; mask = "255.255.0.0 (/16)"; }
+  else if (a < 224) { cls = "C"; mask = "255.255.255.0 (/24)"; }
+  else if (a < 240) { cls = "D (multicast)"; mask = "Sans objet"; }
+  else { cls = "E (réservée)"; mask = "Sans objet"; }
+  let type = "Publique";
+  if (a === 127) type = "Bouclage (loopback) : la machine elle-même";
+  else if (a === 10 || (a === 172 && o[1] >= 16 && o[1] <= 31) || (a === 192 && o[1] === 168)) type = "Privée (RFC 1918)";
+  else if (a === 169 && o[1] === 254) type = "APIPA : aucune réponse du DHCP";
+  else if (a >= 224 && a <= 239) type = "Multicast";
+  else if (a >= 240) type = "Réservée";
+  else if (a === 0) type = "Adresse spéciale";
+  if (o.every(x => x === 255)) type = "Broadcast limité";
+  const bin = o.map(x => x.toString(2).padStart(8, '0')).join('.');
+  return `<dl class="dl"><dt>Binaire</dt><dd class="mac">${bin}</dd><dt>Classe</dt><dd>${cls}</dd><dt>Masque par défaut</dt><dd>${mask}</dd><dt>Type</dt><dd>${type}</dd></dl>`;
+}
+function v6HTML(s) {
+  const g = ip6expand(s);
+  if (!g) return `<div class="note">Adresse invalide : 8 groupes de 1 à 4 chiffres hexadécimaux séparés par « : » (un seul « :: » est permis).</div>`;
+  const g0 = parseInt(g[0], 16); let type;
+  if (g.every(x => x === '0000')) type = "Adresse non spécifiée (::)";
+  else if (g.slice(0, 7).every(x => x === '0000') && g[7] === '0001') type = "Bouclage (::1)";
+  else if ((g0 & 0xff00) === 0xff00) type = "Multicast (ff00::/8)";
+  else if ((g0 & 0xffc0) === 0xfe80) type = "Lien local (fe80::/10)";
+  else if ((g0 & 0xfe00) === 0xfc00) type = "Locale unique (fc00::/7)";
+  else if ((g0 & 0xe000) === 0x2000) type = "Unicast global (2000::/3)";
+  else type = "Autre plage";
+  return `<dl class="dl"><dt>Forme complète</dt><dd class="mac">${g.join(':')}</dd><dt>Forme abrégée</dt><dd class="mac">${ip6compress(g)}</dd><dt>Type</dt><dd>${type}</dd></dl>`;
+}
+function simIp(el) {
+  let mode = 'v4';
+  const defs = { v4: '192.168.1.10', v6: '2001:0db8:0000:0000:0000:0000:0000:0001' };
+  function out() { const v = el.querySelector('#ip-in').value; el.querySelector('#ip-out').innerHTML = mode === 'v4' ? v4HTML(v) : v6HTML(v); }
+  function build() {
+    el.innerHTML = `<div class="sim"><div class="seg" role="group" aria-label="Version"><button data-s="m" data-v="v4" aria-pressed="${mode === 'v4'}">IPv4 : analyser</button><button data-s="m" data-v="v6" aria-pressed="${mode === 'v6'}">IPv6 : abréger</button></div>
+      <div class="field"><label for="ip-in">Adresse ${mode === 'v4' ? 'IPv4' : 'IPv6'}</label><input id="ip-in" type="text" value="${defs[mode]}" autocomplete="off" autocapitalize="off" spellcheck="false"></div><div id="ip-out"></div></div>`;
+    out();
+  }
+  el.addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; mode = b.dataset.v; build(); });
+  el.addEventListener('input', e => { if (e.target.id === 'ip-in') out(); });
+  build();
+}
+
+/* ---------- Simulation sous-réseaux ---------- */
+function simSubnet(el) {
+  let po = ''; for (let p = 8; p <= 30; p++) po += `<option value="${p}"${p === 26 ? ' selected' : ''}>/${p}</option>`;
+  el.innerHTML = `<div class="sim"><div class="fl">
+    <div class="field"><label for="sn-ip">Adresse IPv4</label><input id="sn-ip" type="text" value="192.168.1.130" autocomplete="off" spellcheck="false"></div>
+    <div class="field"><label for="sn-p">Préfixe</label><select id="sn-p">${po}</select></div>
+    <div class="field"><label for="sn-n">Découpage</label><select id="sn-n"><option value="1">Aucun</option><option value="2">2 sous-réseaux</option><option value="4" selected>4 sous-réseaux</option><option value="8">8 sous-réseaux</option><option value="16">16 sous-réseaux</option></select></div>
+    </div><div id="sn-out"></div></div>`;
+  const ipI = el.querySelector('#sn-ip'), pS = el.querySelector('#sn-p'), nS = el.querySelector('#sn-n'), box = el.querySelector('#sn-out');
+  function out() {
+    const o = parseIp4(ipI.value), p = +pS.value, n = +nS.value;
+    if (!o) { box.innerHTML = `<div class="note">Adresse invalide : écrivez 4 nombres de 0 à 255 séparés par des points.</div>`; return; }
+    const ipn = ipToInt(o), s = subnetOf(ipn, p);
+    let bin = '', idx = 0;
+    o.forEach((x, k) => { x.toString(2).padStart(8, '0').split('').forEach(ch => { bin += `<span class="${idx < p ? 'net' : 'host'}">${ch}</span>`; idx++; }); if (k < 3) bin += '.'; });
+    let h = `<div class="block"><h3>Analyse de ${intToIp(ipn)}/${p}</h3><p class="bn">${bin}</p><div class="leg"><span><i style="background:var(--accent)"></i>Partie réseau</span><span><i style="background:var(--d2)"></i>Partie machine</span></div>
+      <dl class="dl"><dt>Masque</dt><dd class="mac">${intToIp(maskOf(p))}</dd><dt>Adresse réseau</dt><dd class="mac">${intToIp(s.net)}</dd><dt>Premier hôte</dt><dd class="mac">${intToIp(s.first)}</dd><dt>Dernier hôte</dt><dd class="mac">${intToIp(s.last)}</dd><dt>Broadcast</dt><dd class="mac">${intToIp(s.bc)}</dd><dt>Hôtes utilisables</dt><dd>${s.hosts}</dd></dl></div>`;
+    if (n > 1) {
+      const nb = Math.round(Math.log2(n)), np = p + nb;
+      if (np > 30) h += `<div class="note">Découpage impossible : avec ${nb} bit${nb > 1 ? 's' : ''} empruntés, il ne resterait pas assez de bits machine.</div>`;
+      else {
+        const sz = Math.pow(2, 32 - np); let rows = '';
+        for (let k = 0; k < n; k++) { const net = s.net + k * sz; rows += `<tr><td>${k + 1}</td><td class="mac">${intToIp(net)}/${np}</td><td class="mac">${intToIp(net + 1)} à ${intToIp(net + sz - 2)}</td><td class="mac">${intToIp(net + sz - 1)}</td></tr>`; }
+        h += `<div class="block"><h3>${n} sous-réseaux : on emprunte ${nb} bit${nb > 1 ? 's' : ''}, nouveau préfixe /${np}</h3><p>Chaque sous-réseau compte ${sz - 2} hôtes utilisables.</p><div class="scroll"><table><thead><tr><th>N°</th><th>Réseau</th><th>Plage utilisable</th><th>Broadcast</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+      }
+    }
+    box.innerHTML = h;
+  }
+  el.addEventListener('input', out); el.addEventListener('change', out);
+  out();
+}
+
+/* ---------- Simulation VLSM ---------- */
+function vlsmPlan(baseStr, needs) {
+  const m = String(baseStr).trim().match(/^(.+)\/(\d{1,2})$/);
+  const o = m && parseIp4(m[1]), p = m ? +m[2] : 0;
+  if (!o || p < 8 || p > 30) return { err: "Réseau de base invalide : écrivez par exemple 192.168.1.0/24 (préfixe de 8 à 30)." };
+  const b = subnetOf(ipToInt(o), p);
+  const list = needs.filter(n => n > 0).sort((x, y) => y - x);
+  if (!list.length) return { err: "Indiquez au moins un besoin en machines." };
+  let cur = b.net, rows = [], used = 0;
+  for (const n of list) {
+    let h = 2; while (Math.pow(2, h) - 2 < n) h++;
+    const size = Math.pow(2, h);
+    cur = Math.ceil(cur / size) * size;
+    if (h > 30 || cur + size - 1 > b.bc) { rows.push({ n, fail: true }); continue; }
+    rows.push({ n, p: 32 - h, net: cur, first: cur + 1, last: cur + size - 2, bc: cur + size - 1, size });
+    cur += size; used += size;
+  }
+  return { rows, used, total: b.size, base: intToIp(b.net) + '/' + p };
+}
+function simVlsm(el) {
+  const defs = [100, 50, 25, 10, 2];
+  el.innerHTML = `<div class="sim">
+    <div class="field"><label for="vl-b">Réseau de base</label><input id="vl-b" type="text" value="192.168.1.0/24" autocomplete="off" spellcheck="false"></div>
+    <div class="needs">${defs.map((d, i) => `<div class="field"><label for="vl-${i}">Besoin ${i + 1}</label><input id="vl-${i}" type="number" min="0" max="65000" value="${d}" inputmode="numeric"></div>`).join('')}</div>
+    <p class="muted">Besoin = nombre de machines du sous-réseau. Laissez 0 pour ignorer une ligne.</p>
+    <div id="vl-out"></div></div>`;
+  function out() {
+    const needs = defs.map((d, i) => parseInt(el.querySelector('#vl-' + i).value, 10) || 0);
+    const r = vlsmPlan(el.querySelector('#vl-b').value, needs), box = el.querySelector('#vl-out');
+    if (r.err) { box.innerHTML = `<div class="note">${r.err}</div>`; return; }
+    const rows = r.rows.map(x => x.fail
+      ? `<tr><td>${x.n}</td><td colspan="4">Ne rentre pas dans le réseau de base</td></tr>`
+      : `<tr><td>${x.n}</td><td>/${x.p}</td><td class="mac">${intToIp(x.net)}</td><td class="mac">${intToIp(x.first)} à ${intToIp(x.last)}</td><td class="mac">${intToIp(x.bc)}</td></tr>`).join('');
+    const bad = r.rows.some(x => x.fail);
+    box.innerHTML = `<div class="scroll"><table><thead><tr><th>Besoin</th><th>Préfixe</th><th>Réseau</th><th>Plage utilisable</th><th>Broadcast</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="note">${bad ? 'Le réseau de base est trop petit pour tous les besoins. ' : ''}Adresses allouées : ${r.used} sur ${r.total} dans ${r.base}.</div>`;
+  }
+  el.addEventListener('input', out);
+  out();
+}
+
+/* ---------- Simulation adresse MAC ---------- */
+function macParse(s) {
+  s = String(s).trim();
+  if (!/^[0-9a-fA-F:.\-\s]+$/.test(s)) return null;
+  const h = s.replace(/[^0-9a-fA-F]/g, '').toUpperCase();
+  return h.length === 12 ? h : null;
+}
+function macHTML(s) {
+  const h = macParse(s);
+  if (!h) return `<div class="note">Adresse invalide : il faut 12 chiffres hexadécimaux (0 à 9, A à F), par exemple 00:1A:2B:3C:4D:5E.</div>`;
+  const b = h.match(/../g), n = parseInt(b[0], 16), bin = n.toString(2).padStart(8, '0');
+  const ig = n & 1, ul = (n >> 1) & 1;
+  let type = ig ? 'Multicast' : 'Unicast';
+  if (h === 'FFFFFFFFFFFF') type = 'Broadcast (toutes les machines du réseau local)';
+  else if (h.slice(0, 6) === '01005E') type = 'Multicast IPv4';
+  return `<dl class="dl"><dt>Forme standard</dt><dd class="mac">${b.join(':')}</dd><dt>OUI (constructeur)</dt><dd class="mac">${b.slice(0, 3).join(':')}</dd><dt>Numéro de carte</dt><dd class="mac">${b.slice(3).join(':')}</dd>
+    <dt>Premier octet</dt><dd class="bn">${bin.slice(0, 6)}<span class="net">${bin[6]}</span><span class="host">${bin[7]}</span></dd>
+    <dt>Bit I/G</dt><dd>${ig} : ${ig ? 'groupe (multicast ou broadcast)' : 'individuel (unicast)'}</dd>
+    <dt>Bit U/L</dt><dd>${ul} : ${ul ? 'administrée localement (modifiée par logiciel)' : 'universelle (gravée par le constructeur)'}</dd>
+    <dt>Type</dt><dd>${type}</dd></dl><div class="leg"><span><i style="background:var(--accent)"></i>Bit U/L</span><span><i style="background:var(--d2)"></i>Bit I/G</span></div>`;
+}
+function simMacinfo(el) {
+  const PRE = [["Carte réseau", "00:1A:2B:3C:4D:5E"], ["Broadcast", "FF:FF:FF:FF:FF:FF"], ["Multicast IPv4", "01:00:5E:00:00:05"], ["Locale", "02:11:22:33:44:55"]];
+  el.innerHTML = `<div class="sim"><div class="field"><label for="mc-in">Adresse MAC</label><input id="mc-in" type="text" value="${PRE[0][1]}" autocomplete="off" spellcheck="false"></div>
+    <div class="seg" role="group" aria-label="Exemples">${PRE.map((p, i) => `<button data-s="p" data-v="${i}" aria-pressed="false">${p[0]}</button>`).join('')}</div><div id="mc-out"></div></div>`;
+  const inp = el.querySelector('#mc-in');
+  function out() { el.querySelector('#mc-out').innerHTML = macHTML(inp.value); }
+  el.addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; inp.value = PRE[+b.dataset.v][1]; out(); });
+  el.addEventListener('input', e => { if (e.target.id === 'mc-in') out(); });
+  out();
+}
+
+/* ---------- Simulation débit, duplex et vitesse de commutation ---------- */
+const fnum = (n, d) => n.toFixed(d).replace('.', ',');
+function fmtTime(s) { return s < 1 ? fnum(s * 1000, 1) + ' ms' : s < 60 ? fnum(s, 1) + ' s' : fnum(s / 60, 1) + ' min'; }
+function fmtRate(m) { return m >= 1000 ? fnum(m / 1000, m % 1000 ? 1 : 0) + ' Gb/s' : m + ' Mb/s'; }
+function simTransfer(el) {
+  let speed = 100, size = 100, dup = 'full';
+  const SP = [10, 100, 1000, 10000], SZ = [[1, '1 Mo'], [100, '100 Mo'], [1000, '1 Go'], [10000, '10 Go']];
+  function draw() {
+    const t = size * 8 / speed, cum = dup === 'full' ? speed * 2 : speed;
+    const mode = [["Cut-through", 6, "Lit la MAC de destination"], ["Fragment-free", 64, "Lit les 64 premiers octets"], ["Store-and-forward", 1518, "Reçoit toute la trame (1518 octets au maximum)"]];
+    el.innerHTML = `<div class="sim">
+      <div class="fl">
+        <div class="field"><label for="tr-s">Débit du lien</label><select id="tr-s">${SP.map(v => `<option value="${v}"${v === speed ? ' selected' : ''}>${fmtRate(v)}</option>`).join('')}</select></div>
+        <div class="field"><label for="tr-z">Taille du fichier</label><select id="tr-z">${SZ.map(v => `<option value="${v[0]}"${v[0] === size ? ' selected' : ''}>${v[1]}</option>`).join('')}</select></div>
+      </div>
+      <div class="seg" role="group" aria-label="Mode duplex"><button data-s="d" data-v="half" aria-pressed="${dup === 'half'}">Half-duplex</button><button data-s="d" data-v="full" aria-pressed="${dup === 'full'}">Full-duplex</button></div>
+      <div class="stats2"><div><b>${fmtTime(t)}</b><span>temps de transfert théorique</span></div><div><b>${fmtRate(cum)}</b><span>débit cumulé maximal (les deux sens)</span></div></div>
+      <div class="note">${dup === 'half' ? "En half-duplex, les deux machines se partagent le lien : elles ne peuvent pas émettre en même temps." : "En full-duplex, chaque machine émet et reçoit en même temps : le débit cumulé double."}</div>
+      <div class="block"><h3>Attente avant l'envoi dans le switch, à ${fmtRate(speed)}</h3><div class="scroll"><table><thead><tr><th>Mode</th><th>Octets lus</th><th>Délai</th></tr></thead><tbody>${mode.map(m => `<tr><td>${m[0]}</td><td>${m[1]}</td><td>${fnum(m[1] * 8 / speed, 2)} µs</td></tr>`).join('')}</tbody></table></div><p class="muted">Ordre de grandeur, sans compter le préambule ni le traitement du switch.</p></div>
+    </div>`;
+  }
+  el.addEventListener('change', e => { if (e.target.id === 'tr-s') speed = +e.target.value; else if (e.target.id === 'tr-z') size = +e.target.value; draw(); });
+  el.addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; dup = b.dataset.v; draw(); });
+  draw();
+}
+
+/* ---------- Simulation topologies et pannes ---------- */
+function topoDef(k) {
+  const nodes = [], links = [];
+  const N = (x, y, l, t) => nodes.push({ x: Math.round(x), y: Math.round(y), l, t }) - 1;
+  const ell = (i, n, rx, ry, a0) => { const a = (a0 + i * 360 / n) * Math.PI / 180; return [240 + rx * Math.cos(a), 120 + ry * Math.sin(a)]; };
+  let pcFail = 0, central = { nodes: [], links: [] };
+  if (k === 'star') {
+    const c = N(240, 120, 'SWITCH', 'd'), pcs = [];
+    for (let i = 0; i < 6; i++) { const p = ell(i, 6, 185, 88, -90); pcs.push(N(p[0], p[1], 'PC' + (i + 1), 'p')); links.push([c, pcs[i]]); }
+    pcFail = pcs[2]; central = { nodes: [c], links: [] };
+  } else if (k === 'bus') {
+    const js = [], pcs = [];
+    for (let i = 0; i < 6; i++) js.push(N(60 + 72 * i, 110, '', 'j'));
+    for (let i = 0; i < 6; i++) pcs.push(N(60 + 72 * i, i % 2 ? 175 : 45, 'PC' + (i + 1), 'p'));
+    for (let i = 0; i < 5; i++) links.push([js[i], js[i + 1]]);
+    for (let i = 0; i < 6; i++) links.push([js[i], pcs[i]]);
+    pcFail = pcs[2]; central = { nodes: [], links: [2] };
+  } else if (k === 'ring') {
+    const pcs = [];
+    for (let i = 0; i < 6; i++) { const p = ell(i, 6, 185, 85, -90); pcs.push(N(p[0], p[1], 'PC' + (i + 1), 'p')); }
+    for (let i = 0; i < 6; i++) links.push([pcs[i], pcs[(i + 1) % 6]]);
+    pcFail = pcs[2]; central = { nodes: [], links: [0] };
+  } else if (k === 'mesh') {
+    const pcs = [];
+    for (let i = 0; i < 5; i++) { const p = ell(i, 5, 150, 85, -90); pcs.push(N(p[0], p[1], 'PC' + (i + 1), 'p')); }
+    for (let i = 0; i < 5; i++) for (let j = i + 1; j < 5; j++) links.push([pcs[i], pcs[j]]);
+    pcFail = pcs[2]; central = { nodes: [], links: [0] };
+  } else {
+    const r = N(240, 35, 'SWITCH', 'd'), a = N(130, 105, 'SWITCH', 'd'), b = N(350, 105, 'SWITCH', 'd');
+    links.push([r, a], [r, b]);
+    [60, 130, 200].forEach((x, i) => { const p = N(x, 185, 'PC' + (i + 1), 'p'); links.push([a, p]); });
+    [280, 350, 420].forEach((x, i) => { const p = N(x, 185, 'PC' + (i + 4), 'p'); links.push([b, p]); });
+    pcFail = 4; central = { nodes: [a], links: [] };
+  }
+  return { nodes, links, pcFail, central };
+}
+const TOPO = {
+  star: { label: "Étoile", pc: "Seul le PC en panne est isolé. Les 5 autres continuent de communiquer.", ce: "Le switch central est en panne : les 6 PC perdent le réseau. C'est un point unique de défaillance." },
+  bus: { label: "Bus", pc: "Un PC en panne ne coupe pas le bus : les 5 autres continuent de communiquer.", ce: "Le câble principal est coupé : le réseau est séparé en deux, et les deux moitiés ne se parlent plus." },
+  ring: { label: "Anneau", pc: "Dans un anneau simple, un PC en panne rompt l'anneau : la circulation est interrompue. Un double anneau tolère cette panne.", ce: "Un lien coupé rompt l'anneau simple : la circulation des données est interrompue." },
+  mesh: { label: "Maillée", pc: "Les 4 autres équipements restent reliés entre eux par plusieurs chemins.", ce: "Le trafic contourne le lien coupé par un autre chemin : aucune coupure." },
+  tree: { label: "Arbre", pc: "Seul le PC en panne est isolé. Le reste de la branche fonctionne.", ce: "Le switch de la branche gauche est en panne : ses 3 PC sont isolés, la branche droite continue de fonctionner." }
+};
+function simTopo(el) {
+  let k = 'star', st = 'ok';
+  function draw() {
+    const d = topoDef(k), fn = new Set(), fl = new Set();
+    if (st === 'pc') fn.add(d.pcFail);
+    if (st === 'central') { d.central.nodes.forEach(n => fn.add(n)); d.central.links.forEach(l => fl.add(l)); }
+    let links = '', nodes = '';
+    d.links.forEach((l, i) => {
+      const a = d.nodes[l[0]], b = d.nodes[l[1]], bad = fl.has(i) || fn.has(l[0]) || fn.has(l[1]);
+      links += lineSVG(a.x, a.y, b.x, b.y, bad ? 'fail' : '');
+    });
+    d.nodes.forEach((n, i) => {
+      const c = fn.has(i) ? 'fail' : '';
+      if (n.t === 'p') nodes += nodeSVG(n.x, n.y, n.l, '', c, 46, 30);
+      else if (n.t === 'd') nodes += devSVG(n.x, n.y, n.l, 74, 28, c);
+      else nodes += `<circle class="jn" cx="${n.x}" cy="${n.y}" r="3.5"/>`;
+    });
+    const msg = st === 'ok' ? "Réseau en bon état. Simulez une panne pour voir ses conséquences." : st === 'pc' ? TOPO[k].pc : TOPO[k].ce;
+    el.innerHTML = `<div class="sim">
+      <div class="seg" role="group" aria-label="Topologie">${Object.keys(TOPO).map(x => `<button data-s="k" data-v="${x}" aria-pressed="${x === k}">${TOPO[x].label}</button>`).join('')}</div>
+      <svg class="map" viewBox="0 0 480 240" role="img" aria-label="Topologie ${TOPO[k].label}">${links}${nodes}</svg>
+      <div class="seg" role="group" aria-label="Panne"><button data-s="st" data-v="ok" aria-pressed="${st === 'ok'}">Réseau sain</button><button data-s="st" data-v="pc" aria-pressed="${st === 'pc'}">Panne d'un PC</button><button data-s="st" data-v="central" aria-pressed="${st === 'central'}">${k === 'star' || k === 'tree' ? "Panne d'un switch" : "Coupure d'un câble"}</button></div>
+      <div class="note">${msg}</div></div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'k') { k = b.dataset.v; st = 'ok'; } else st = b.dataset.v;
+    draw();
+  });
+  draw();
+}
+const SIMS = { hub: simHub, pick: simPick, explorer: simExplorer, mac: simMac, dom: simDom, arp: simArp, osi: simOsi, encaps: simEncaps, map: simMap, bits: simBits, ip: simIp, subnet: simSubnet, vlsm: simVlsm, macinfo: simMacinfo, transfer: simTransfer, topo: simTopo };
+
+/* ---------- Application ---------- */
+const CHAPS = ["Les différents types de réseaux", "Les réseaux locaux", "L'adressage IP", "Les modèles et les protocoles", "La commutation"];
+const CLEAD = [
+  "Composants, catégories, topologies et tendances : le vocabulaire de base.",
+  "Ethernet, adresses MAC, vitesse de commutation et Wi-Fi.",
+  "Binaire, IPv4, IPv6, sous-réseaux et VLSM.",
+  "Les modèles OSI et TCP/IP, et les protocoles du quotidien.",
+  "Le switch, la trame, les domaines et le protocole ARP."
+];
+const app = document.getElementById('app');
+const S = { view: 'home', tid: 1, tab: 'cours', quiz: null };
+const theme = id => THEMES.filter(t => t.id === id)[0];
+const inChap = c => THEMES.filter(t => t.ch === c);
+function best(key) { return store.get('cmt-best-' + key); }
+function saveBest(key, score, n) {
+  const old = best(key);
+  if (old) { const p = old.split('/'); if (+p[0] / +p[1] >= score / n) return; }
+  store.set('cmt-best-' + key, score + '/' + n);
+}
+function chipOf(key) {
+  const b = best(key); if (!b) return '';
+  const p = b.split('/'); return `<span class="chip${+p[0] / +p[1] >= .7 ? ' ok' : ''}">${b}</span>`;
+}
+function go(view, tid, tab) { S.view = view; if (tid != null) S.tid = tid; if (tab) S.tab = tab; render(); try { window.scrollTo(0, 0); } catch (e) {} }
+
+function homeHTML() {
+  let nq = 0; THEMES.forEach(t => nq += t.q.length);
+  let h = `<div class="stack"><div class="hero"><div class="eyebrow">OFPPT · Infrastructure digitale · 1re année</div><h1>Réseaux informatiques</h1>
+    <p class="lead">Cinq thèmes, vingt et une leçons. Pour chaque leçon : une fiche de cours, une simulation à manipuler et un QCM corrigé. Avancez à votre rythme.</p>
+    <button class="btn" data-a="general">Quiz général · 20 questions</button>
+    <p class="stats">${CHAPS.length} thèmes · ${THEMES.length} leçons · ${THEMES.length} simulations · ${nq} questions</p></div>`;
+  CHAPS.forEach((name, c) => {
+    const L = inChap(c); let nc = 0; L.forEach(t => nc += t.q.length);
+    h += `<section class="chap"><div class="chead"><div><h2>${esc(name)}</h2><p class="muted">${esc(CLEAD[c])}</p></div></div><div class="list">`;
+    L.forEach((t, k) => {
+      h += `<button class="row" data-a="open" data-id="${t.id}"><span class="n">${k + 1}</span><span><strong>${esc(t.t)}</strong><small>${esc(t.short)}</small></span>${chipOf('t' + t.id)}</button>`;
+    });
+    h += `</div><div class="cq"><button class="btn alt" data-a="chapter" data-c="${c}">Quiz du thème · ${Math.min(15, nc)} questions</button>${chipOf('c' + c)}</div></section>`;
+  });
+  return h + `</div>`;
+}
+function tableHTML(tb) {
+  return `<div class="scroll"><table><thead><tr>${tb.h.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${tb.r.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function frameHTML() {
+  const seg = [['Préambule', '8 octets', '', 8], ['MAC destination', '6 octets', 'a', 12], ['MAC source', '6 octets', 'b', 12], ['Type', '2 octets', '', 6], ['Données', '46 à 1500 octets', '', 20], ['FCS', '4 octets', '', 6]];
+  return `<div class="block"><h3>Structure d'une trame Ethernet II</h3><div class="scroll"><div class="frame">${seg.map(s => `<span class="${s[2]}" style="flex:${s[3]}">${s[0]}<small>${s[1]}</small></span>`).join('')}</div></div><p class="muted">Le switch lit la MAC source pour apprendre et la MAC destination pour décider.</p></div>`;
+}
+function themeHTML() {
+  const t = theme(S.tid), L = inChap(t.ch), k = L.indexOf(t) + 1;
+  const tabs = [['cours', 'Cours'], ['sim', 'Simulation'], ['quiz', 'Quiz']];
+  let h = `<div class="stack fiche"><button class="ghost" data-a="home">← Toutes les leçons</button>
+    <div><div class="eyebrow">${esc(CHAPS[t.ch])} · leçon ${k} sur ${L.length}</div><h2>${esc(t.t)}</h2></div>
+    <div class="tabs" role="tablist">${tabs.map(x => `<button class="tab" role="tab" data-a="tab" data-t="${x[0]}" aria-selected="${S.tab === x[0]}">${x[1]}</button>`).join('')}</div>`;
+  if (S.tab === 'cours') {
+    h += `<div class="block"><h3>Définition</h3><p class="def">${fmt(t.def)}</p></div>
+      <div class="block"><h3>Points clés</h3><ul class="pts">${t.pts.map(p => `<li>${fmt(p)}</li>`).join('')}</ul></div>`;
+    if (t.extra === 'frame') h += frameHTML();
+    if (t.table) h += `<div class="block"><h3>En un coup d'œil</h3>${tableHTML(t.table)}</div>`;
+    h += `<div class="tip"><b>Pour retenir</b>${fmt(t.ana)}</div>
+      <div class="reseau"><b>Dans un vrai réseau</b>${fmt(t.res)}</div>
+      <div class="piege"><b>Piège à éviter</b>${fmt(t.piege)}</div>
+      <div class="block"><h3>Mots-clés</h3><div class="kws">${t.kw.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>
+      <div class="actions"><button class="btn" data-a="tab" data-t="sim">Passer à la simulation</button></div>`;
+  } else if (S.tab === 'sim') {
+    h += `<p class="muted">${esc(t.simIntro)}</p><div id="sim"></div><div class="actions"><button class="btn alt" data-a="tab" data-t="quiz">Passer au quiz</button></div>`;
+  } else {
+    const b = best('t' + t.id);
+    h += `<div class="block"><h3>Quiz de la leçon</h3><p>${t.q.length} questions à choix unique, corrigées une par une. L'ordre des réponses change à chaque tirage.</p>${b ? `<p class="muted">Meilleur score : ${b}</p>` : ''}</div>
+      <div class="actions"><button class="btn" data-a="startTheme">Commencer le quiz</button></div>`;
+  }
+  return h + `</div>`;
+}
+function quizHTML() {
+  const z = S.quiz, q = z.qs[z.i], n = z.qs.length, ans = z.sel !== null;
+  let h = `<div class="stack"><div class="top"><button class="ghost" data-a="quit">← Quitter</button><span class="count">${z.i + 1} / ${n}</span></div>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${z.i + (ans ? 1 : 0)}"><i style="width:${(z.i + (ans ? 1 : 0)) / n * 100}%"></i></div>
+    <div class="eyebrow">${esc(z.title)}</div><h2 class="q">${fmt(q.q)}</h2><div class="opts">`;
+  q.o.forEach((o, k) => {
+    let c = ''; if (ans) { if (k === q.ci) c = ' ok'; else if (k === z.sel) c = ' bad'; }
+    h += `<button class="opt${c}" data-a="pick" data-k="${k}" ${ans ? 'disabled' : ''}><span class="l">${'ABCD'[k]}</span><span>${fmt(o)}</span></button>`;
+  });
+  h += `</div>`;
+  if (ans) {
+    const ok = z.sel === q.ci;
+    h += `<div class="fb ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Correct.' : 'Incorrect.'}</b>${ok ? '' : `<p>Bonne réponse : ${fmt(q.o[q.ci])}</p>`}<p>${fmt(q.e)}</p></div>
+      <div><button class="btn" data-a="next">${z.i + 1 >= n ? 'Voir le résultat' : 'Question suivante'}</button></div>`;
+  }
+  return h + `</div>`;
+}
+function resultHTML() {
+  const z = S.quiz, n = z.qs.length, p = z.score / n;
+  const msg = p >= .9 ? "Excellent. Les notions sont acquises." : p >= .7 ? "Bien. Revoyez les points ratés ci-dessous." : p >= .5 ? "À consolider. Relisez la fiche, testez la simulation, puis refaites le quiz." : "À reprendre. Relisez la fiche et manipulez la simulation avant de réessayer.";
+  let h = `<div class="stack"><div class="eyebrow">${esc(z.title)}</div><p class="score">${z.score}<small> / ${n}</small></p><p class="def">${msg}</p>
+    <div class="actions"><button class="btn" data-a="retry">Refaire le quiz</button><button class="btn alt" data-a="quit">${z.key.charAt(0) === 't' ? 'Retour à la leçon' : "Retour à l'accueil"}</button></div>`;
+  if (z.wrong.length) {
+    h += `<div class="block"><h3>À revoir · ${z.wrong.length} erreur${z.wrong.length > 1 ? 's' : ''}</h3></div><div class="review">`;
+    z.wrong.forEach(w => { h += `<div class="rv"><strong>${fmt(w.q.q)}</strong><p>Votre réponse : ${fmt(w.q.o[w.sel])}</p><p class="good">Bonne réponse : ${fmt(w.q.o[w.q.ci])}</p><p class="muted">${fmt(w.q.e)}</p></div>`; });
+    h += `</div>`;
+  }
+  return h + `</div>`;
+}
+function prep(q) { const o = shuffle(q.o); return { q: q.q, o, ci: o.indexOf(q.o[0]), e: q.e }; }
+function startQuiz(qs, title, key) {
+  S.quiz = { qs: shuffle(qs).map(prep), title, key, i: 0, sel: null, score: 0, wrong: [] };
+  go('quiz');
+}
+function startChapter(c) {
+  let all = []; inChap(c).forEach(t => { all = all.concat(t.q); });
+  startQuiz(shuffle(all).slice(0, 15), CHAPS[c], 'c' + c);
+}
+function startGeneral() {
+  let all = []; THEMES.forEach(t => { all = all.concat(t.q); });
+  startQuiz(shuffle(all).slice(0, 20), 'Quiz général · réseaux informatiques', 'gen');
+}
+function render() {
+  if (S.view === 'home') app.innerHTML = homeHTML();
+  else if (S.view === 'theme') {
+    app.innerHTML = themeHTML();
+    if (S.tab === 'sim') { const t = theme(S.tid); SIMS[t.sim](document.getElementById('sim'), t); }
+  }
+  else if (S.view === 'quiz') app.innerHTML = quizHTML();
+  else app.innerHTML = resultHTML();
+}
+app.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a, z = S.quiz;
+  if (a === 'home') go('home');
+  else if (a === 'open') go('theme', +b.dataset.id, 'cours');
+  else if (a === 'tab') go('theme', null, b.dataset.t);
+  else if (a === 'startTheme') { const t = theme(S.tid); startQuiz(t.q, t.t, 't' + t.id); }
+  else if (a === 'chapter') startChapter(+b.dataset.c);
+  else if (a === 'general') startGeneral();
+  else if (a === 'pick' && z && z.sel === null) {
+    z.sel = +b.dataset.k; const q = z.qs[z.i];
+    if (z.sel === q.ci) z.score++; else z.wrong.push({ q, sel: z.sel });
+    render();
+  }
+  else if (a === 'next') {
+    z.i++; z.sel = null;
+    if (z.i >= z.qs.length) { saveBest(z.key, z.score, z.qs.length); go('result'); } else render();
+  }
+  else if (a === 'retry') {
+    if (z.key === 'gen') startGeneral();
+    else if (z.key.charAt(0) === 'c') startChapter(+z.key.slice(1));
+    else { const t = theme(S.tid); startQuiz(t.q, z.title, z.key); }
+  }
+  else if (a === 'quit') { if (z && z.key.charAt(0) === 't') go('theme', null, 'quiz'); else go('home'); }
+});
+render();
+
+if (window.__test) window.__test = { THEMES, macStep, arpSteps, domainSVG, MACS, ip6expand, ip6compress, vlsmPlan, subnetOf, macParse, macHTML, v4HTML, v6HTML, intToIp, ipToInt, topoDef, SIMS, parseIp4 };
+})();
+</script>
