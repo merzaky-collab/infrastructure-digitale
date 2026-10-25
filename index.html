@@ -294,6 +294,42 @@ svg .link.dim { opacity: .3; }
 .lx-corr[hidden] { display: none; }
 .lx-cfg { display: flex; flex-direction: column; gap: 6px; }
 .lx-cfgh { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+
+/* Labs VLAN */
+a.btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.labmap { width: 100%; max-width: 640px; height: auto; display: block; margin-inline: auto; }
+svg .lk { fill: none; stroke: var(--line); stroke-width: 3; }
+svg .lk.v10 { stroke: var(--accent); }
+svg .lk.v20 { stroke: var(--d2); }
+svg .lk.v30 { stroke: var(--ok); }
+svg .lk.vt { stroke: var(--ink); stroke-width: 4.5; }
+svg .nd rect { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; }
+svg .nd.sw rect { fill: var(--accent-soft); }
+svg .nd.r rect { fill: var(--d2-soft); }
+svg .nd.l3 rect { fill: var(--ok-soft); stroke-width: 3; }
+svg .nd.pc.v10 rect { stroke: var(--accent); stroke-width: 3; }
+svg .nd.pc.v20 rect { stroke: var(--d2); stroke-width: 3; }
+svg .nd.pc.v30 rect { stroke: var(--ok); stroke-width: 3; }
+svg text.nm { font: 700 13px var(--f-mono); }
+svg text.sb { font: 500 10px var(--f-mono); fill: var(--muted); }
+svg text.pt { font: 500 10.5px var(--f-mono); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+svg text.tl { font: 700 11px var(--f-mono); }
+.dots { font: 500 13px var(--f-mono); letter-spacing: .12em; color: var(--accent); }
+.metas { display: flex; flex-wrap: wrap; gap: 8px; }
+.lsteps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; counter-reset: s; }
+.lsteps > li { counter-increment: s; border-top: 1.5px solid var(--line); padding: 14px 0 0 44px; position: relative; display: flex; flex-direction: column; gap: 8px; }
+.lsteps > li::before { content: counter(s); position: absolute; left: 0; top: 12px; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); font: 700 15px/26px var(--f-display); text-align: center; }
+.lsteps strong { font-family: var(--f-display); font-size: 1.08rem; }
+details { border: 1.5px solid var(--line); border-radius: 8px; background: var(--surface); }
+details > summary { cursor: pointer; padding: 10px 14px; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+details[open] > summary { border-bottom: 1px solid var(--line); }
+details > div, details > p { padding: 12px 14px; margin: 0; }
+details .blk { display: flex; flex-direction: column; gap: 14px; }
+details .blk h4 { margin: 0 0 6px; font: 500 12px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+pre.code { margin: 0; padding: 12px 14px; background: #0F1B22; color: #D6E9EE; border: 1px solid var(--line); font: 500 13px/1.55 var(--f-mono); overflow-x: auto; border-radius: 8px; white-space: pre; }
+.row:disabled { cursor: not-allowed; }
+.row:disabled strong, .row:disabled:hover strong { color: var(--muted); }
+.navlab { display: flex; flex-wrap: wrap; gap: 10px; }
 </style>
 
 <main id="app"></main>
@@ -2495,8 +2531,70 @@ const CLEAD = [
   "Le switch, la trame, les domaines et le protocole ARP.",
   "Segmenter un switch, trunks 802.1Q, configuration Cisco, routage inter-VLAN et dépannage."
 ];
+
+/* ---------- Labs VLAN ---------- */
+const LABS = [{"id": 1, "niveau": "Débutant", "titre": "Mes premiers VLAN", "sous": "Un switch, quatre PC, deux services", "duree": "45 min", "locked": true}, {"id": 2, "niveau": "Facile", "titre": "Trois services, un switch", "sous": "Plages de ports, adressage par VLAN et diagnostic", "duree": "1 h 15", "locked": true}, {"id": 3, "niveau": "Intermédiaire", "titre": "Deux switchs et un trunk", "sous": "Un VLAN qui traverse plusieurs switchs", "duree": "1 h 30", "locked": true}, {"id": 4, "niveau": "Intermédiaire +", "titre": "Routage inter-VLAN : router-on-a-stick", "sous": "Faire communiquer deux VLAN avec un seul câble vers le routeur", "duree": "2 h", "locked": true}, {"id": 5, "niveau": "Avancé", "titre": "Trois switchs, trois VLAN et DHCP", "sous": "Un réseau d'entreprise complet : trunks, routage inter-VLAN et adresses automatiques", "duree": "2 h 30", "locked": true}, {"id": 6, "niveau": "Expert", "titre": "Cœur de réseau L3, sécurité et dépannage", "sous": "SVI, ACL entre VLAN, sécurité des ports et chasse aux pannes", "duree": "3 h", "locked": true}];
+function labTopoSVG(tp) {
+  const N = {}; tp.nodes.forEach(n => { N[n.id] = n; });
+  const SZ = { pc: [78, 44], sw: [100, 40], r: [100, 40], l3: [112, 44] };
+  const exit = (n, ux, uy) => { const s = SZ[n.t], ex = Math.abs(ux) < 1e-6 ? 1e9 : s[0] / 2 / Math.abs(ux), ey = Math.abs(uy) < 1e-6 ? 1e9 : s[1] / 2 / Math.abs(uy); return Math.min(ex, ey); };
+  let lines = '', labs = '', nodes = ''; const oc = {}; tp.links.forEach(l => { oc[l.a] = (oc[l.a] || 0) + 1; });
+  tp.links.forEach(l => {
+    const a = N[l.a], b = N[l.b], dx = b.x - a.x, dy = b.y - a.y, len = Math.sqrt(dx * dx + dy * dy), ux = dx / len, uy = dy / len;
+    lines += `<line class="lk v${l.c}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+    const put = (n, txt, sx) => {
+      if (!txt) return;
+      const lw = txt.length * 6.4; let d = exit(n, sx * ux, sx * uy) + 8 + Math.abs(ux) * lw / 2 + Math.abs(uy) * 7; if (sx === 1 && oc[n.id] >= 4) d = len * 0.42;
+      labs += `<text class="pt" x="${(n.x + sx * ux * d).toFixed(1)}" y="${(n.y + sx * uy * d + 4).toFixed(1)}" text-anchor="middle">${esc(txt)}</text>`;
+    };
+    put(a, l.pa, 1); put(b, l.pb, -1);
+    if (l.lab) {
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      labs += Math.abs(ux) > Math.abs(uy)
+        ? `<text class="tl" x="${mx}" y="${my - 10}" text-anchor="middle">${esc(l.lab)}</text>`
+        : `<text class="tl" x="${mx + 12}" y="${my + 4}">${esc(l.lab)}</text>`;
+    }
+  });
+  tp.nodes.forEach(n => {
+    const s = SZ[n.t], v = n.v ? ' v' + n.v : '';
+    nodes += `<g class="nd ${n.t}${v}"><rect x="${n.x - s[0] / 2}" y="${n.y - s[1] / 2}" width="${s[0]}" height="${s[1]}" rx="${n.t === 'pc' ? 6 : 10}"/>
+      <text class="nm" x="${n.x}" y="${n.y - 2}" text-anchor="middle">${esc(n.l)}</text><text class="sb" x="${n.x}" y="${n.y + 13}" text-anchor="middle">${esc(n.s || '')}</text></g>`;
+  });
+  return `<svg class="labmap" viewBox="0 0 640 ${tp.h}" role="img" aria-label="Topologie du lab">${lines}${nodes}${labs}</svg>`;
+}
+function ltable(h, rows) {
+  return `<div class="scroll"><table><thead><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+const labDots = n => '●'.repeat(n) + '○'.repeat(6 - n);
+function labsHome() {
+  let h = `<section class="chap"><div class="chead"><div><h2>Labs VLAN</h2><p class="muted">Six travaux pratiques Packet Tracer, du plus simple au plus difficile. Le formateur débloque les labs au fur et à mesure.</p></div></div><div class="list">`;
+  LABS.forEach(l => {
+    if (l.locked) { h += `<button class="row" disabled aria-disabled="true"><span class="n">&#128274;</span><span><strong>${esc(l.titre)}</strong><small>${esc(l.niveau)} · ${esc(l.sous)}</small></span><span class="chip">Verrouillé</span></button>`; return; }
+    h += `<button class="row" data-a="lab" data-id="${l.id}"><span class="n">${l.id}</span><span><strong>${esc(l.titre)}</strong><small>${esc(l.niveau)} · ${esc(l.sous)}</small></span><span class="chip">${esc(l.duree)}</span></button>`;
+  });
+  return h + `</div></section>`;
+}
+function labHTML() {
+  const b = LABS.filter(x => x.id === S.lab)[0], pdf = `labs/lab-${b.id}-vlan.pdf`;
+  const tot = b.bareme.reduce((s, r) => s + r[1], 0);
+  let h = `<div class="stack fiche"><button class="ghost" data-a="home">← Toutes les leçons et labs</button>
+    <div><div class="eyebrow">Lab VLAN · niveau ${b.id} sur ${LABS.length} · ${esc(b.niveau)}</div><h2>${esc(b.titre)}</h2><p class="muted" style="margin-top:6px">${esc(b.sous)}</p></div>
+    <div class="metas"><span class="chip">${esc(b.duree)}</span><span class="chip">${esc(b.materiel)}</span><span class="chip">${esc(b.logiciel)}</span><span class="dots" aria-label="Difficulté ${b.id} sur ${LABS.length}">${labDots(b.id)}</span></div>
+    <div class="actions"><a class="btn" href="${pdf}" target="_blank" rel="noopener" download>Télécharger le PDF</a>${b.sim ? `<a class="btn alt" href="${b.sim.url}" target="_blank" rel="noopener">Version interactive</a>` : ''}</div>
+    <div class="tip"><b>Pour retenir</b>${esc(b.analogie)}</div>
+    <div class="block"><h3>Objectifs</h3><ul class="pts">${b.objectifs.map(o => `<li>${esc(o)}</li>`).join('')}</ul></div>
+    <div class="block"><h3>Topologie</h3><div class="sim">${labTopoSVG(b.topo)}</div></div>
+    <div class="block"><h3>Plan d'adressage</h3>${ltable(b.plan[0], b.plan.slice(1))}<p class="muted">${esc(b.plan_note)}</p></div>
+    <div class="block"><h3>Étapes du TP</h3><ol class="lsteps">${b.etapes.map(e => `<li><strong>${esc(e.t)}</strong><p>${esc(e.d)}</p>${e.q ? `<details><summary>Question : ${esc(e.q)}</summary><p>${esc(e.r)}</p></details>` : ''}</li>`).join('')}</ol></div>
+    <div class="block"><h3>Corrigé formateur</h3><details><summary>Afficher les configurations</summary><div class="blk">${b.corrige.map(c => `<div><h4>${esc(c.titre)}</h4><pre class="code">${esc(c.code)}</pre></div>`).join('')}</div></details></div>
+    <div class="block"><h3>Vérifications</h3>${ltable(['Commande ou test', 'Résultat attendu'], b.verifs)}</div>
+    <div class="block"><h3>Pannes fréquentes</h3><details><summary>Symptômes, causes et corrections</summary><div>${ltable(['Symptôme', 'Cause probable', 'Correction'], b.pannes)}</div></details></div>
+    <div class="block"><h3>Barème · ${tot} points</h3>${ltable(['Critère', 'Points'], b.bareme.map(r => [r[0], String(r[1])]))}</div>
+    <div class="navlab">${b.id > 1 ? `<button class="btn alt" data-a="lab" data-id="${b.id - 1}">← Lab ${b.id - 1}</button>` : ''}${b.id < LABS.length ? `<button class="btn" data-a="lab" data-id="${b.id + 1}" ${LABS[b.id].locked ? 'disabled' : ''}>${LABS[b.id].locked ? '&#128274; ' : ''}Lab ${b.id + 1} →</button>` : ''}</div></div>`;
+  return h;
+}
 const app = document.getElementById('app');
-const S = { view: 'home', tid: 1, tab: 'cours', quiz: null, labPreset: null };
+const S = { view: 'home', tid: 1, tab: 'cours', quiz: null, labPreset: null, lab: 1 };
 const theme = id => THEMES.filter(t => t.id === id)[0];
 const inChap = c => THEMES.filter(t => t.ch === c);
 function best(key) { return store.get('cmt-best-' + key); }
@@ -2516,7 +2614,7 @@ function homeHTML() {
   let h = `<div class="stack"><div class="hero"><div class="eyebrow">OFPPT · Infrastructure digitale · 1re année</div><h1>Réseaux informatiques</h1>
     <p class="lead">Six thèmes, vingt-six leçons. Pour chaque leçon : une fiche de cours, une simulation à manipuler et un QCM corrigé. Avancez à votre rythme.</p>
     <button class="btn" data-a="general">Quiz général · 20 questions</button>
-    <p class="stats">${CHAPS.length} thèmes · ${THEMES.length} leçons · ${THEMES.length} simulations · ${nq} questions</p></div>`;
+    <p class="stats">${CHAPS.length} thèmes · ${THEMES.length} leçons · ${THEMES.length} simulations · ${nq} questions · ${LABS.length} labs VLAN</p></div>`;
   CHAPS.forEach((name, c) => {
     const L = inChap(c); let nc = 0; L.forEach(t => nc += t.q.length);
     h += `<section class="chap"><div class="chead"><div><h2>${esc(name)}</h2><p class="muted">${esc(CLEAD[c])}</p></div></div><div class="list">`;
@@ -2525,6 +2623,7 @@ function homeHTML() {
     });
     h += `</div><div class="cq"><button class="btn alt" data-a="chapter" data-c="${c}">Quiz du thème · ${Math.min(15, nc)} questions</button>${chipOf('c' + c)}</div></section>`;
   });
+  h += labsHome();
   return h + `</div>`;
 }
 function tableHTML(tb) {
@@ -2610,6 +2709,7 @@ function render() {
     if (S.tab === 'sim') { const t = theme(S.tid); SIMS[t.sim](document.getElementById('sim'), t); }
   }
   else if (S.view === 'quiz') app.innerHTML = quizHTML();
+  else if (S.view === 'lab') app.innerHTML = labHTML();
   else app.innerHTML = resultHTML();
 }
 app.addEventListener('click', e => {
@@ -2621,6 +2721,7 @@ app.addEventListener('click', e => {
   else if (a === 'startTheme') { const t = theme(S.tid); startQuiz(t.q, t.t, 't' + t.id); }
   else if (a === 'chapter') startChapter(+b.dataset.c);
   else if (a === 'general') startGeneral();
+  else if (a === 'lab') { const X = LABS.filter(x => x.id === +b.dataset.id)[0]; if (X && !X.locked) { S.lab = X.id; go('lab'); } }
   else if (a === 'pick' && z && z.sel === null) {
     z.sel = +b.dataset.k; const q = z.qs[z.i];
     if (z.sel === q.ci) z.score++; else z.wrong.push({ q, sel: z.sel });
@@ -2644,6 +2745,15 @@ app.addEventListener('click', e => {
     try { navigator.clipboard.writeText(txt).then(done, sel); } catch (err) { sel(); }
   }
   else if (a === 'quit') { if (z && z.key.charAt(0) === 't') go('theme', null, 'quiz'); else go('home'); }
+});
+
+/* Déverrouillage : un lab est disponible uniquement si le fichier labs/lab-N.json est présent sur le site */
+LABS.forEach(l => {
+  if (!l.locked) return;
+  fetch('labs/lab-' + l.id + '.json', { cache: 'no-store' })
+    .then(r => { if (!r.ok) throw 0; return r.json(); })
+    .then(d => { if (!d || d.id !== l.id || !d.etapes) throw 0; Object.assign(l, d); l.locked = false; if (S.view === 'home') render(); })
+    .catch(() => {});
 });
 render();
 
