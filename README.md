@@ -1,11 +1,13 @@
 # Réseaux informatiques · Infrastructure digitale
 
 Application web pour les stagiaires OFPPT de 1re année (Infrastructure digitale) :
-6 thèmes, 26 leçons, chacune avec une fiche de cours, une simulation et un QCM corrigé.
+7 thèmes, 29 leçons, chacune avec une fiche de cours, une simulation et un QCM corrigé.
 
 Site en ligne : https://infrastructure-digitale.netlify.app/
 
 ## Organisation
+Le thème « La redondance des réseaux » (leçons 27 à 29) couvre les atouts de la redondance, STP et VRRP, avec les simulations `simRedund`, `simStp` et `simVrrp`.
+
 Tout le site tient dans `index.html` (HTML, CSS et JavaScript, sans dépendance à installer).
 - Les leçons sont dans le tableau `THEMES`, les thèmes dans `CHAPS` et `CLEAD`.
 - Chaque simulation est une fonction déclarée dans `SIMS`.

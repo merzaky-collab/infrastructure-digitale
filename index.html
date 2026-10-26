@@ -330,6 +330,8 @@ pre.code { margin: 0; padding: 12px 14px; background: #0F1B22; color: #D6E9EE; b
 .row:disabled { cursor: not-allowed; }
 .row:disabled strong, .row:disabled:hover strong { color: var(--muted); }
 .navlab { display: flex; flex-wrap: wrap; gap: 10px; }
+svg .link.blk { stroke: var(--d2); stroke-dasharray: 7 6; }
+svg .mk.ok circle { stroke: var(--ok); }
 </style>
 
 <main id="app"></main>
@@ -2519,17 +2521,365 @@ function labTabHTML(t) {
   return h;
 }
 
-const SIMS = { vlanbc: simVlanBc, lab: simLab, hub: simHub, pick: simPick, explorer: simExplorer, mac: simMac, dom: simDom, arp: simArp, osi: simOsi, encaps: simEncaps, map: simMap, bits: simBits, ip: simIp, subnet: simSubnet, vlsm: simVlsm, macinfo: simMacinfo, transfer: simTransfer, topo: simTopo };
+/* ---------- Thème Redondance des réseaux ---------- */
+THEMES.push(
+{ id: 27, ch: 6, t: "Atouts et limites de la redondance", short: "Haute disponibilité, point unique de défaillance, coût", sim: 'redund',
+  def: "La redondance consiste à doubler les éléments critiques d'un réseau (liens, équipements, alimentation, accès Internet) pour que la panne d'un seul élément ne coupe pas le service. Elle vise la haute disponibilité : un réseau qui reste utilisable même quand quelque chose tombe en panne.",
+  pts: [
+    "Point unique de défaillance (SPOF, Single Point of Failure) : un élément dont la panne coupe tout le service. Un seul switch central, un seul routeur, un seul accès Internet sont des SPOF.",
+    "On peut doubler à plusieurs niveaux : les liens (deux câbles), les équipements (deux switchs, deux routeurs), l'alimentation (deux blocs, un onduleur), les fournisseurs d'accès (deux opérateurs) et même les sites (deux salles serveurs).",
+    "La disponibilité se mesure en pourcentage de temps de service par an : 99 % = environ 3,65 jours d'arrêt, 99,9 % = environ 8 h 46, 99,99 % = environ 53 minutes, 99,999 % = environ 5 minutes.",
+    "Atouts : continuité du service malgré une panne, maintenance sans coupure (on arrête un équipement pendant que l'autre travaille), respect des contrats de service (SLA), confiance des utilisateurs.",
+    "Limites : coût (matériel, licences, énergie, câblage), complexité (configuration, supervision, compétences) et risques nouveaux (boucles de couche 2, conflits d'adresses).",
+    "Une redondance ne protège que si elle est complète : deux routeurs sur la même prise électrique, ou deux câbles dans la même gaine, restent un seul point de panne.",
+    "Il faut tester la bascule et superviser les équipements de secours. Un équipement de secours en panne depuis des mois, sans que personne le sache, donne une fausse sécurité.",
+    "Deux familles de protocoles : en couche 2, `STP` évite les boucles entre switchs redondants ; en couche 3, `VRRP` ou `HSRP` doublent la passerelle par défaut."
+  ],
+  table: { h: ["", "Sans redondance", "Avec redondance"], r: [
+    ["Panne d'un équipement", "Le service est coupé", "Le service continue (bascule)"],
+    ["Maintenance", "Arrêt programmé nécessaire", "Possible sans coupure"],
+    ["Coût", "Faible", "Plus élevé (matériel, énergie, licences)"],
+    ["Configuration", "Simple", "Plus complexe (protocoles, tests)"],
+    ["Risque de boucle", "Aucun", "À maîtriser avec STP"]
+  ] },
+  kw: ["Haute disponibilité", "SPOF", "Redondance", "Bascule (failover)", "SLA", "Disponibilité", "Supervision"],
+  ana: "La roue de secours d'une voiture : elle coûte de l'argent et prend de la place, mais une crevaison n'immobilise plus personne. À une condition : qu'elle soit gonflée. Une roue de secours à plat est une fausse sécurité.",
+  res: "Un lycée relie chaque switch d'étage à deux switchs de cœur par deux câbles, et prend deux accès Internet chez deux opérateurs. Si un chantier coupe un câble, les élèves ne s'en aperçoivent pas.",
+  piege: "Doubler un équipement ne suffit pas. Si les deux partagent la même alimentation, le même câble ou la même erreur de configuration, une seule panne les emporte tous les deux. Et la redondance a un coût : on la place là où une panne coûte plus cher que la protection.",
+  simIntro: "Choisissez une architecture, puis simulez une panne pour voir si Internet reste joignable. Essayez les trois architectures avec chaque panne.",
+  q: [
+    { q: "Qu'est-ce qu'un point unique de défaillance (SPOF) ?", o: ["Un élément dont la panne coupe tout le service", "Un switch qui possède un seul port", "Un protocole sans mot de passe", "Un câble de plus de 100 m"], e: "Si cet élément tombe et qu'aucun autre ne peut le remplacer, le service s'arrête." },
+    { q: "Quel est l'objectif principal de la redondance ?", o: ["Maintenir le service malgré la panne d'un élément", "Augmenter le débit d'un seul lien", "Réduire le coût du réseau", "Chiffrer le trafic"], e: "La redondance vise la haute disponibilité. Elle coûte plus cher, elle ne réduit pas le coût." },
+    { q: "Deux routeurs redondants sont branchés sur la même multiprise. Que peut-on dire ?", o: ["La multiprise reste un point unique de défaillance", "Le réseau est totalement redondant", "La redondance est inutile pour les routeurs", "Le routage devient plus rapide"], e: "La redondance doit couvrir toute la chaîne : équipements, câblage et alimentation. Ici, une panne de la multiprise coupe les deux routeurs." },
+    { q: "Laquelle de ces propositions est une limite de la redondance ?", o: ["Elle augmente le coût et la complexité", "Elle réduit la disponibilité", "Elle supprime la maintenance", "Elle empêche la supervision"], e: "Matériel doublé, configuration plus complexe, tests à prévoir : c'est le prix de la disponibilité." },
+    { q: "Une disponibilité de 99,9 % correspond à environ combien d'arrêt par an ?", o: ["8 h 46", "3 jours et demi", "53 minutes", "5 minutes"], e: "0,1 % de 8 766 heures donne environ 8,8 heures. 99 % = 3,65 jours, 99,99 % = 53 minutes, 99,999 % = 5 minutes." },
+    { q: "Quelle architecture élimine le point unique de défaillance « routeur de sortie » ?", o: ["Deux routeurs capables de se remplacer", "Un seul routeur plus puissant", "Un câble plus court vers le routeur", "Un switch de plus côté postes"], e: "Un routeur plus puissant reste seul : s'il tombe, tout s'arrête. Il faut un second routeur prêt à prendre le relais." },
+    { q: "Dans la simulation, on double le câble entre le switch et R1, puis R1 tombe en panne. Que se passe-t-il ?", o: ["Internet est coupé : le routeur reste un point unique de défaillance", "Le second câble prend le relais", "R1 se répare tout seul", "Le switch devient routeur"], e: "Doubler un lien protège contre la coupure du câble, pas contre la panne de l'équipement au bout." },
+    { q: "Pourquoi faut-il tester régulièrement la bascule d'une architecture redondante ?", o: ["Pour être sûr que l'équipement de secours fonctionne le jour de la panne", "Pour augmenter le débit des liens", "Pour vider la table MAC", "Pour changer les adresses IP"], e: "Un équipement de secours jamais testé peut être en panne depuis longtemps. On le découvre alors au pire moment." },
+    { q: "Quels éléments peut-on rendre redondants ?", o: ["Liens, équipements, alimentation et fournisseurs d'accès", "Uniquement les câbles", "Uniquement les serveurs", "Uniquement l'alimentation"], e: "Tous les maillons de la chaîne peuvent l'être. On choisit selon le coût d'une panne." }
+  ] },
+
+{ id: 28, ch: 6, t: "Le protocole STP", short: "Boucles de couche 2, pont racine, ports bloqués, RSTP", sim: 'stp',
+  def: "STP (Spanning Tree Protocol, norme IEEE 802.1D) évite les boucles de couche 2 dans un réseau de switchs reliés par des liens redondants. Il bloque logiquement certains ports pour ne laisser qu'un seul chemin actif entre deux points, et réactive un port bloqué quand un lien tombe en panne.",
+  pts: [
+    "Le problème : des liens redondants entre switchs créent une boucle. Une trame de diffusion (broadcast) est recopiée par chaque switch et tourne sans fin. C'est la tempête de diffusion : le réseau est saturé en quelques secondes.",
+    "Ethernet n'a pas de durée de vie dans la trame (pas de TTL comme dans un paquet IP) : rien ne détruit une trame qui tourne en boucle.",
+    "Les switchs échangent des messages `BPDU` (Bridge Protocol Data Unit), toutes les 2 secondes, pour construire un arbre sans boucle (spanning tree).",
+    "Étape 1 : élection du pont racine (Root Bridge). Le switch qui a le plus petit Bridge ID gagne. Le Bridge ID = priorité (32768 par défaut, par pas de 4096) + adresse MAC. À priorité égale, la plus petite MAC l'emporte.",
+    "Étape 2 : chaque switch non racine choisit un port racine (Root Port) : celui qui offre le coût le plus faible vers la racine.",
+    "Étape 3 : sur chaque lien entre deux switchs, un port désigné (Designated Port) : celui du switch le plus proche de la racine. Les autres ports sont bloqués (Alternate) : ils ne transmettent aucune trame de données.",
+    "Coût d'un lien selon son débit : 10 Mb/s = 100, 100 Mb/s = 19, 1 Gb/s = 4, 10 Gb/s = 2. Le coût total vers la racine est la somme des liens traversés.",
+    "États d'un port STP classique : Blocking, puis Listening (15 s), Learning (15 s), enfin Forwarding. La convergence prend 30 à 50 secondes.",
+    "RSTP (802.1w, Rapid PVST+ chez Cisco) converge en 1 à 2 secondes. On l'active avec `spanning-tree mode rapid-pvst`.",
+    "PortFast sur les ports des PC les passe directement en Forwarding. On lui associe BPDU Guard, qui coupe le port si un switch y est branché par erreur.",
+    "Commandes Cisco : `show spanning-tree`, `spanning-tree vlan 1 root primary`, `spanning-tree vlan 1 priority 4096`."
+  ],
+  table: { h: ["État du port", "Reçoit les BPDU", "Apprend les MAC", "Transmet les données", "Durée"], r: [
+    ["Blocking", "Oui", "Non", "Non", "20 s (max age)"],
+    ["Listening", "Oui", "Non", "Non", "15 s"],
+    ["Learning", "Oui", "Oui", "Non", "15 s"],
+    ["Forwarding", "Oui", "Oui", "Oui", "Régime normal"]
+  ] },
+  kw: ["Boucle", "Tempête de diffusion", "BPDU", "Pont racine (Root Bridge)", "Bridge ID", "Port racine", "Port désigné", "Port bloqué", "RSTP", "PortFast"],
+  ana: "Un carrefour dont toutes les routes forment un rond-point sans panneau : les voitures tournent sans fin. STP est l'agent de circulation : il ferme certaines routes (les ports bloqués) pour que chacun n'ait qu'un chemin. S'il y a un accident sur une route ouverte, il rouvre une route fermée.",
+  res: "Dans un lycée, chaque switch d'étage est branché à deux switchs de cœur. STP bloque l'un des deux liens. Si le lien actif est coupé par un chantier, le port bloqué passe en Forwarding et le réseau repart : 30 à 50 s en STP classique, 1 à 2 s en RSTP.",
+  piege: "Avec STP, la redondance ne répartit pas la charge : le lien bloqué ne transporte rien tant que le lien actif fonctionne. Et si on ne règle pas les priorités, le switch qui a la plus petite adresse MAC (souvent le plus vieux) devient racine, parfois au pire endroit du réseau.",
+  simIntro: "Trois switchs reliés en triangle forment une boucle. Commencez sans STP, puis activez-le. Ensuite, coupez un lien et changez la priorité pour déplacer le pont racine.",
+  q: [
+    { q: "Quel problème STP résout-il ?", o: ["Les boucles de couche 2 créées par des liens redondants entre switchs", "Les conflits d'adresses IP", "Les collisions sur un hub", "L'attribution automatique des adresses"], e: "STP bloque certains ports pour qu'il n'existe qu'un seul chemin actif entre deux switchs." },
+    { q: "Que se passe-t-il, sans STP, dans un réseau de switchs reliés en boucle ?", o: ["Une tempête de diffusion : les trames tournent sans fin", "Rien, les switchs détectent la boucle", "Le trafic est chiffré", "Les VLAN sont supprimés"], e: "Une trame de diffusion est recopiée en boucle. Ethernet n'a pas de TTL pour la détruire : le réseau est saturé." },
+    { q: "Comment est élu le pont racine (Root Bridge) ?", o: ["Le plus petit Bridge ID : priorité, puis adresse MAC", "Le switch qui a le plus de ports", "Le switch le plus récent", "Le plus grand Bridge ID"], e: "Le Bridge ID est composé de la priorité (32768 par défaut) et de l'adresse MAC. Le plus petit gagne." },
+    { q: "Trois switchs ont tous la priorité par défaut 32768. Lequel devient pont racine ?", o: ["Celui qui a la plus petite adresse MAC", "Celui qui a la plus grande adresse MAC", "Le premier allumé", "Celui qui a le plus de PC"], e: "À priorité égale, la plus petite adresse MAC départage. D'où l'intérêt de fixer soi-même la priorité du switch de cœur." },
+    { q: "Que fait un port en état Blocking ?", o: ["Il reçoit les BPDU mais ne transmet aucune trame de données", "Il transmet les données et apprend les MAC", "Il est éteint électriquement", "Il envoie uniquement des broadcasts"], e: "Le port reste à l'écoute des BPDU pour pouvoir se réactiver si un lien tombe, mais il ne transmet pas de données." },
+    { q: "Dans quel ordre passent les états d'un port avec STP classique (802.1D) ?", o: ["Blocking, Listening, Learning, Forwarding", "Listening, Blocking, Forwarding, Learning", "Forwarding, Learning, Listening, Blocking", "Learning, Blocking, Listening, Forwarding"], e: "Le port apprend d'abord la topologie (Listening), puis les adresses MAC (Learning), puis transmet (Forwarding). Total : environ 30 à 50 s." },
+    { q: "Quel est le coût STP d'un lien Gigabit Ethernet (1 Gb/s) ?", o: ["4", "19", "100", "1000"], e: "10 Mb/s = 100, 100 Mb/s = 19, 1 Gb/s = 4, 10 Gb/s = 2. Plus le lien est rapide, plus le coût est faible." },
+    { q: "Quel est l'avantage principal de RSTP (802.1w) par rapport à STP ?", o: ["Il converge en quelques secondes au lieu de 30 à 50 s", "Il supprime le pont racine", "Il répartit la charge sur tous les liens", "Il fonctionne sans BPDU"], e: "RSTP garde le même principe mais réagit beaucoup plus vite à une panne de lien." },
+    { q: "Pourquoi configurer PortFast sur les ports des PC ?", o: ["Pour les passer directement en Forwarding, sans attendre 30 s", "Pour bloquer le trafic des PC", "Pour doubler leur débit", "Pour désigner le pont racine"], e: "Un PC ne crée pas de boucle : inutile d'attendre. On ajoute BPDU Guard pour couper le port si un switch y est branché par erreur." }
+  ] },
+
+{ id: 29, ch: 6, t: "Le protocole VRRP", short: "Passerelle virtuelle, Master et Backup, bascule", sim: 'vrrp',
+  def: "VRRP (Virtual Router Redundancy Protocol, RFC 5798) permet à plusieurs routeurs de partager une même adresse IP virtuelle, utilisée comme passerelle par défaut par les PC. Un routeur (le Master) assure le routage. S'il tombe, un routeur de secours (le Backup) prend le relais automatiquement, sans rien changer sur les PC.",
+  pts: [
+    "Le problème : un PC n'a qu'une seule passerelle par défaut. Si ce routeur tombe, le PC n'atteint plus rien, même s'il existe un second routeur. STP protège les liens entre switchs, pas la passerelle.",
+    "Les routeurs forment un groupe VRRP (identifiant VRID de 1 à 255). Ils partagent une IP virtuelle (par exemple 192.168.1.1) et une MAC virtuelle (00:00:5E:00:01:VRID en IPv4). Les PC utilisent l'IP virtuelle comme passerelle.",
+    "Le Master est le routeur de plus haute priorité. La priorité va de 1 à 254, avec 100 par défaut. La valeur 255 est réservée au routeur propriétaire de l'IP virtuelle. À priorité égale, la plus grande adresse IP réelle l'emporte.",
+    "Le Master envoie une annonce (Advertisement) chaque seconde, en multicast vers `224.0.0.18`. Les Backup écoutent.",
+    "Si un Backup n'entend plus d'annonce pendant environ 3 intervalles (environ 3 secondes), il se déclare Master. Il prend l'IP virtuelle et la MAC virtuelle, puis envoie un ARP gratuit pour que le switch mette à jour son port.",
+    "Les PC ne changent rien : même IP de passerelle, même MAC dans leur table ARP. Seul le routeur qui répond change.",
+    "Préemption : quand le routeur de plus haute priorité revient, il reprend le rôle de Master. Elle est activée par défaut en VRRP et peut être désactivée pour éviter un deuxième basculement.",
+    "VRRP est un standard ouvert (IETF). HSRP et GLBP sont des protocoles Cisco de principe voisin ; GLBP peut répartir la charge entre routeurs.",
+    "Exemple Cisco : `vrrp 1 ip 192.168.1.1` et `vrrp 1 priority 110` sur l'interface. Vérification : `show vrrp brief`. Selon la version de Packet Tracer, VRRP n'est pas toujours disponible : on utilise alors HSRP, qui fonctionne sur le même principe."
+  ],
+  table: { h: ["", "VRRP", "HSRP", "GLBP"], r: [
+    ["Norme", "Ouverte (IETF, RFC 5798)", "Propriétaire Cisco", "Propriétaire Cisco"],
+    ["Routeur actif", "Master", "Active", "AVG et AVF"],
+    ["Routeur de secours", "Backup", "Standby", "AVG de secours"],
+    ["Partage de charge", "Non (un actif par groupe)", "Non (un actif par groupe)", "Oui"],
+    ["Priorité par défaut", "100", "100", "100"]
+  ] },
+  kw: ["IP virtuelle", "MAC virtuelle", "Master", "Backup", "Priorité", "Advertisement", "Préemption", "Passerelle par défaut", "HSRP"],
+  ana: "Le standard téléphonique d'une entreprise : les clients appellent toujours le même numéro (l'IP virtuelle). La standardiste titulaire décroche (le Master). Si elle est absente, sa collègue prend la ligne (le Backup). Les clients n'ont pas changé de numéro.",
+  res: "Dans une école, R1 (priorité 110) et R2 (priorité 100) sont reliés au même réseau. Tous les PC ont pour passerelle 192.168.1.1, l'adresse virtuelle. Si R1 tombe, R2 devient Master en 3 secondes environ et les PC continuent de travailler sans rien reconfigurer.",
+  piege: "VRRP protège la passerelle, pas le reste. Si le switch où sont branchés les deux routeurs tombe, tout s'arrête : d'où les switchs redondants et STP. Et on ne configure jamais la passerelle des PC avec l'adresse réelle d'un routeur : elle doit être l'adresse virtuelle.",
+  simIntro: "Parcourez les 4 étapes : fonctionnement normal, panne de R1, bascule sur R2, retour de R1. Changez ensuite la préemption pour comparer les deux comportements.",
+  q: [
+    { q: "Quel problème VRRP résout-il ?", o: ["La panne de la passerelle par défaut", "Les boucles de couche 2", "Les conflits d'adresses MAC", "L'attribution des adresses IP"], e: "Sans VRRP, la panne du routeur de sortie coupe tous les PC, même si un second routeur existe." },
+    { q: "Quelle passerelle les PC doivent-ils utiliser avec VRRP ?", o: ["L'adresse IP virtuelle du groupe", "L'adresse IP réelle du Master", "L'adresse IP réelle du Backup", "L'adresse de broadcast"], e: "L'IP virtuelle ne change pas, quel que soit le routeur qui assure le rôle de Master." },
+    { q: "Quel routeur devient Master ?", o: ["Celui qui a la plus haute priorité", "Celui qui a la plus basse priorité", "Celui qui a le plus de ports", "Celui qui a la plus petite adresse MAC"], e: "La plus haute priorité gagne. À priorité égale, la plus grande adresse IP réelle l'emporte." },
+    { q: "Quelle est la priorité VRRP par défaut ?", o: ["100", "1", "255", "32768"], e: "La priorité va de 1 à 254. La valeur 255 est réservée au routeur qui possède réellement l'IP virtuelle. 32768 est la priorité par défaut de STP." },
+    { q: "Comment le Backup détecte-t-il la panne du Master ?", o: ["Il ne reçoit plus d'annonces pendant environ 3 intervalles", "Il envoie un ping toutes les 100 ms", "Le switch l'avertit par SNMP", "L'utilisateur le signale"], e: "Le Master envoie une annonce par seconde. Sans annonce pendant environ 3 secondes, le Backup prend la place." },
+    { q: "Après la bascule, le PC doit-il modifier sa configuration ?", o: ["Non, l'IP virtuelle et la MAC virtuelle restent les mêmes", "Oui, il doit changer de passerelle", "Oui, il doit vider sa table de routage", "Oui, il doit relancer le DHCP"], e: "Le PC garde la même passerelle et la même entrée ARP. Il ne voit pas le changement de routeur." },
+    { q: "Quelle est la différence entre VRRP et HSRP ?", o: ["VRRP est un standard ouvert, HSRP est propriétaire Cisco", "VRRP travaille en couche 2, HSRP en couche 3", "VRRP répartit la charge, pas HSRP", "VRRP ne fonctionne que sur Internet"], e: "Les deux protocoles ont le même but et un principe très proche. VRRP est normalisé par l'IETF (RFC 5798)." },
+    { q: "Deux routeurs VRRP sont branchés sur un seul switch. Que se passe-t-il si ce switch tombe ?", o: ["Le réseau est coupé : le switch reste un point unique de défaillance", "Le Backup prend automatiquement le relais", "VRRP bascule vers un autre switch", "Les PC passent en Wi-Fi"], e: "VRRP protège la passerelle, pas le switch. Pour doubler les switchs, on utilise des liens redondants et STP." },
+    { q: "Que signifie la préemption en VRRP ?", o: ["Un routeur de priorité supérieure reprend le rôle de Master dès son retour", "Le Backup refuse de devenir Master", "Le Master s'éteint pour économiser l'énergie", "Les annonces cessent"], e: "Avec la préemption, R1 (priorité 110) reprend la main au retour, même si R2 assurait le service. Sans préemption, R2 reste Master." }
+  ] }
+);
+
+/* ---------- Simulation : redondance et point unique de défaillance ---------- */
+function simRedund(el) {
+  let arch = 'single', fault = 'none';
+  const ARCH = { single: "Sans redondance", links: "Liens doublés", dual: "Routeurs doublés" };
+  const FAULT = { none: "Aucune panne", cable: "Câble coupé", router: "Routeur R1 en panne", switch: "Switch en panne" };
+  const EXTRA = {
+    single: "Matériel en plus : aucun. Une seule chaîne PC, switch, routeur, Internet.",
+    links: "Matériel en plus : un câble entre le switch et R1.",
+    dual: "Matériel en plus : un routeur R2 et deux câbles. Le coût augmente."
+  };
+  function message(ok, viaR2) {
+    if (fault === 'none') return arch === 'single' ? "Tout fonctionne, mais chaque élément de la chaîne est un point unique de défaillance." : arch === 'links' ? "Tout fonctionne. Le second câble ne sert que si le premier tombe." : "Tout fonctionne. R2 reste en secours et prend le relais si R1 tombe.";
+    if (fault === 'cable') return arch === 'single' ? "Le câble est coupé et il n'y a pas d'autre chemin : le PC perd Internet." : arch === 'links' ? "Un câble est coupé, mais le second prend le relais : personne ne s'en aperçoit." : "Le lien vers R1 est coupé : le trafic passe par R2.";
+    if (fault === 'router') return arch === 'dual' ? "R1 est en panne : R2 prend le relais." : arch === 'links' ? "R1 est en panne et il est seul : tout s'arrête. Doubler le câble ne suffisait pas, il fallait doubler le routeur." : "R1 est en panne et il est seul : tout s'arrête.";
+    return "Le switch est en panne : il reste un point unique de défaillance dans les trois architectures. Il faut aussi le doubler, avec des liens redondants entre switchs gérés par STP.";
+  }
+  function draw() {
+    const dual = arch === 'dual', links2 = arch === 'links';
+    const swUp = fault !== 'switch', r1Up = fault !== 'router', cut = fault === 'cable';
+    const viaR1 = swUp && r1Up && (!cut || links2);
+    const viaR2 = swUp && dual && !viaR1;
+    const ok = viaR1 || viaR2;
+    const PC = [50, 125], SW = [150, 125], NET = [420, 125], R1 = dual ? [290, 62] : [290, 125], R2 = [290, 188];
+    let l = '', n = '', mark = '';
+    l += lineSVG(PC[0], PC[1], SW[0], SW[1], ok ? 'out' : '');
+    if (links2) {
+      l += lineSVG(SW[0], SW[1] - 6, R1[0], R1[1] - 6, cut ? 'fail' : (viaR1 ? 'out' : ''));
+      l += lineSVG(SW[0], SW[1] + 6, R1[0], R1[1] + 6, cut && viaR1 ? 'out' : '');
+    } else {
+      l += lineSVG(SW[0], SW[1], R1[0], R1[1], cut ? 'fail' : (viaR1 ? 'out' : ''));
+    }
+    l += lineSVG(R1[0], R1[1], NET[0], NET[1], viaR1 ? 'out' : '');
+    if (dual) {
+      l += lineSVG(SW[0], SW[1], R2[0], R2[1], viaR2 ? 'out' : '');
+      l += lineSVG(R2[0], R2[1], NET[0], NET[1], viaR2 ? 'out' : '');
+    }
+    if (cut) {
+      const my = (SW[1] + R1[1]) / 2 - (links2 ? 6 : 0);
+      mark = `<text x="${(SW[0] + R1[0]) / 2}" y="${my + 6}" text-anchor="middle" style="fill:var(--bad);font-size:18px">✕</text>`;
+    }
+    n += nodeSVG(PC[0], PC[1], 'PC', '', ok ? 'on' : 'fail', 56, 34);
+    n += nodeSVG(SW[0], SW[1], 'SW', swUp ? '' : 'en panne', swUp ? (ok ? 'on' : '') : 'fail', 64, 40);
+    n += nodeSVG(R1[0], R1[1], 'R1', r1Up ? '' : 'en panne', r1Up ? (viaR1 ? 'on' : '') : 'fail', 70, 40);
+    if (dual) n += nodeSVG(R2[0], R2[1], 'R2', viaR2 ? 'relais' : 'secours', viaR2 ? 'on' : '', 70, 40);
+    n += nodeSVG(NET[0], NET[1], 'Internet', '', ok ? 'on' : '', 76, 34);
+    el.innerHTML = `<div class="sim">
+      <div class="seg" role="group" aria-label="Architecture">${Object.keys(ARCH).map(k => `<button data-s="arch" data-v="${k}" aria-pressed="${k === arch}">${ARCH[k]}</button>`).join('')}</div>
+      <svg class="map" viewBox="0 0 480 240" role="img" aria-label="Architecture ${ARCH[arch]}, ${FAULT[fault]}">${l}${mark}${n}</svg>
+      ${legend([['--ok', "Chemin utilisé"], ['--bad', "Panne"], ['--line', "Disponible, inutilisé"]])}
+      <div class="seg" role="group" aria-label="Panne">${Object.keys(FAULT).map(k => `<button data-s="fault" data-v="${k}" aria-pressed="${k === fault}">${FAULT[k]}</button>`).join('')}</div>
+      <div class="fb ${ok ? 'ok' : 'bad'}"><b>${ok ? "Internet joignable." : "Internet coupé."}</b><p>${message(ok, viaR2)}</p></div>
+      <p class="muted">${EXTRA[arch]}</p></div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'arch') arch = b.dataset.v; else fault = b.dataset.v;
+    draw();
+  });
+  draw();
+}
+
+/* ---------- Simulation : STP, trois switchs en triangle ---------- */
+function simStp(el) {
+  let mode = 'stp', cut = -1, low = 'none';
+  const NAMES = ['SW1', 'SW2', 'SW3'];
+  const POS = { SW1: [240, 48], SW2: [95, 190], SW3: [385, 190] };
+  const MACN = { SW1: 1, SW2: 2, SW3: 3 };
+  const LINKS = [['SW1', 'SW2'], ['SW1', 'SW3'], ['SW2', 'SW3']];
+  const CUTS = ["Aucune panne", "Lien SW1–SW2 coupé", "Lien SW1–SW3 coupé", "Lien SW2–SW3 coupé"];
+  const cmpArr = (a, b) => { for (let i = 0; i < a.length; i++) { if (a[i] !== b[i]) return a[i] < b[i] ? -1 : 1; } return 0; };
+  const bid = n => [n === low ? 4096 : 32768, MACN[n]];
+  function compute(c) {
+    let root = NAMES[0];
+    NAMES.forEach(n => { if (cmpArr(bid(n), bid(root)) < 0) root = n; });
+    const cost = {}; NAMES.forEach(n => { cost[n] = n === root ? 0 : 99; });
+    for (let k = 0; k < 3; k++) LINKS.forEach((lk, i) => {
+      if (i === c) return;
+      const a = lk[0], b = lk[1];
+      if (cost[a] + 4 < cost[b]) cost[b] = cost[a] + 4;
+      if (cost[b] + 4 < cost[a]) cost[a] = cost[b] + 4;
+    });
+    const rp = {};
+    NAMES.forEach(n => {
+      if (n === root) return;
+      let bi = -1, bk = null;
+      LINKS.forEach((lk, i) => {
+        if (i === c || lk.indexOf(n) < 0) return;
+        const m = lk[0] === n ? lk[1] : lk[0];
+        const key = [cost[m] + 4, bid(m)[0], bid(m)[1], i];
+        if (bk === null || cmpArr(key, bk) < 0) { bk = key; bi = i; }
+      });
+      rp[n] = bi;
+    });
+    const ports = LINKS.map((lk, i) => {
+      if (i === c) return null;
+      const a = lk[0], b = lk[1];
+      const desig = cmpArr([cost[a], bid(a)[0], bid(a)[1]], [cost[b], bid(b)[0], bid(b)[1]]) < 0 ? a : b;
+      const st = {};
+      lk.forEach(n => { st[n] = rp[n] === i ? 'root' : (n === desig ? 'designated' : 'blocked'); });
+      return st;
+    });
+    return { root, cost, rp, ports };
+  }
+  function draw() {
+    const st = compute(cut), base = compute(-1);
+    let l = '', mk = '', n = '', loop = '';
+    LINKS.forEach((lk, i) => {
+      const A = POS[lk[0]], B = POS[lk[1]];
+      let c;
+      if (i === cut) c = 'fail';
+      else if (mode === 'nostp') c = cut === -1 ? 'waste' : 'out';
+      else c = (st.ports[i][lk[0]] === 'blocked' || st.ports[i][lk[1]] === 'blocked') ? 'blk' : 'req';
+      l += lineSVG(A[0], A[1], B[0], B[1], c);
+      if (i === cut) l += `<text x="${(A[0] + B[0]) / 2}" y="${(A[1] + B[1]) / 2 + 6}" text-anchor="middle" style="fill:var(--bad);font-size:18px">✕</text>`;
+      if (mode === 'stp' && i !== cut) lk.forEach((nm, e) => {
+        const P = POS[nm], Q = POS[lk[1 - e]], dx = Q[0] - P[0], dy = Q[1] - P[1], len = Math.sqrt(dx * dx + dy * dy);
+        const x = (P[0] + dx / len * 70).toFixed(1), y = (P[1] + dy / len * 70).toFixed(1), s = st.ports[i][nm];
+        mk += `<g class="mk ${s === 'root' ? 'ok' : s === 'blocked' ? 'd2' : 'd1'}"><circle cx="${x}" cy="${y}" r="11"/><text x="${x}" y="${(+y + 4).toFixed(1)}" text-anchor="middle">${s === 'root' ? 'R' : s === 'blocked' ? 'B' : 'D'}</text></g>`;
+      });
+    });
+    if (mode === 'nostp' && cut === -1) {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const path = `M${POS.SW1} L${POS.SW3} L${POS.SW2} Z`;
+      if (reduce) NAMES.forEach(nm => { loop += `<circle cx="${POS[nm][0]}" cy="${POS[nm][1]}" r="6" style="fill:var(--d2)"/>`; });
+      else [0, -0.8, -1.6].forEach(b => { loop += `<circle r="6" style="fill:var(--d2)"><animateMotion dur="2.4s" begin="${b}s" repeatCount="indefinite" path="${path}"/></circle>`; });
+    }
+    NAMES.forEach(nm => {
+      const P = POS[nm], isRoot = mode === 'stp' && nm === st.root;
+      n += nodeSVG(P[0], P[1], nm, `${nm === low ? 4096 : 32768} · :0${MACN[nm]}`, isRoot ? 'on' : '', 100, 46);
+      if (isRoot) n += `<text x="${P[0]}" y="${nm === 'SW1' ? P[1] - 32 : P[1] + 40}" text-anchor="middle" style="fill:var(--ok);font-size:12px;font-weight:700">RACINE</text>`;
+    });
+    let info = '';
+    if (mode === 'nostp') {
+      info = cut === -1
+        ? `<div class="fb bad"><b>Tempête de diffusion.</b><p>Les trois liens sont actifs : c'est une boucle. Une trame de diffusion est recopiée par chaque switch, tourne sans fin et se multiplie. En quelques secondes, le réseau est saturé.</p></div>`
+        : `<div class="fb ok"><b>Pas de boucle, mais pas de secours.</b><p>Un lien est coupé : les switchs forment une ligne. Le réseau fonctionne, mais une deuxième panne le coupera en deux. Activez STP pour avoir la redondance sans la boucle.</p></div>`;
+    } else {
+      const log = [];
+      log.push(low === 'none' ? `Élection : toutes les priorités valent 32768, donc la plus petite adresse MAC gagne. ${st.root} devient le pont racine.` : `Élection : ${low} a la priorité la plus basse (4096). Il devient le pont racine.`);
+      NAMES.forEach(nm => {
+        if (nm === st.root) return;
+        const lk = LINKS[st.rp[nm]], other = lk[0] === nm ? lk[1] : lk[0];
+        log.push(`${nm} : port racine (R) vers ${other}, coût total vers la racine : ${st.cost[nm]}.`);
+      });
+      LINKS.forEach((lk, i) => {
+        if (i === cut) return;
+        lk.forEach(nm => { if (st.ports[i][nm] === 'blocked') log.push(`Lien ${lk[0]}–${lk[1]} : le port de ${nm} est bloqué (B). Il évite la boucle et reste prêt en secours.`); });
+      });
+      if (cut >= 0) {
+        const cl = LINKS[cut], was = base.ports[cut];
+        const wasBlocked = was[cl[0]] === 'blocked' || was[cl[1]] === 'blocked';
+        log.push(wasBlocked
+          ? `Le lien coupé ${cl[0]}–${cl[1]} était justement le lien bloqué : personne ne s'en aperçoit.`
+          : `Le lien ${cl[0]}–${cl[1]} est coupé. STP recalcule l'arbre et réactive le port qui était bloqué : Blocking, Listening, Learning, puis Forwarding. Comptez 30 à 50 s en STP classique, 1 à 2 s en RSTP.`);
+      }
+      info = `<ol class="log">${log.map(x => `<li>${x}</li>`).join('')}</ol>`;
+    }
+    el.innerHTML = `<div class="sim">
+      <div class="seg" role="group" aria-label="Mode"><button data-s="mode" data-v="nostp" aria-pressed="${mode === 'nostp'}">Sans STP</button><button data-s="mode" data-v="stp" aria-pressed="${mode === 'stp'}">Avec STP</button></div>
+      <svg class="map" viewBox="0 0 480 250" role="img" aria-label="Trois switchs en triangle">${l}${loop}${mk}${n}</svg>
+      <div class="leg"><span><b style="color:var(--ok)">R</b> port racine</span><span><b style="color:var(--accent)">D</b> port désigné</span><span><b style="color:var(--d2)">B</b> port bloqué</span><span>Sous chaque nom : priorité · fin de l'adresse MAC</span></div>
+      <div class="seg" role="group" aria-label="Panne">${CUTS.map((t, i) => `<button data-s="cut" data-v="${i - 1}" aria-pressed="${cut === i - 1}">${t}</button>`).join('')}</div>
+      <div class="fl"><div class="field"><label for="stp-low">Priorité 4096 pour</label><select id="stp-low"><option value="none"${low === 'none' ? ' selected' : ''}>Personne (32768 partout)</option>${NAMES.map(x => `<option value="${x}"${low === x ? ' selected' : ''}>${x}</option>`).join('')}</select></div></div>
+      ${info}</div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'mode') mode = b.dataset.v; else cut = +b.dataset.v;
+    draw();
+  });
+  el.addEventListener('change', e => { if (e.target.id === 'stp-low') { low = e.target.value; draw(); } });
+  draw();
+}
+
+/* ---------- Simulation : VRRP, bascule Master et Backup ---------- */
+function simVrrp(el) {
+  let step = 0, pre = true;
+  const TITLES = ["1. Fonctionnement normal", "2. R1 tombe en panne", "3. R2 devient Master", "4. R1 revient"];
+  function roles() {
+    if (step === 0) return { r1: 'master', r2: 'backup', act: 'r1' };
+    if (step === 1) return { r1: 'down', r2: 'wait', act: null };
+    if (step === 2) return { r1: 'down', r2: 'master', act: 'r2' };
+    return pre ? { r1: 'master', r2: 'backup', act: 'r1' } : { r1: 'backup', r2: 'master', act: 'r2' };
+  }
+  const LAB = { master: "Master", backup: "Backup", down: "en panne", wait: "attend…" };
+  const CLS = { master: 'on', backup: 'd1', down: 'fail', wait: 'd1' };
+  function body() {
+    if (step === 0) return "R1 (priorité 110) est Master : il possède l'IP virtuelle et répond aux PC. Il envoie une annonce VRRP chaque seconde vers 224.0.0.18. R2 (priorité 100) est Backup : il écoute et ne route rien.";
+    if (step === 1) return "Plus aucune annonce n'arrive. R2 attend, puis déclare R1 perdu après environ 3 secondes (3 annonces manquées). Pendant ce court délai, les paquets des PC vers 192.168.1.1 restent sans réponse.";
+    if (step === 2) return "R2 prend l'IP virtuelle et la MAC virtuelle, puis envoie un ARP gratuit pour que le switch apprenne son port. Les PC n'ont rien changé : même passerelle, même MAC dans leur table ARP.";
+    return pre
+      ? "R1 revient avec la priorité 110, supérieure à 100 : il reprend le rôle de Master (préemption activée). R2 repasse Backup. Une courte perturbation est possible pendant le retour."
+      : "R1 revient, mais R2 reste Master tant qu'il fonctionne : R1 devient Backup (préemption désactivée). On évite un deuxième basculement, mais le routeur préféré n'est plus Master.";
+  }
+  function ann() {
+    if (step === 0) return "Annonces : R1 envoie (priorité 110) toutes les secondes · R2 reçoit";
+    if (step === 1) return "Annonces : aucune depuis 3 s · R2 lance l'élection";
+    if (step === 2) return "Annonces : R2 envoie (priorité 100) · R1 est éteint";
+    return pre ? "Annonces : R1 envoie (priorité 110) · R2 reçoit et repasse Backup" : "Annonces : R2 envoie (priorité 100) · R1 reçoit et reste Backup";
+  }
+  function draw() {
+    const r = roles();
+    const PC = [55, 125], SW = [150, 125], R1 = [290, 58], R2 = [290, 192], NET = [425, 125];
+    const c1 = r.act === 'r1' ? 'out' : r.r1 === 'down' ? 'fail' : '';
+    const c2 = r.act === 'r2' ? 'out' : r.r2 === 'down' ? 'fail' : '';
+    let l = lineSVG(PC[0], PC[1], SW[0], SW[1], r.act ? 'out' : 'waste');
+    l += lineSVG(SW[0], SW[1], R1[0], R1[1], c1) + lineSVG(R1[0], R1[1], NET[0], NET[1], c1);
+    l += lineSVG(SW[0], SW[1], R2[0], R2[1], c2) + lineSVG(R2[0], R2[1], NET[0], NET[1], c2);
+    const sub = (role, p) => role === 'down' ? LAB[role] : `${LAB[role]} · ${p}`;
+    let n = nodeSVG(PC[0], PC[1], 'PC', '', r.act ? 'on' : 'waste', 56, 34);
+    n += nodeSVG(SW[0], SW[1], 'SW', '', r.act ? 'on' : '', 64, 40);
+    n += nodeSVG(R1[0], R1[1], 'R1', sub(r.r1, 110), CLS[r.r1], 100, 44);
+    n += nodeSVG(R2[0], R2[1], 'R2', sub(r.r2, 100), CLS[r.r2], 100, 44);
+    n += nodeSVG(NET[0], NET[1], 'Internet', '', r.act ? 'on' : '', 76, 34);
+    n += `<text class="sub" x="${PC[0]}" y="${PC[1] + 30}" text-anchor="middle">GW 192.168.1.1</text>`;
+    el.innerHTML = `<div class="sim">
+      <div class="step">Étape ${step + 1} sur 4</div>
+      <svg class="map" viewBox="0 0 480 250" role="img" aria-label="${TITLES[step]}">${l}${n}</svg>
+      ${legend([['--ok', "Chemin des paquets"], ['--bad', "Routeur en panne"], ['--d2', "Paquets sans réponse"]])}
+      <div class="note"><b>${TITLES[step]}</b><br>${body()}</div>
+      <div class="pkt"><span>${ann()}</span><span>Table ARP du PC : <b>192.168.1.1</b> = <b>00:00:5E:00:01:01</b> (MAC virtuelle, inchangée)</span></div>
+      <div class="seg" role="group" aria-label="Préemption"><button data-s="pre" data-v="1" aria-pressed="${pre}">Préemption activée</button><button data-s="pre" data-v="0" aria-pressed="${!pre}">Préemption désactivée</button></div>
+      <div><button class="btn" data-s="next">${step < 3 ? "Étape suivante" : "Recommencer"}</button></div></div>`;
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'next') step = step < 3 ? step + 1 : 0;
+    else pre = b.dataset.v === '1';
+    draw();
+  });
+  draw();
+}
+
+const SIMS = { redund: simRedund, stp: simStp, vrrp: simVrrp, vlanbc: simVlanBc, lab: simLab, hub: simHub, pick: simPick, explorer: simExplorer, mac: simMac, dom: simDom, arp: simArp, osi: simOsi, encaps: simEncaps, map: simMap, bits: simBits, ip: simIp, subnet: simSubnet, vlsm: simVlsm, macinfo: simMacinfo, transfer: simTransfer, topo: simTopo };
 
 /* ---------- Application ---------- */
-const CHAPS = ["Les différents types de réseaux", "Les réseaux locaux", "L'adressage IP", "Les modèles et les protocoles", "La commutation", "Les VLAN"];
+const CHAPS = ["Les différents types de réseaux", "Les réseaux locaux", "L'adressage IP", "Les modèles et les protocoles", "La commutation", "Les VLAN", "La redondance des réseaux"];
 const CLEAD = [
   "Composants, catégories, topologies et tendances : le vocabulaire de base.",
   "Ethernet, adresses MAC, vitesse de commutation et Wi-Fi.",
   "Binaire, IPv4, IPv6, sous-réseaux et VLSM.",
   "Les modèles OSI et TCP/IP, et les protocoles du quotidien.",
   "Le switch, la trame, les domaines et le protocole ARP.",
-  "Segmenter un switch, trunks 802.1Q, configuration Cisco, routage inter-VLAN et dépannage."
+  "Segmenter un switch, trunks 802.1Q, configuration Cisco, routage inter-VLAN et dépannage.",
+  "Pourquoi doubler les équipements, et les protocoles STP et VRRP qui évitent les boucles et les pannes de passerelle."
 ];
 
 /* ---------- Labs VLAN ---------- */
@@ -2612,7 +2962,7 @@ function go(view, tid, tab) { S.view = view; if (tid != null) S.tid = tid; if (t
 function homeHTML() {
   let nq = 0; THEMES.forEach(t => nq += t.q.length);
   let h = `<div class="stack"><div class="hero"><div class="eyebrow">OFPPT · Infrastructure digitale · 1re année</div><h1>Réseaux informatiques</h1>
-    <p class="lead">Six thèmes, vingt-six leçons. Pour chaque leçon : une fiche de cours, une simulation à manipuler et un QCM corrigé. Avancez à votre rythme.</p>
+    <p class="lead">Sept thèmes, vingt-neuf leçons. Pour chaque leçon : une fiche de cours, une simulation à manipuler et un QCM corrigé. Avancez à votre rythme.</p>
     <button class="btn" data-a="general">Quiz général · 20 questions</button>
     <p class="stats">${CHAPS.length} thèmes · ${THEMES.length} leçons · ${THEMES.length} simulations · ${nq} questions · ${LABS.length} labs VLAN</p></div>`;
   CHAPS.forEach((name, c) => {
